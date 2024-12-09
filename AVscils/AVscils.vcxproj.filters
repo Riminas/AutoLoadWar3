@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков\Data">
+      <UniqueIdentifier>{c9e42ca6-4b59-4d13-b8c7-cdea06346609}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Data">
+      <UniqueIdentifier>{41927789-f5e3-4cd5-a62c-21db333d571d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\UI">
+      <UniqueIdentifier>{96ec295a-c0f4-420d-8885-3feeca4d783e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AvLoad.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="OwnerWindow.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFileTip1.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFileTip2.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="getMapOpen.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="key.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadManager.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="StringToString.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="NewDirectory.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="NewPathSaveCode.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="SkillsUpgradeStart.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="StringConvector.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadDataFail.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigMainEngine.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigMapsEngine.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="DataMaps.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="DataPath.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="NewDataAll.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="DataAll.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroInfoEngine.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroInfo.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigMain.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigMaps.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="DataAll.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchAfterCreatedFile.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="CoutGuide.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectingNewPathMap.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="FontLoader.cpp">
+      <Filter>Исходные файлы\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="FontSelector.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoUpdate.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AVscils.rc">
+      <Filter>Файлы ресурсов</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resuce\iconca.ico">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="OwnerWindow.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFileTip1.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFileTip2.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="getMapOpen.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="key.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="StringToString.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="NewDirectory.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="NewPathSaveCode.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="SkillsUpgradeStart.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="StringConvector.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadDataFail.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigMain.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigMainEngine.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigMaps.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigMapsEngine.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DataMaps.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DataPath.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandsUI_1.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandsUI_0.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroInfo.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroInfoEngine.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="NewDataAll.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchAfterCreatedFile.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonUI.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CoutGuide.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectingNewPathMap.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsUI.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLoader.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="FontSelector.h">
+      <Filter>Файлы заголовков\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="LogError.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoUpdate.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
