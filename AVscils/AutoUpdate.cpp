@@ -1,152 +1,182 @@
+#include "AutoUpdate.h"
 #include <windows.h>
 #include <winhttp.h>
+#include <string>
+#include <iostream>
+
+#include "json.hpp"
+using json = nlohmann::json;
+
 #pragma comment(lib, "winhttp.lib")
-#include "AutoUpdate.h"
 
-bool AutoUpdate::CheckForUpdates(const std::wstring& serverUrl, const std::wstring& currentVersion)
+std::string AutoUpdate::GetLatestReleaseInfo(const std::wstring& owner, const std::wstring& repo)
 {
-    bool updateAvailable = false;
-
-    // Создаем сессию WinHTTP
-    HINTERNET hSession = WinHttpOpen(L"Updater/1.0",
+    HINTERNET hSession = WinHttpOpen(L"MyApp/1.0",
         WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
         WINHTTP_NO_PROXY_NAME,
         WINHTTP_NO_PROXY_BYPASS, 0);
-    if (hSession) {
-        URL_COMPONENTS urlComp;
-        ZeroMemory(&urlComp, sizeof(urlComp));
-        urlComp.dwStructSize = sizeof(urlComp);
 
-        // Устанавливаем размеры буферов
-        wchar_t hostName[256];
-        wchar_t urlPath[256];
-        urlComp.lpszHostName = hostName;
-        urlComp.dwHostNameLength = _countof(hostName);
-        urlComp.lpszUrlPath = urlPath;
-        urlComp.dwUrlPathLength = _countof(urlPath);
+    std::string result;
 
-        // Разбираем URL
-        if (WinHttpCrackUrl(serverUrl.c_str(), (DWORD)serverUrl.length(), 0, &urlComp)) {
-            // Открываем соединение
-            HINTERNET hConnect = WinHttpConnect(hSession, urlComp.lpszHostName,
-                urlComp.nPort, 0);
-            if (hConnect) {
-                // Создаем запрос
-                HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET",
-                    urlComp.lpszUrlPath,
-                    NULL, WINHTTP_NO_REFERER,
-                    WINHTTP_DEFAULT_ACCEPT_TYPES,
-                    (urlComp.nScheme == INTERNET_SCHEME_HTTPS) ? WINHTTP_FLAG_SECURE : 0);
-                if (hRequest) {
-                    // Отправляем запрос
-                    BOOL bResult = WinHttpSendRequest(hRequest,
-                        WINHTTP_NO_ADDITIONAL_HEADERS, 0,
-                        WINHTTP_NO_REQUEST_DATA, 0,
-                        0, 0);
-                    if (bResult) {
-                        bResult = WinHttpReceiveResponse(hRequest, NULL);
-                        if (bResult) {
-                            // Читаем данные
-                            DWORD dwSize = 0;
-                            WinHttpQueryDataAvailable(hRequest, &dwSize);
-                            if (dwSize > 0) {
-                                wchar_t* buffer = new wchar_t[dwSize / sizeof(wchar_t) + 1];
-                                ZeroMemory(buffer, dwSize + sizeof(wchar_t));
-                                DWORD dwDownloaded = 0;
-                                WinHttpReadData(hRequest, (LPVOID)buffer, dwSize, &dwDownloaded);
+    if (hSession)
+    {
+        HINTERNET hConnect = WinHttpConnect(hSession, L"api.github.com",
+            INTERNET_DEFAULT_HTTPS_PORT, 0);
 
-                                std::wstring latestVersion(buffer);
+        if (hConnect)
+        {
+            std::wstring path = L"/repos/" + owner + L"/" + repo + L"/releases/latest";
+
+            HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", path.c_str(),
+                NULL, WINHTTP_NO_REFERER,
+                WINHTTP_DEFAULT_ACCEPT_TYPES,
+                WINHTTP_FLAG_SECURE);
+
+            if (hRequest)
+            {
+                // Установите заголовок User-Agent, иначе GitHub API может вернуть ошибку
+                const wchar_t* szHeaders = L"User-Agent: MyApp\r\n";
+                BOOL bResult = WinHttpSendRequest(hRequest, szHeaders, -1L,
+                    WINHTTP_NO_REQUEST_DATA, 0,
+                    0, 0);
+
+                if (bResult)
+                {
+                    bResult = WinHttpReceiveResponse(hRequest, NULL);
+
+                    if (bResult)
+                    {
+                        DWORD dwSize = 0;
+                        do
+                        {
+                            DWORD dwDownloaded = 0;
+                            if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
+                                break;
+
+                            if (dwSize == 0)
+                                break;
+
+                            char* buffer = new char[dwSize + 1];
+                            ZeroMemory(buffer, dwSize + 1);
+
+                            if (!WinHttpReadData(hRequest, (LPVOID)buffer,
+                                dwSize, &dwDownloaded))
+                            {
                                 delete[] buffer;
-
-                                // Сравниваем версии
-                                if (latestVersion != currentVersion) {
-                                    updateAvailable = true;
-                                }
+                                break;
                             }
-                        }
+
+                            result.append(buffer, dwDownloaded);
+                            delete[] buffer;
+
+                        } while (dwSize > 0);
                     }
-                    WinHttpCloseHandle(hRequest);
                 }
-                WinHttpCloseHandle(hConnect);
+                WinHttpCloseHandle(hRequest);
             }
+            WinHttpCloseHandle(hConnect);
         }
         WinHttpCloseHandle(hSession);
     }
-
-    return updateAvailable;
-
+    return result;
 }
-
-bool AutoUpdate::DownloadUpdate(const std::wstring& downloadUrl, const std::wstring& savePath)
+bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePath)
 {
-    bool downloadSuccess = false;
-
-    // Создаем сессию WinHTTP
-    HINTERNET hSession = WinHttpOpen(L"Updater/1.0",
+    HINTERNET hSession = WinHttpOpen(L"MyApp/1.0",
         WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
         WINHTTP_NO_PROXY_NAME,
         WINHTTP_NO_PROXY_BYPASS, 0);
-    if (hSession) {
-        // Разбираем URL
-        URL_COMPONENTS urlComp;
-        ZeroMemory(&urlComp, sizeof(urlComp));
-        urlComp.dwStructSize = sizeof(urlComp);
 
-        wchar_t hostName[256];
-        wchar_t urlPath[256];
-        urlComp.lpszHostName = hostName;
-        urlComp.dwHostNameLength = _countof(hostName);
-        urlComp.lpszUrlPath = urlPath;
-        urlComp.dwUrlPathLength = _countof(urlPath);
+    if (!hSession)
+        return false;
 
-        if (WinHttpCrackUrl(downloadUrl.c_str(), (DWORD)downloadUrl.length(), 0, &urlComp)) {
-            // Открываем соединение
-            HINTERNET hConnect = WinHttpConnect(hSession, urlComp.lpszHostName,
-                urlComp.nPort, 0);
-            if (hConnect) {
-                // Создаем запрос
-                HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET",
-                    urlComp.lpszUrlPath,
-                    NULL, WINHTTP_NO_REFERER,
-                    WINHTTP_DEFAULT_ACCEPT_TYPES,
-                    (urlComp.nScheme == INTERNET_SCHEME_HTTPS) ? WINHTTP_FLAG_SECURE : 0);
-                if (hRequest) {
-                    // Отправляем запрос
-                    BOOL bResult = WinHttpSendRequest(hRequest,
-                        WINHTTP_NO_ADDITIONAL_HEADERS, 0,
-                        WINHTTP_NO_REQUEST_DATA, 0,
-                        0, 0);
-                    if (bResult) {
-                        bResult = WinHttpReceiveResponse(hRequest, NULL);
-                        if (bResult) {
-                            HANDLE hFile = CreateFile(savePath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-                            if (hFile != INVALID_HANDLE_VALUE) {
-                                DWORD dwSize = 0;
-                                do {
-                                    dwSize = 0;
-                                    if (WinHttpQueryDataAvailable(hRequest, &dwSize)) {
-                                        BYTE* buffer = new BYTE[dwSize];
-                                        ZeroMemory(buffer, dwSize);
-                                        DWORD dwDownloaded = 0;
-                                        if (WinHttpReadData(hRequest, (LPVOID)buffer, dwSize, &dwDownloaded)) {
-                                            DWORD dwWritten = 0;
-                                            WriteFile(hFile, buffer, dwDownloaded, &dwWritten, NULL);
-                                        }
-                                        delete[] buffer;
-                                    }
-                                } while (dwSize > 0);
-                                CloseHandle(hFile);
-                                downloadSuccess = true;
-                            }
-                        }
-                    }
-                    WinHttpCloseHandle(hRequest);
-                }
-                WinHttpCloseHandle(hConnect);
-            }
-        }
+    URL_COMPONENTS urlComp;
+    ZeroMemory(&urlComp, sizeof(urlComp));
+    urlComp.dwStructSize = sizeof(urlComp);
+
+    wchar_t hostName[256];
+    wchar_t urlPath[1024];
+    urlComp.lpszHostName = hostName;
+    urlComp.dwHostNameLength = _countof(hostName);
+    urlComp.lpszUrlPath = urlPath;
+    urlComp.dwUrlPathLength = _countof(urlPath);
+
+    std::wstring wideUrl = std::wstring(url.begin(), url.end());
+    WinHttpCrackUrl(wideUrl.c_str(), 0, 0, &urlComp);
+
+    HINTERNET hConnect = WinHttpConnect(hSession, urlComp.lpszHostName,
+        urlComp.nPort, 0);
+
+    if (!hConnect)
+    {
         WinHttpCloseHandle(hSession);
+        return false;
     }
 
-    return downloadSuccess;
+    DWORD dwFlags = (urlComp.nScheme == INTERNET_SCHEME_HTTPS) ? WINHTTP_FLAG_SECURE : 0;
+
+    HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", urlComp.lpszUrlPath,
+        NULL, WINHTTP_NO_REFERER,
+        WINHTTP_DEFAULT_ACCEPT_TYPES,
+        dwFlags);
+
+    if (!hRequest)
+    {
+        WinHttpCloseHandle(hConnect);
+        WinHttpCloseHandle(hSession);
+        return false;
+    }
+
+    // Установите заголовок User-Agent
+    const wchar_t* szHeaders = L"User-Agent: MyApp\r\n";
+    BOOL bResult = WinHttpSendRequest(hRequest, szHeaders, -1L,
+        WINHTTP_NO_REQUEST_DATA, 0,
+        0, 0);
+
+    if (bResult)
+    {
+        bResult = WinHttpReceiveResponse(hRequest, NULL);
+
+        if (bResult)
+        {
+            HANDLE hFile = CreateFileW(savePath.c_str(), GENERIC_WRITE, 0, NULL,
+                CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+            if (hFile == INVALID_HANDLE_VALUE)
+            {
+                WinHttpCloseHandle(hRequest);
+                WinHttpCloseHandle(hConnect);
+                WinHttpCloseHandle(hSession);
+                return false;
+            }
+
+            DWORD dwSize = 0;
+            do
+            {
+                DWORD dwDownloaded = 0;
+                BYTE buffer[8192];
+
+                if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
+                    break;
+
+                if (dwSize == 0)
+                    break;
+
+                if (!WinHttpReadData(hRequest, buffer, min(dwSize, sizeof(buffer)), &dwDownloaded))
+                    break;
+
+                DWORD dwWritten = 0;
+                WriteFile(hFile, buffer, dwDownloaded, &dwWritten, NULL);
+
+            } while (dwSize > 0);
+
+            CloseHandle(hFile);
+        }
+    }
+
+    WinHttpCloseHandle(hRequest);
+    WinHttpCloseHandle(hConnect);
+    WinHttpCloseHandle(hSession);
+
+    return bResult == TRUE;
 }

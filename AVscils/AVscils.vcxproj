@@ -233,6 +233,7 @@
     <ClInclude Include="Global.h" />
     <ClInclude Include="HeroInfo.h" />
     <ClInclude Include="HeroInfoEngine.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="key.h" />
     <ClInclude Include="LoadDataFail.h" />
     <ClInclude Include="LoadManager.h" />

@@ -22,6 +22,14 @@ public:
             logFile << "[MESSAGE] " << message << std::endl;
         }
     }
+    void logMessageW(const std::wstring& message) {
+        checkDirectories();
+
+        std::wofstream logFile(nameFile.c_str(), std::ios::app);
+        if (logFile.is_open()) {
+            logFile << "[MESSAGE] " << message << std::endl;
+        }
+    }
     void logWarning(const std::string& message) {
         checkDirectories();
 

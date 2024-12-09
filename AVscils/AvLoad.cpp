@@ -2,13 +2,10 @@
 #include <iostream>
 #include "Engine.h"
 #include "AutoUpdate.h"
- // точка входа: mainCRTStartup
-
-const std::wstring CURRENT_VERSION = L"1.0.0";
-const std::wstring VERSION_URL = L"https://yourserver.com/latest_version.txt";
-const std::wstring UPDATE_URL = L"https://yourserver.com/yourapp_update.exe";
-const std::wstring UPDATE_FILE_PATH = L"update.exe";
-
+#include "json.hpp"
+#include "LogError.h"
+using json = nlohmann::json;
+//с++20 SFML MVS2022 как сделать авто обновление программы через GitHab с использоанием #pragma comment(lib, "winhttp.lib")
 int main()
 {
     SetConsoleOutputCP(CP_UTF8); // Устанавливаем кодировку консоли на UTF-8
@@ -18,20 +15,63 @@ int main()
 
     if (FindWindow(NULL, L"AutoLoads") == NULL) {
         AutoUpdate AutoUpddate_;
-        // Проверяем наличие обновлений
-        if (AutoUpddate_.CheckForUpdates(VERSION_URL, CURRENT_VERSION)) {
-            // Сообщаем пользователю
-            MessageBox(NULL, L"Доступно обновление. Приложение будет обновлено.", L"Обновление", MB_OK);
+        std::string releaseInfo = AutoUpddate_.GetLatestReleaseInfo(L"Riminas", L"AutoLoadWar3");
 
-            // Скачиваем обновление
-            if (AutoUpddate_.DownloadUpdate(UPDATE_URL, UPDATE_FILE_PATH)) {
-                // Запускаем обновление и выходим из приложения
-                ShellExecute(NULL, L"open", UPDATE_FILE_PATH.c_str(), NULL, NULL, SW_SHOWNORMAL);
-                return 0; // Завершаем текущий процесс
+        if (!releaseInfo.empty())
+        {
+            json jsonData = json::parse(releaseInfo);
+
+            std::string latestVersion = jsonData["tag_name"];
+
+            // Предположим, что currentVersion - это строка с текущей версией вашей программы
+            std::string currentVersion = "AutoLoad_1_18_15";
+
+            if (latestVersion != currentVersion)
+            {
+                LogError().logMessage("Доступно обновление до версии " + latestVersion);
+                
+                std::string downloadUrl;
+                for (const auto& asset : jsonData["assets"])
+                {
+                    std::string name = asset["name"];
+                    if (name == "AvLoad.exe") // или другое имя вашего файла
+                    {
+                        downloadUrl = asset["browser_download_url"];
+                        break;
+                    }
+                }
+                LogError().logMessage("адрес " + downloadUrl);
+
+                wchar_t modulePath[MAX_PATH];
+                GetModuleFileName(NULL, modulePath, MAX_PATH);
+                std::wstring savePath = modulePath;
+                savePath.erase(savePath.size() - 11);
+                //"AvLoad.exe"
+
+
+                LogError().logMessageW(L"savePath " + savePath);
+
+                if (AutoUpddate_.DownloadFile(downloadUrl, savePath))
+                {
+                    LogError().logMessage("Файл обновления успешно загружен.");
+                    // Перейдите к установке обновления
+                    ShellExecute(NULL, L"open", L"update.exe", NULL, NULL, SW_SHOWNORMAL);
+                }
+                else
+                {
+                    LogError().logMessage("Ошибка при загрузке файла обновления.");
+                }
+
+
             }
-            else {
-                MessageBox(NULL, L"Не удалось скачать обновление.", L"Ошибка", MB_OK | MB_ICONERROR);
+            else
+            {
+                LogError().logMessage("У вас установлена последняя версия.");
             }
+        }
+        else
+        {
+            LogError().logMessage("Не удалось получить информацию о последнем релизе.");
         }
 
         Engine().engine1();

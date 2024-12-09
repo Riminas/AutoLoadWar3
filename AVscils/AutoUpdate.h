@@ -4,7 +4,7 @@
 class AutoUpdate
 {
 public:
-    bool CheckForUpdates(const std::wstring& serverUrl, const std::wstring& currentVersion);
-    bool DownloadUpdate(const std::wstring& downloadUrl, const std::wstring& savePath);
+	std::string GetLatestReleaseInfo(const std::wstring& owner, const std::wstring& repo);
+	bool DownloadFile(const std::string& url, const std::wstring& savePath);
 };
 
