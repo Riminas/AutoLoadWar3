@@ -51,18 +51,13 @@ bool ConfigMainEngine::loadConfigMain() {
                         break;
                     G_CONFIG_MAIN.optionsConfig.blackColor = parseBool(value);
                 }
-                else if (key == "autoUpdate") {
-                    if (enumLoad++ != 3)
-                        break;
-                    G_CONFIG_MAIN.optionsConfig.autoUpdate = parseBool(value);
-                }
                 else if (key == "writeLogs") {
-                    if (enumLoad++ != 4)
+                    if (enumLoad++ != 3)
                         break;
                     G_CONFIG_MAIN.optionsConfig.writeLogs = parseBool(value);
                 }
                 else if (key == "autoExit") {
-                    if (enumLoad++ != 5)
+                    if (enumLoad++ != 4)
                         break;
                     G_CONFIG_MAIN.optionsConfig.autoExit = parseBool(value);
                 }
@@ -90,7 +85,6 @@ bool ConfigMainEngine::saveConfigMain() const {
     file << "autoClickerKey=" << (G_CONFIG_MAIN.optionsConfig.autoClickerKey ? "true" : "false") << std::endl;
     file << "autoClickerMouse=" << (G_CONFIG_MAIN.optionsConfig.autoClickerMouse ? "true" : "false") << std::endl;
     file << "blackColor=" << (G_CONFIG_MAIN.optionsConfig.blackColor ? "true" : "false") << std::endl;
-    file << "autoUpdate=" << (G_CONFIG_MAIN.optionsConfig.autoUpdate ? "true" : "false") << std::endl;
     file << "writeLogs=" << (G_CONFIG_MAIN.optionsConfig.writeLogs ? "true" : "false") << std::endl;
     file << "autoExit=" << (G_CONFIG_MAIN.optionsConfig.autoExit ? "true" : "false") << std::endl;
 

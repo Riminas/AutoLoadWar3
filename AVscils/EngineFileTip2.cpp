@@ -18,7 +18,8 @@
 #include "ConfigMaps.h"
 
 short EngineFileTip2::initialize() {
-    if (!engineFile()) {
+    if (!engineFile() || G_HERO_INFO.size() == 0) {
+        MessageBox(NULL, L"Неудалась найти профы", L"Error", MB_OK | MB_ICONEXCLAMATION);
         return 0;
     }
 

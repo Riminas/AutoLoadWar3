@@ -14,7 +14,7 @@ struct OptionsConfig {
     bool autoClickerKey{ true };
     bool autoClickerMouse{ true };
     bool blackColor{ true };
-    bool autoUpdate{ true };
+    bool autoUpdate{ false };
     bool writeLogs{ true };
     bool autoExit{ false };
 

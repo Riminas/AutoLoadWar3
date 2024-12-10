@@ -165,7 +165,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
         WINHTTP_NO_PROXY_BYPASS, 0);
 
     if (!hSession) {
-        LogError().logMessage("1");
+        LogError().logError("hSession");
         return false;
     }
 
@@ -189,7 +189,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
     if (!hConnect)
     {
         WinHttpCloseHandle(hSession);
-        LogError().logMessage("2");
+        LogError().logError("hConnect");
         return false;
     }
 
@@ -204,7 +204,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
     {
         WinHttpCloseHandle(hConnect);
         WinHttpCloseHandle(hSession);
-        LogError().logMessage("3");
+        LogError().logError("hRequest");
         return false;
     }
 
@@ -228,7 +228,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
                 WinHttpCloseHandle(hRequest);
                 WinHttpCloseHandle(hConnect);
                 WinHttpCloseHandle(hSession);
-                LogError().logMessage("4");
+                LogError().logError("INVALID_HANDLE_VALUE");
                 return false;
             }
 
@@ -259,7 +259,6 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
-    LogError().logMessage("5");
 
     return bResult == TRUE;
 }

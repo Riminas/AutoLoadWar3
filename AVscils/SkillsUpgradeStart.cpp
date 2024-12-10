@@ -71,12 +71,10 @@ bool SkillsUpgradeStart::loadDataSkill()
                 numKey = std::stoul(tokens[1]);
             }
             catch (const std::invalid_argument& e) {
-                // Обработка ошибки: строка не является числом
-                LogError().logError("Invalid argument: " + std::string(e.what()));
+                LogError().logError("Invalid argument: " + std::string(e.what()));// Обработка ошибки: строка не является числом
             }
             catch (const std::out_of_range& e) {
-                // Обработка ошибки: число выходит за пределы типа unsigned int
-                LogError().logError("Out of range: " + std::string(e.what()));
+                LogError().logError("Out of range: " + std::string(e.what()));// Обработка ошибки: число выходит за пределы типа unsigned int
             }
         }
 

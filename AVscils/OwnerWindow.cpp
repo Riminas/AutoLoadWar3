@@ -21,6 +21,7 @@
 #include "ConfigMapsEngine.h"
 #include "CoutGuide.h"
 #include "SelectingNewPathMap.h"
+#include "LogError.h"
 
 void OwnerWindow::initialize() {
 
@@ -50,6 +51,7 @@ void OwnerWindow::initialize() {
 void OwnerWindow::draw(const bool t_isVisibleLoad) {
 
     if (t_isVisibleLoad) {
+        LogError().logError("Thil_1_1");
         G_WINDOW.draw(m_SpriteIsLoad);
         return;
     }
@@ -162,20 +164,26 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
                 isWindow2Visible[0] = false;
             }
 
+            LogError().logError("Thil_1");
             updateRegion(G_DATA_PATH.hWndWindowWar, 1u);
 
+            LogError().logError("Thil_2");
             G_WINDOW.clear(sf::Color(255, 255, 255));
             draw(true);
             G_WINDOW.display();
+            LogError().logError("Thil_3");
 
             EngineFileTip1().engineFile();
+            LogError().logError("Thil_4");
 
             updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
+            LogError().logError("Thil_5");
 
             if (G_CONFIG_MAIN.optionsConfig.autoExit)
                 G_WINDOW.close();
         }
         else {
+            LogError().logError("G_CONFIG_MAPS.path.empty()");
             SelectingNewPathMap().selectingNewPathMap();
             m_IsVisibleMenu = !m_IsVisibleMenu;
             updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
@@ -183,7 +191,7 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
 
         break;
     }
-    case 1: {//список герое
+    case 1: {//список героев
         if (!G_CONFIG_MAPS.path.empty()) {
             isWindow2Visible[0] = !isWindow2Visible[0];
             updateRegion(G_DATA_PATH.hWndWindowWar, 0u);

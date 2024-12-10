@@ -14,15 +14,19 @@
 bool HeroInfoEngine::retrieveHeroData(const std::wstring& saveCodePath) {
 
     const std::wstring fullSavePath = G_DATA_PATH.warPathDirectSave + saveCodePath;
+    LogError().logError("Thil_3_1_1");
 
     if (!std::filesystem::is_directory(fullSavePath)) {
         LogError().logErrorW(L"directory - (" + fullSavePath + L")");
         return false;
     }
 
+    LogError().logError("Thil_3_1_2");
     G_HERO_INFO = parseHeroData(fullSavePath);
+    LogError().logError("Thil_3_1_3");
 
     sortList(G_HERO_INFO);
+    LogError().logError("Thil_3_1_4");
     return true;
 }
 
@@ -43,19 +47,25 @@ void  HeroInfoEngine::sortList(std::vector<HeroInfo>& heroList) {
     std::sort(heroList.begin(), heroList.end(), [](const HeroInfo& a, const HeroInfo& b) {
         return a.latestTime < b.latestTime; // Sort by latestTime in descending order
         });
+    LogError().logError("Thil_3_2_1_1");
 }
 
 std::vector<HeroInfo> HeroInfoEngine::parseHeroData(const std::wstring& folderPath) {
     std::unordered_map<std::string, HeroInfo> heroDataMap;
 
+    LogError().logErrorW(L"Thil_3_1_1_1 "+folderPath);
     for (const auto& entry : std::filesystem::directory_iterator(folderPath)) {
         if (entry.is_directory()) {
+            LogError().logError("Thil_9 " + entry.path().string());
             processDirectory(entry, heroDataMap);
         }
         else if (isTextFile(entry)) {
+            LogError().logError("Thil_8 " + entry.path().string());
             processFile(entry, heroDataMap);
         }
+        LogError().logError("Thil_3_1_1_2");
     }
+    LogError().logError("Thil_3_1_1_7");//Thil_3_1_1_2
 
     return convertToHeroList(heroDataMap);
 }
@@ -71,43 +81,6 @@ void HeroInfoEngine::processDirectory(const std::filesystem::directory_entry& di
 }
 
 void HeroInfoEngine::processFile(const std::filesystem::directory_entry& fileEntry, std::unordered_map<std::string, HeroInfo>& heroDataMap) {
-
-
-    //// Открытие файла
-    //std::ifstream file(fileEntry.path(), std::ios::binary);
-    //if (!file.is_open()) {
-    //    return; // Если не удалось открыть файл, выйти из функции
-    //}
-
-    //// Чтение содержимого файла в буфер
-    //std::vector<char> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    //std::string utf8Text(buffer.begin(), buffer.end());
-
-    //// Удаление специальных символов из текста
-    //removeSpecialCharacters(utf8Text);
-
-    //// Преобразование текста из UTF-8 в UTF-16
-    //
-    //const std::string line = StringConvector_.utf8_to_utf16(utf8Text);
-
-    //// Разделение строки на токены
-    //std::wistringstream iss(line);
-    //std::vector<std::string> tokens((std::istream_iterator<std::string, wchar_t>(iss)), std::istream_iterator<std::string, wchar_t>());
-
-    //std::vector<std::string> tokens;
-    //std::string currentToken;
-    //for (size_t i = 0; i < line.length(); ++i) {
-    //    if (line[i] == L'\n') {
-    //        if (!currentToken.empty()) {
-    //            tokens.push_back(currentToken);
-    //            currentToken.clear();
-    //        }
-    //        tokens.push_back(L"\n");
-    //    }
-    //    else {
-    //        currentToken += line[i];
-    //    }
-    //}
 
     LoadDataFail LoadDataFail_;
     std::vector<std::string> tokens = LoadDataFail_.loadDataFailTokens(fileEntry.path());
@@ -191,9 +164,11 @@ void HeroInfoEngine::updateHeroInfo(const std::filesystem::directory_entry& file
 
 std::vector<HeroInfo> HeroInfoEngine::convertToHeroList(const std::unordered_map<std::string, HeroInfo>& heroDataMap) const {
     std::vector<HeroInfo> heroList;
+    //LogError().logError("Thil_3_1_1_3");
     for (const auto& [name, info] : heroDataMap) {
         heroList.push_back(HeroInfo(name, info.path, info.latestTime));
     }
+    //LogError().logError("Thil_3_1_1_4");
     //saveDataHero(heroList);
     return heroList;
 }

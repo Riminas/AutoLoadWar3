@@ -185,6 +185,7 @@
     <ClCompile Include="FontSelector.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="FontLoader.cpp" />
+    <ClCompile Include="HeroInfoEngineFast.cpp" />
     <ClCompile Include="NewDataAll.cpp" />
     <ClCompile Include="DataAll.h" />
     <ClCompile Include="DataMaps.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="Global.h" />
     <ClInclude Include="HeroInfo.h" />
     <ClInclude Include="HeroInfoEngine.h" />
+    <ClInclude Include="HeroInfoEngineFast.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="key.h" />
     <ClInclude Include="LoadDataFail.h" />

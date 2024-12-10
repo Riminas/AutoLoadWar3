@@ -117,11 +117,14 @@
     <ClCompile Include="FontSelector.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="AutoUpdate.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="OptionActionsUi.h">
       <Filter>Файлы заголовков\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroInfoEngineFast.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoUpdate.cpp">
+      <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -237,11 +240,14 @@
     <ClInclude Include="LogError.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="AutoUpdate.h">
+    <ClInclude Include="HeroInfoEngineFast.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="AutoUpdate.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
     <ClInclude Include="json.hpp">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

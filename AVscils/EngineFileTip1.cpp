@@ -9,6 +9,7 @@
 #include "NewDirectory.h"
 #include "SkillsUpgradeStart.h"
 #include "HeroInfoEngine.h"
+#include "HeroInfoEngineFast.h"
 #include "ConfigMain.h"
 #include "ConfigMapsEngine.h"
 #include "LogError.h"
@@ -17,11 +18,14 @@
 
 void EngineFileTip1::engineFile()
 {
-    HeroInfoEngine HeroInfoEngine_;
-    if (!HeroInfoEngine_.retrieveHeroData(G_CONFIG_MAPS.path)) return;
+    if (!HeroInfoEngineFast().retrieveHeroDataFast(G_CONFIG_MAPS.path)) return;
+
+    if (G_HERO_INFO.size() == 0) {
+        MessageBox(NULL, L"Неудалась найти профы", L"Error", MB_OK | MB_ICONEXCLAMATION);
+        return;
+    }
 
     engineTip1();
-
     return;
 }
 
@@ -40,9 +44,10 @@ void EngineFileTip1::engineTip1()
             }
         }
     }
-    else {
-        patc = G_HERO_INFO.front().path;
+    else{
+        patc = G_HERO_INFO[0].path;// patc = G_HERO_INFO.front().path
     }
+
     LogError().logMessage("Герой: " + nameChar);
 
     LoadManager LoadManager_(G_DATA_PATH.hWndWindowWar);

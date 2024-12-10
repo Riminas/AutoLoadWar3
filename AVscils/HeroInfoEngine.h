@@ -6,6 +6,7 @@ class HeroInfoEngine
 {
 public:
 	bool retrieveHeroData(const std::wstring& saveCodePath);
+	bool retrieveHeroDataFast(const std::wstring& saveCodePath);
 private:
 	void removeSpecialCharacters(std::string& wstr);
 	void sortList(std::vector<HeroInfo>& heroList);
