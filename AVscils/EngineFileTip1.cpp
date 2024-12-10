@@ -1,5 +1,5 @@
 #include <Windows.h>
-#include <iostream>
+
 #include <filesystem>
 
 #include "Global.h"
@@ -11,6 +11,7 @@
 #include "HeroInfoEngine.h"
 #include "ConfigMain.h"
 #include "ConfigMapsEngine.h"
+#include "LogError.h"
 #include "DataPath.h"
 #include "DataMaps.h"
 
@@ -42,7 +43,7 @@ void EngineFileTip1::engineTip1()
     else {
         patc = G_HERO_INFO.front().path;
     }
-    std::cout << "Hero:  " << nameChar << std::endl;
+    LogError().logMessage("Герой: " + nameChar);
 
     LoadManager LoadManager_(G_DATA_PATH.hWndWindowWar);
     LoadManager_.executeLoad(patc);

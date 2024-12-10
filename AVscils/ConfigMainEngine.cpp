@@ -1,5 +1,6 @@
 #include "ConfigMainEngine.h"
 #include "LoadDataFail.h"
+#include "LogError.h"
 
 ConfigMainEngine::ConfigMainEngine()
 {
@@ -44,8 +45,14 @@ bool ConfigMainEngine::loadConfigMain() {
                 else if (key == "autoExit") {
                     G_CONFIG_MAIN.optionsConfig.autoExit = parseBool(value);
                 }
+                else if (key == "blackColor") {
+                    G_CONFIG_MAIN.optionsConfig.blackColor = parseBool(value);
+                }
                 else if (key == "writeLogs") {
                     G_CONFIG_MAIN.optionsConfig.writeLogs = parseBool(value);
+                }
+                else if (key == "autoUpdate") {
+                    G_CONFIG_MAIN.optionsConfig.autoUpdate = parseBool(value);
                 }
             }
             else if (section == "PlayerName") {
@@ -61,7 +68,7 @@ bool ConfigMainEngine::loadConfigMain() {
 bool ConfigMainEngine::saveConfigMain() const {
     std::ofstream file(m_FilePath);
     if (!file.is_open()) {
-        std::cerr << "Unable to open file: " << m_FilePath << std::endl;
+        LogError().logError("Unable to open file: " + m_FilePath.string());
         return false;
     }
     // Сохранение секции Options
@@ -69,7 +76,9 @@ bool ConfigMainEngine::saveConfigMain() const {
     file << "autoClickerKey=" << (G_CONFIG_MAIN.optionsConfig.autoClickerKey ? "true" : "false") << std::endl;
     file << "autoClickerMouse=" << (G_CONFIG_MAIN.optionsConfig.autoClickerMouse ? "true" : "false") << std::endl;
     file << "autoExit=" << (G_CONFIG_MAIN.optionsConfig.autoExit ? "true" : "false") << std::endl;
+    file << "blackColor=" << (G_CONFIG_MAIN.optionsConfig.blackColor ? "true" : "false") << std::endl;
     file << "writeLogs=" << (G_CONFIG_MAIN.optionsConfig.writeLogs ? "true" : "false") << std::endl;
+    file << "autoUpdate=" << (G_CONFIG_MAIN.optionsConfig.autoUpdate ? "true" : "false") << std::endl;
 
     // Сохранение секции PlayerName
     file << "[PlayerName]" << std::endl;

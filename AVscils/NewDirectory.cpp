@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
-#include <iostream>
+
 #include <functional>
 #include <algorithm>
 #include <fstream>
@@ -88,10 +88,11 @@ void NewDirectory::initializeWindow() {
 
 
 float NewDirectory::initializeDataCommands() {
-    const float OFFSET_X = 32;
 
-    initializeSprite(m_TopLineCommandsUI, sf::Vector2f{ m_Rect[0], m_Rect[1] }, sf::Rect(0, 0, 512, 32));
-    float positionY = 32;
+    m_PathWar3.initialize(G_CONFIG_MAPS.path, m_Texture);
+    const float OFFSET_X = 32;
+    initializeSprite(m_TopLineCommandsUI, sf::Vector2f{ m_Rect[0], m_Rect[1] + 32 }, sf::Rect(0, 0, 512, 32));
+    float positionY = 64;
     for (size_t i = 0; CommandsUI_0& commands : m_CommandsMain) {
         commands.initialize(G_CONFIG_MAPS.mainConfig[i].start, G_CONFIG_MAPS.mainConfig[i].cmd, m_Texture);
         commands.setPosition(m_Rect[0], m_Rect[1] + positionY);
@@ -110,14 +111,23 @@ float NewDirectory::initializeDataCommands() {
 }
 
 void NewDirectory::initializeSettings() {
-    m_Options[0].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerKey, "Авто нажатия клавиш", m_Texture, false);
+    m_Options[0].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerKey, "Авто нажатия клавиш", m_Texture);
     m_Options[0].setPosition(m_Rect[0], m_Rect[1] + 10);
 
-    m_Options[1].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerMouse, "Авто нажатия правой кнопки мыши", m_Texture, false);
+    m_Options[1].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerMouse, "Авто нажатия правой кнопки мыши", m_Texture);
     m_Options[1].setPosition(m_Rect[0], m_Rect[1] + 42);
 
-    m_Options[2].initialize(G_CONFIG_MAIN.optionsConfig.autoExit, "Авто выход после быстрой загрузки", m_Texture, false);
+    m_Options[2].initialize(G_CONFIG_MAIN.optionsConfig.autoExit, "Авто выход после быстрой загрузки", m_Texture);
     m_Options[2].setPosition(m_Rect[0], m_Rect[1] + 74);
+
+    m_Options[3].initialize(G_CONFIG_MAIN.optionsConfig.blackColor, "Темная тема", m_Texture);
+    m_Options[3].setPosition(m_Rect[0], m_Rect[1] + 106);
+
+    m_Options[4].initialize(G_CONFIG_MAIN.optionsConfig.writeLogs, "Запись логов", m_Texture);
+    m_Options[4].setPosition(m_Rect[0], m_Rect[1] + 138);
+
+    m_Options[5].initialize(G_CONFIG_MAIN.optionsConfig.autoUpdate, "Автоматическое обновление", m_Texture);
+    m_Options[5].setPosition(m_Rect[0], m_Rect[1] + 170);
 }
 
 void NewDirectory::newDirectory() {
@@ -133,6 +143,7 @@ void NewDirectory::drawWindow() {
     G_WINDOW.draw(background);
 
     if (numMenu == 2) {
+        m_PathWar3.draw(G_WINDOW);
         G_WINDOW.draw(m_TopLineCommandsUI);
 
         for (CommandsUI_0& p : m_CommandsMain)
@@ -177,57 +188,83 @@ std::wstring NewDirectory::handleMousePress(sf::Event& event) {
             return L"";
         }
     }
+
     if (bottomBackground.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
         //const sf::Vector2f mouseButton2{ mouseButton.x - bottomBackground.getPosition().x, mouseButton.y - bottomBackground.getPosition().y };
         //if (mouseButton2.x >= 480/* && mouseButton2.x < 512*/)
-            return L"Exit";
+        return L"Exit";
     }
     if (titlAndClose.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
-        const sf::Vector2f mouseButton2{ mouseButton.x - bottomBackground.getPosition().x, mouseButton.y - bottomBackground.getPosition().y };
+        const sf::Vector2f mouseButton2{ mouseButton.x - titlAndClose.getPosition().x, mouseButton.y - titlAndClose.getPosition().y };
         if (mouseButton2.x >= 480/* && mouseButton2.x < 512*/)
             return L"Exit";
     }
 
     if (numMenu == 2) {
-        if (m_TopLineCommandsUI.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
-            const sf::Vector2f mouseButton2{ mouseButton.x - m_TopLineCommandsUI.getPosition().x, mouseButton.y - m_TopLineCommandsUI.getPosition().y };
-            if (mouseButton2.x >= 0 && mouseButton2.x < 32) {
-                //updateConfigMaps();
-                SelectingNewPathMap().selectingNewPathMap();
-                updateRegionTrue();
-            }
+
+        if (bottomBackground.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
+            //const sf::Vector2f mouseButton2{ mouseButton.x - bottomBackground.getPosition().x, mouseButton.y - bottomBackground.getPosition().y };
+            //if (mouseButton2.x >= 480/* && mouseButton2.x < 512*/)
+            return L"Exit";
+        }
+        if(m_PathWar3.isClicked(mouseButton) && m_PathWar3.isClickedButton(mouseButton)) {
+            SelectingNewPathMap().selectingNewPathMap();
+            updateRegionTrue();
         }
 
-        short isSquare = 0;
+        //if (m_TopLineCommandsUI.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
+        //    const sf::Vector2f mouseButton2{ mouseButton.x - m_TopLineCommandsUI.getPosition().x, mouseButton.y - m_TopLineCommandsUI.getPosition().y };
+        //    if (mouseButton2.x >= 0 && mouseButton2.x < 32) {
+        //        //updateConfigMaps();
+        //        SelectingNewPathMap().selectingNewPathMap();
+        //        updateRegionTrue();
+        //    }
+        //}
+
+        bool isSquare = false;
         int numDataCommands = -1;
         for (int i = 0; CommandsUI_0& command : m_CommandsMain) {
-            if (command.isClicked(mouseButton) && command.isClickedCheckBox(mouseButton))
-                G_CONFIG_MAPS.mainConfig[i].start = command.getValue();
-            i++;
-        }
-
-        for (int i = 0; CommandsUI_1 & command : m_CommandsUsers) {
             if (command.isClicked(mouseButton)) {
-                if (command.isClickedCheckBox1(mouseButton)) {
-                    G_CONFIG_MAPS.usersConfig[i].isVisibleButton = command.getValueBox1();
-                    isSquare = true;
+                if(command.isClickedCheckBox(mouseButton)){
+                    G_CONFIG_MAPS.mainConfig[i].start = command.getValue();
                     break;
                 }
-                else if (command.isClickedCheckBox2(mouseButton)) {
-                    G_CONFIG_MAPS.usersConfig[i].start = command.getValueBox2();
-                    isSquare = true;
+                else if (command.isClickedEdit(mouseButton)) {
+                    updateConfigMaps();
                     break;
                 }
             }
             i++;
         }
-        if (isSquare != 0) {
+        if (isSquare == false) {
+            for (int i = 0; CommandsUI_1 & command : m_CommandsUsers) {
+                if (command.isClicked(mouseButton)) {
+                    if (command.isClickedCheckBox1(mouseButton)) {
+                        G_CONFIG_MAPS.usersConfig[i].isVisibleButton = command.getValueBox1();
+                        isSquare = true;
+                        break;
+                    }
+                    else if (command.isClickedCheckBox2(mouseButton)) {
+                        G_CONFIG_MAPS.usersConfig[i].start = command.getValueBox2();
+                        isSquare = true;
+                        break;
+                    }
+                    else if (command.isClickedEdit(mouseButton)) {
+                        updateConfigMaps();
+                        break;
+                    }
+                }
+                i++;
+            }
+        }
+        if (isSquare) {
 
             ConfigMapsEngine ConfigMapsEngine_(G_DATA_MAPS.m_NameMaps);
             ConfigMapsEngine_.saveConfigMain();
         }
     }
     else if (numMenu == 3) {
+
         const sf::Vector2i mousePosition = sf::Mouse::getPosition(G_WINDOW);
         auto checkAndToggle = [&](const int& index, bool& option, bool& isSave) {
             if (m_Options[index].isClicked(mouseButton)) {

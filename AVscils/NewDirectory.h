@@ -9,6 +9,7 @@
 #include "CommandsUI_1.h"
 #include "OptionsUI.h"
 #include "NewDataAll.h"
+#include "OptionActionsUi.h"
 
 
 class NewDirectory { // 8000 > 11000 > 12700
@@ -38,6 +39,8 @@ private:
     sf::Sprite bottomBackground;
     sf::Sprite background;//осташияся незаполненная область
 
+    OptionActionUi m_PathWar3;
+
     sf::Sprite titlAndClose;
 
     sf::Sprite m_TopLineCommandsUI;
@@ -45,5 +48,5 @@ private:
     int numMenu = 2;
     std::array<CommandsUI_0, 4> m_CommandsMain;
     std::array<CommandsUI_1, 5> m_CommandsUsers;
-    std::array<OptionsUI, 3> m_Options;
+    std::array<OptionsUI, 6> m_Options;
 };

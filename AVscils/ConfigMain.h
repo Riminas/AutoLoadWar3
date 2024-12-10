@@ -15,6 +15,8 @@ struct OptionsConfig {
     bool autoClickerMouse{ true };
     bool autoExit{ false };
     bool writeLogs{ true };
+    bool autoUpdate{ true };
+    bool blackColor{ true };
 
     //float timeDelay{ 600000 };
 };

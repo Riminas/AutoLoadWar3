@@ -85,5 +85,9 @@ public:
             return true;
         }
         return false;
+    }    
+    inline bool isClickedEdit(const sf::Vector2f& mouseButton) {
+        //const sf::Vector2f mouseButton2{ mouseButton.x - sprite.getPosition().x, mouseButton.y - sprite.getPosition().y };
+        return { mouseButton.x - sprite.getPosition().x < 370 };
     }
 };

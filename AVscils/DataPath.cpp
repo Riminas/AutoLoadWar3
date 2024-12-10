@@ -1,4 +1,4 @@
-#include <iostream>
+
 #include <filesystem>
 #include <fstream>
 #include <ranges>
@@ -17,6 +17,7 @@
 #include "LoadDataFail.h"
 #include "ConfigMain.h"
 
+#include "LogError.h"
 #include "DataPath.h"
 
 DataPath G_DATA_PATH;
@@ -35,11 +36,11 @@ bool DataPath::initializePaths(const HWND hWndWindow) {
         std::wstring filename = filePath.filename().wstring();
 
         if (filename == L"Warcraft III.exe") {
-            std::wcout << L"Found: " << filePath << std::endl;
+            LogError().logMessage("путь до 1.36 " + filePath.string());
             versionWarcraft = 1;
         }
         else if (filename == L"war3.exe") {
-            std::wcout << L"Found: " << filePath << std::endl;
+            LogError().logMessage("путь до 1.26 " + filePath.string());
             versionWarcraft = 2;
             pathWar = filePath.parent_path().wstring();
         }
@@ -52,7 +53,7 @@ bool DataPath::initializePaths(const HWND hWndWindow) {
         PWSTR path = NULL;
         HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path);
         if (!SUCCEEDED(hr)) {
-            std::cout << "Error: SHGetKnownFolderPath()" << std::endl;
+            LogError().logError("SHGetKnownFolderPath()");
             return false;
         }
 
@@ -64,21 +65,20 @@ bool DataPath::initializePaths(const HWND hWndWindow) {
         str += L"\\Warcraft III";
 
         if (!std::filesystem::is_directory(str)) {
-            std::wcout << "Error: directory Warcraft III(" << str << ")" << std::endl;
+            LogError().logMessageW(L"directory Warcraft III(" + str + L")");
             return false;
         }
 
         warPathDirectMaps = str + L"\\Maps";
-        std::wcout << "Warcraft Maps Path: " << warPathDirectMaps << std::endl;
+        LogError().logMessageW(L"Путь до папки с картами:(" + warPathDirectMaps + L")");
         warPathDirectSave = str + L"\\CustomMapData";
-        std::wcout << "Warcraft Save Path: " << warPathDirectSave << std::endl;
+        LogError().logMessageW(L"путь до папки с сохранениями:" + warPathDirectSave + L")");
     }
     else if (versionWarcraft == 2) {
-
         warPathDirectMaps = pathWar + L"\\Maps";
-        std::wcout << "Warcraft Maps Path: " << warPathDirectMaps << std::endl;
+        LogError().logMessageW(L"Путь до папки с картами:(" + warPathDirectMaps + L")");
         warPathDirectSave = pathWar;
-        std::wcout << "Warcraft Save Path: " << warPathDirectSave << std::endl;
+        LogError().logMessageW(L"путь до папки с сохранениями:" + warPathDirectSave + L")");
     }
 
     hWndWindowWar = hWndWindow;
@@ -99,17 +99,17 @@ std::wstring DataPath::openWarcraft3(const HWND hWndWindow) {
             return path;
         }
 
-        std::wcout << L"Unable to open process!" << std::endl;
+        LogError().logError("неудалось открыть процесс");
         return L"\0";
     }
 
     WCHAR processName[MAX_PATH];
     if (GetModuleFileNameEx(hProcess, NULL, processName, MAX_PATH)) {
-        std::wcout << L"Process name: " << processName << std::endl;
+        LogError().logMessageW(L"Process name: " + std::wstring(processName));
         return processName;
     }
     else {
-        std::wcout << L"Unable to get process name!" << std::endl;
+        LogError().logErrorW(L"Неудалось полчить имя процесса");
     }
 
     CloseHandle(hProcess);

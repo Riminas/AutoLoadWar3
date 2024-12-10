@@ -120,6 +120,9 @@
     <ClCompile Include="AutoUpdate.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="OptionActionsUi.h">
+      <Filter>Файлы заголовков\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AVscils.rc">

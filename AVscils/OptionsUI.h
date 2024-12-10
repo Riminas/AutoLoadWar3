@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "StringConvector.h"
 #include "Global.h"
 
 // Структура для хранения данных
@@ -11,7 +10,7 @@ private:
     bool m_Value{ 0 };
 public:
     // Конструктор для инициализации данных
-    void initialize(const bool t_Value, const std::string& str, const sf::Texture& texture, const bool isConvectorStr = true)
+    void initialize(const bool t_Value, const std::string& str, const sf::Texture& texture)
     {
         m_Value = t_Value;
 
@@ -20,8 +19,7 @@ public:
 
         // Инициализация основного текста
         text.setFont(G_FONT_STANDART);
-        if (isConvectorStr) text.setString(StringConvector().utf8_to_utf16(str));
-        else text.setString(str);
+        text.setString(str);
         text.setFillColor(sf::Color::White);
         text.setCharacterSize(14);
     }

@@ -13,6 +13,14 @@ public:
             logFile << "[ERROR]   " << message << std::endl;
         }
 	}
+	void logErrorW(const std::wstring& message) {
+        checkDirectories();
+
+        std::wofstream logFile(nameFile.c_str(), std::ios::app);
+        if (logFile.is_open()) {
+            logFile << "[ERROR]   " << message << std::endl;
+        }
+	}
 
     void logMessage(const std::string& message) {
         checkDirectories();

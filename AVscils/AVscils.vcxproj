@@ -200,6 +200,7 @@
     <ClCompile Include="LoadManager.cpp" />
     <ClCompile Include="NewDirectory.cpp" />
     <ClCompile Include="NewPathSaveCode.cpp" />
+    <ClCompile Include="OptionActionsUi.h" />
     <ClCompile Include="OwnerWindow.cpp" />
     <ClCompile Include="SearchAfterCreatedFile.cpp" />
     <ClCompile Include="SelectingNewPathMap.cpp" />

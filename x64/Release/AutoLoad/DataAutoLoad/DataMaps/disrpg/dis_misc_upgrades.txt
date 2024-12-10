@@ -1,0 +1,160 @@
+Awakening Rune 60 + Magic Book 60 Fusion
+
+- Awakening Rune 60
+- Magic Book 60
+- [Phantom][Annihilation] Piece x 89 (13k CL boss, requires killing 1 Creator to enter)
+- Disillusioned Cat Soul x 89 (13k CL Area)
+- Disillusioned Creator Soul x 3 (Creator of Disillusionment, 13k CL)
+- 1 Million Lumber
+
+Click the [Phantom][Annihilation] Piece to craft
+
+*Fused Rune Book can be upgraded 1 more time (2 times in total) with the same recipe	
+
+
+Fragment of the World upgrade
+
+- [Disillusioned Stone] Fragment of the World (13k CL dual boss, requires killing 1 Creator to enter)
+- [Phantom][Annihilation] Piece x 89 (13k CL dual boss, requires killing 1 Creator to enter)
+- Disillusioned Cat Soul x 89 (13k CL Area)
+- Disillusioned Creator Soul x 3 (Creator of Disillusionment, 13k CL)
+- 1 Million Lumber
+
+Click the [Phantom][Annihilation] Piece to craft
+
+*Fragment of the World can be upgraded 2 times with the same recipe	
+
+---------------------------------------------------------------------------------------------------------------------
+
+Relic of Disillusionment (Evil Spirit) Upgrade
+
+- [Disillusion 3rd] Ancient Relic
+- Destroyed Pieces of Disillusionment x 60 (Destroyed Disillusionment, 18k CL)
+- Disillusioned Creator Soul x 10 (Creator of Disillusionment, 13k CL)
+
+Click the Destroyed Pieces of Disillusionment to craft
+
+*Relic of Disillusionment (Evil Spirit) can be upgraded 2 times with the same recipe
+
+
+Monster of Disillusionment (Good Spirit) Upgrade
+
+- [Disillusion 3rd] Monster of Disillusionment
+- Destroyed Pieces of Disillusionment x 60 (Destroyed Disillusionment, 18k CL)
+- Disillusioned Creator Soul x 10 (Creator of Disillusionment, 13k CL)
+
+Click the Destroyed Pieces of Disillusionment to craft
+
+*Monster of Disillusionment (Good Spirit) can be upgraded 2 times with the same recipe
+
+---------------------------------------------------------------------------------------------------------------------
+
+[Transcendence] Master (Enhances Dis3 Skill by 1 Level)
+
+- [Transcendence] Diamond
+- Sin God's Soulstone x 50 (The God of Sin, 8k CL)
+- Fate God's Soulstone x 50 (God of Destiny, 8k CL)
+- Fragment of Transcendence x 89 (Sniper Room, 13k CL)
+
+Use The Equipment Transcendence on your pet to craft
+
+[Transcendence] Disillusion (Enhances both Dis2 and Dis3 Skills by 1 Level)
+
+- [Transcendence] Master
+- Death Creator Soul x 50 (Creator of Death, 10k CL)
+- Creator of Life Soul x 50 (Creator of Life, 10k CL)
+- Fragment of Transcendence x 89 (Sniper Room, 13k CL)
+
+Use The Equipment Transcendence on your pet to craft
+
+---------------------------------------------------------------------------------------------------------------------
+
+Conqueror 15 to 17
+
+- Conqueror 14 to 16
+- Fragment of Disillusioned Time x 2 (Time of Disillusionment, 23k CL)
+- Spirit of Disillusion in the Beginning (Primal Disillusionment Energy) x 10 (Source of Disillusionment, 23k CL)
+
+Conqueror 18 to 20
+
+- Conqueror 17 to 19
+- Disillusioned Creator Soul x 20 (Creator of Disillusionment, 13k CL)
+- [Phantom][Annihilation] Piece x 20 (13k CL dual boss, requires killing 1 Creator to enter)
+- Fragment of Disillusioned Time x 4 (Time of Disillusionment, 23k CL)
+- Spirit of Disillusion in the Beginning (Primal Disillusionment Energy) x 10 (Source of Disillusionment, 23k CL)
+- Time Conquest Seal x 1 (Uncommon, Unsavable) (Time of Disillusionment, 23k CL)
+
+---------------------------------------------------------------------------------------------------------------------
+
+Golden Box Equipment Enhancement (Max +80)
+All Enhancements only works if the Enhanced item is on its final stage
+If nothing happens when you click on the materials, your item might be missing an upgrade
+e.g [Disillusionment] Relic of Disillusionment, [Disillusionment] The Creator's Monster (Monster of Disillusionment)
+
+
+Relic of Disillusionment (Evil Spirit) / Monster of Disillusionment (Good Spirit) Enhancement (Max +80)
+
+- [Disillusionment] Relic of Disillusionment / [Disillusionment] The Creator's Monster
+- Disillusioned Creator Soul x 2 (Creator of Disillusionment, 13k CL)
+- Spirit of Disillusion in the Beginning (Primal Disillusionment Energy) x 5 (Source of Disillusionment, 23k CL)
+
+
+Fragment of the World Enhancement (Max +80)
+
+- [Disillusion Stone] Disillusionment of the World
+- Disillusioned Creator Soul x 1 (Creator of Disillusionment, 13k CL)
+- Destroyed Pieces of Disillusionment x 6 (Destroyed Disillusionment, 18k CL)
+
+
+These items may be upgraded a total of +80 each, similar to how equipments can be upgraded to +89
+Instead of using enhancement scrolls, these requires getting the materials and clicking on Primal Disillusionment Energy to enhance
+
+---------------------------------------------------------------------------------------------------------------------
+
+Infinity Buff
+
+- Infinity Buff Piece x 3 (Rare Floor Drop, Savable) (Infinite Transcendence, 50k CL)
+- Strength / Agility / Intelligence Piece of Infinity x 2 (Infinite Transcendence, 50k CL+)
+- Strength / Agility / Intelligence Chaos Weapon x 11 (Guardian of Disillusionment, 30k CL, Infinite Transcendence, 50k CL)
+
+Buff Item that gives 4% Stat and +1 Level to Q Skill
+
+---------------------------------------------------------------------------------------------------------------------
+
+[Transcendence] Chaos (1 Upgrade)
+
+- [Transcendence] Disillusion
+- Transcendence Chaos Shard x 4 (Infinity Darkness, 60k CL and Wearing at least 5 Pieces of Infinity Equipment)
+- Strength / Agility / Intelligence Piece of Infinity x 3 (Infinite Transcendence, 50k CL+)
+- [Jin] Death Corpse (Thought Body) x 1 (Rare Drop, Unsavable) (Rare Drop from 23k CL+ Bosses)
+
+[Chaos] Awakening Rune Spellbook (Up to +5)
+
+- [Disillusionment] Awakening Rune Spellbook (Rune 60 + Book 60 Fuse)
+- Transcendence Chaos Shard x 4 (Infinity Darkness, 60k CL and Wearing at least 5 Pieces of Infinity Equipment)
+- Strength / Agility / Intelligence Piece of Infinity x 3 (Infinite Transcendence, 50k CL+)
+- [Jin] Death Corpse (Thought Body) x 1 (Rare Drop, Unsavable) (Rare Drop from 23k CL+ Bosses)
+
+Both Upgrades will grant the items the passive effect of granting % all stats
+[Transcendence] Chaos grants 2% Stats
+[+5 Chaos] Awakening Rune Spellbook grants 10% Stats
+
+---------------------------------------------------------------------------------------------------------------------
+
+Transcendence Buff 1
+
+- Transcendence Chaos Shard x 9 (Infinity Darkness, 60k CL and Wearing at least 5 Pieces of Infinity Equipment)
+- Buff Transcendental Piece x 3 (Rare Ground Drop, Savable) (Transcendental Myth, 60k CL and Wearing at least 5 Pieces of
+Infinity Equipment with minimum one +9)
+- [Jin] Death Corpse (Thought Body) x 1 (Rare Drop, Unsavable) (Rare Drop from 23k CL+ Bosses)
+
+The Buff Grants 2% Stats and 6% Transcendent Stat
+
+
+Transcendence Buff 3
+
+- Transcendental Shards x 19 (Transcendental Myth onwards, 60k+)
+- Buff Transcendence Magic x 4 (Disillusionment of the Universe, 80k CL and have at least 30% Transcendence Stat)
+- Transcendental Chaos Magic x 3 (Disillusionment of the Universe +, 80k CL and have at least 30% Transcendence Stat)
+- [Jin] Death Corpse (Thought Body) x 1 (Rare Drop, Unsavable) (Rare Drop from 23k CL+ Bosses)
+

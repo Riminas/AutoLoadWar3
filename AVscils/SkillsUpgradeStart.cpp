@@ -1,12 +1,13 @@
 #include <filesystem>
 #include <fstream>
-#include <iostream>
+
 #include <optional>
 #include <cctype>
 #include <Windows.h>
 #include <gdiplus.h>
 #include "SkillsUpgradeStart.h"
 #include "key.h"
+#include "LogError.h"
 
 #pragma comment (lib, "Gdiplus.lib")
 
@@ -71,11 +72,11 @@ bool SkillsUpgradeStart::loadDataSkill()
             }
             catch (const std::invalid_argument& e) {
                 // Обработка ошибки: строка не является числом
-                std::cerr << "Invalid argument: " << e.what() << std::endl;
+                LogError().logError("Invalid argument: " + std::string(e.what()));
             }
             catch (const std::out_of_range& e) {
                 // Обработка ошибки: число выходит за пределы типа unsigned int
-                std::cerr << "Out of range: " << e.what() << std::endl;
+                LogError().logError("Out of range: " + std::string(e.what()));
             }
         }
 

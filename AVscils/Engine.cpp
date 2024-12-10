@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <SFML/Graphics.hpp>
 #include <wtypes.h>
-#include <iostream>
+
 #include <TlHelp32.h>
 #include <thread>
 #include <fstream>

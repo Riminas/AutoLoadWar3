@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <vector>
-#include <iostream>
+
 #include <fstream>
 #include <filesystem>
 #include <ctime>
@@ -11,6 +11,7 @@
 #include <regex>
 #include <array>
 
+#include "LogError.h"
 #include "LoadManager.h"
 #include "key.h"
 #include "StringConvector.h"
@@ -248,7 +249,7 @@ void LoadManager::sendLoadDataCommands(const std::array<std::string, 5>& codes, 
         displayCommand(code);
 
         Sleep(10);
-        std::cout << "codes: ( " << code << " )" << std::endl;
+        LogError().logMessage("codes: (" + code + ")");
     }
 }
 

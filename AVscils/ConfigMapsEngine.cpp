@@ -2,6 +2,7 @@
 #include "LoadDataFail.h"
 #include "LoadManager.h"
 #include "StringConvector.h"
+#include "LogError.h"
 
 ConfigMapsEngine::ConfigMapsEngine(const std::wstring& nameMaps)
 {
@@ -20,8 +21,8 @@ ConfigMapsEngine::ConfigMapsEngine(const std::wstring& nameMaps)
 
 void ConfigMapsEngine::initializeDefaultConfig()
 {
-    std::wcout << L"File not found. Initializing default configuration." << std::endl;
-    G_CONFIG_MAPS.path = L"0";
+    LogError().logMessage("новый конфиг карты.");
+    G_CONFIG_MAPS.path = L"";
     G_CONFIG_MAPS.mainConfig = { {
          { "-return" },
          { "-save" },
@@ -36,7 +37,7 @@ bool ConfigMapsEngine::loadConfigMain()
 {
     const std::wstring fullLine = LoadDataFail().loadDataFailW(m_FilePathFull);
     if (fullLine.empty()) {
-        std::wcerr << L"Unable to open file: " << m_FilePathFull << std::endl;
+        LogError().logErrorW(L"Unable to open file: " + m_FilePathFull);
         return false;
     }
 
@@ -110,7 +111,7 @@ bool ConfigMapsEngine::saveConfigMain()
 {
     std::ofstream file(m_FilePathFull);
     if (!file.is_open()) {
-        std::wcerr << L"Unable to open file: " << m_FilePathFull << std::endl;
+        LogError().logErrorW(L"Unable to open file: " + m_FilePathFull);
         return false;
     }
 
@@ -166,7 +167,7 @@ void ConfigMapsEngine::openConfigMain()
     );
 
     if (!success) {
-        std::cerr << "Error: Failed to open file in Notepad." << std::endl;
+        LogError().logError("неудалось открыть блокнот.");
         return;
     }
 
@@ -176,8 +177,7 @@ void ConfigMapsEngine::openConfigMain()
     // Закрытие дескрипторов процесса и потока
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
-
-    std::cout << "Notepad closed. Continuing program execution." << std::endl;
+    LogError().logMessage("блокнот закрыт.");
 
 
     //// Преобразуем std::string в LPCSTR (необходимый тип для ShellExecute)

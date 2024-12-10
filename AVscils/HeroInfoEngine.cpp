@@ -1,4 +1,4 @@
-#include <iostream>
+
 #include <filesystem>
 #include <unordered_set>
 
@@ -8,6 +8,7 @@
 #include "DataPath.h"
 #include "ConfigMapsEngine.h"
 #include "DataMaps.h"
+#include "LogError.h"
 #include <codecvt>
 
 bool HeroInfoEngine::retrieveHeroData(const std::wstring& saveCodePath) {
@@ -15,7 +16,7 @@ bool HeroInfoEngine::retrieveHeroData(const std::wstring& saveCodePath) {
     const std::wstring fullSavePath = G_DATA_PATH.warPathDirectSave + saveCodePath;
 
     if (!std::filesystem::is_directory(fullSavePath)) {
-        std::wcout << L"Error: directory - (" << fullSavePath << L")" << std::endl;
+        LogError().logErrorW(L"directory - (" + fullSavePath + L")");
         return false;
     }
 

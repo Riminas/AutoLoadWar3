@@ -1,5 +1,6 @@
-#include <iostream>
+
 #include "getMapOpen.h"
+#include "LogError.h"
 #include <regex>
 
 std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path) 
@@ -70,11 +71,11 @@ std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path)
 
         }
         else {
-            std::cout << "Error: (not \"m_nameFile\") - (" + m_nameFile + ")" << std::endl;
+            LogError().logError("not \"m_nameFile\" - (" + m_nameFile + ")");
         }
     }
     else {
-        std::wcout << "Error: Put(not \"Maps\" directory) - ( " << folder_path << " )" << std::endl;
+        LogError().logErrorW(L"Put(not \"Maps\" directory) - ( " + folder_path + L" )");
     }
     return L"error";
 }

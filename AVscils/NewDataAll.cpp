@@ -10,6 +10,7 @@
 #include "DataMaps.h"
 #include "ConfigMainEngine.h"
 #include "LoadDataFail.h"
+#include "LogError.h"
 
 
 NewDataAll::NewDataAll()
@@ -111,12 +112,12 @@ int NewDataAll::PutSaveCode(const std::wstring& path) {
     //    return 2;
 
     if (loadDatFail(path)) {
-        std::wcout << "Loads1: " << G_CONFIG_MAPS.path << std::endl;
+        LogError().logMessageW(L"Loads1: " + G_CONFIG_MAPS.path);
         return 1;
     }
 
     if (PathDirectorySaveCode(path)) {
-        std::wcout << "Loads2: " << G_CONFIG_MAPS.path << std::endl;
+        LogError().logMessageW(L"Loads2: " + G_CONFIG_MAPS.path);
         return 1;
     }
 
@@ -136,14 +137,14 @@ bool NewDataAll::loadDatFail(const std::wstring& fullPath) {
 std::wstring NewDataAll::removePath(const std::wstring& filePath) {
     size_t start_pos = filePath.find(L"CustomMapData");
     if (start_pos == std::wstring::npos) {
-        std::cerr << "Substring 'CustomMapData' not found in the path." << std::endl;
+        LogError().logError("Substring 'CustomMapData' not found in the path.");
         return L"";
     }
     start_pos += std::wstring(L"CustomMapData").length() + 1;
 
     size_t end_pos = filePath.find_last_of(L"\\");
     if (end_pos == std::wstring::npos) {
-        std::cerr << "Last backslash not found in the path." << std::endl;
+        LogError().logError("Last backslash not found in the path.");
         return L"";
     }
 
