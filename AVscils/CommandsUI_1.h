@@ -32,7 +32,7 @@ public:
         // Корректировка текста для помещения в левую половину окна
         StringConvector().adjustTextToFit(text, 380); // 236 = 512 / 2 - 20
 
-        text.setPosition(20 + x, 4 + y);
+        text.setPosition(20 + x, 7 + y);
         sprite.setPosition(x, y);
     }
 

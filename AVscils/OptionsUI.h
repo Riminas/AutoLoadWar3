@@ -25,14 +25,14 @@ public:
     }
 
     inline void updateSpriteIsChecBox(const bool val) {
-        if (val) sprite.setTextureRect(sf::Rect{ 0, 224, 512, 32 });
-        else sprite.setTextureRect(sf::Rect{ 0, 256, 512, 32 });
+        if (val) sprite.setTextureRect(sf::Rect{ 0, 256, 512, 32 });
+        else sprite.setTextureRect(sf::Rect{ 0, 224, 512, 32 });
     }
 
     // Метод для установки позиции
     inline void setPosition(const float x, const float y) {
         StringConvector().adjustTextToFit(text, 380); // 236 = 512 / 2 - 20
-        text.setPosition(20 + x, 4 + y);
+        text.setPosition(20 + x, 7 + y);
         sprite.setPosition(x, y);
     }
 

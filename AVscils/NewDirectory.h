@@ -23,7 +23,7 @@ private:
     void initializeSprite(sf::Sprite& rectangle, const sf::Vector2f& position, const sf::IntRect& rect) const;
     std::wstring run();
     void initializeWindow();
-    float initializeDataCommands();
+    void initializeDataCommands();
     void initializeSettings();
     void drawWindow();
     std::wstring handleMousePress(sf::Event& event);

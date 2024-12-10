@@ -14,26 +14,30 @@ public:
     void initialize(const std::wstring& str, const sf::Texture& texture)
     {
         sprite.setTexture(texture);
-        sprite.setTextureRect(sf::Rect{ 0, 544, 512, 32 });
-
+        setString(str);
         // Инициализация основного текста
         FontSelector().getFontForText(text);
-        if (str.empty()) {
-            text.setString("Путь до папки с сохранениями пуст");
-            text.setFillColor(sf::Color(202, 51, 62));
-        }
-        else {
-            text.setString(str);
-            text.setFillColor(sf::Color::White);
-        }
-        text.setCharacterSize(14);
+        text.setCharacterSize(13);
     }
 
     // Метод для установки позиции
     inline void setPosition(const float x, const float y) {
         StringConvector().adjustTextToFit(text, 380); // 236 = 512 / 2 - 20
-        text.setPosition(20 + x, 4 + y);
+        text.setPosition(32 + x, 7 + y);
         sprite.setPosition(x, y);
+    }
+    
+    inline void setString(const std::wstring& str) {
+        if (str.empty()) {
+            text.setString("путь к папке с сохранениями неуказон");
+            text.setFillColor(sf::Color(202, 51, 62));//sf::Color(202, 51, 62)
+            sprite.setTextureRect(sf::Rect{ 0, 576, 512, 32 });
+        }
+        else {
+            text.setString(str);
+            text.setFillColor(sf::Color::White);//sf::Color(45, 170, 74)
+            sprite.setTextureRect(sf::Rect{ 0, 544, 512, 32 });
+        }
     }
 
     inline void draw(sf::RenderWindow& G_WINDOW) {
@@ -45,6 +49,6 @@ public:
 
     inline bool isClickedButton(const sf::Vector2f& mouseButton) {
         const sf::Vector2f mouseButton2{ mouseButton.x - sprite.getPosition().x, mouseButton.y - sprite.getPosition().y };
-        return mouseButton2.x >= 445 && mouseButton2.x < 490;
+        return mouseButton2.x >= 480;
     }
 };

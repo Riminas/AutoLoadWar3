@@ -20,12 +20,14 @@
 #include "SearchAfterCreatedFile.h"
 #include "ConfigMapsEngine.h"
 #include "CoutGuide.h"
+#include "SelectingNewPathMap.h"
 
 void OwnerWindow::initialize() {
 
     setupWindow();
+    if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
+    else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
 
-    m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
     m_Buttons.initialize({ 128, 0, 640, 128 }, m_TextureButton);
     initializeButtonsUsersDataCommands();
     m_ButtonsMenu.initialize({ 0, 0, 128, 640 }, m_TextureButton);
@@ -174,7 +176,7 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
                 G_WINDOW.close();
         }
         else {
-            NewDataAll().newMaps(true, true);
+            SelectingNewPathMap().selectingNewPathMap();
             m_IsVisibleMenu = !m_IsVisibleMenu;
             updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
         }
@@ -187,7 +189,7 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
             updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
         }
         else {
-            NewDataAll().newMaps(true, true);
+            SelectingNewPathMap().selectingNewPathMap();
             m_IsVisibleMenu = !m_IsVisibleMenu;
             updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
         }
@@ -199,6 +201,8 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
         isWindow2Visible[0] = false;
         updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
 
+        if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
+        else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
         break;
     }
     case 3: {//вывод гайда

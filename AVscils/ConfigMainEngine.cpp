@@ -19,6 +19,7 @@ bool ConfigMainEngine::loadConfigMain() {
     std::string line;
     std::string section;
 
+    uint8_t enumLoad = 0;
     while (std::getline(fileStream, line)) {
         std::istringstream iss(line);
         std::string key, value;
@@ -38,21 +39,32 @@ bool ConfigMainEngine::loadConfigMain() {
             if (section == "Options") {
                 if (key == "autoClickerKey") {
                     G_CONFIG_MAIN.optionsConfig.autoClickerKey = parseBool(value);
+                    enumLoad++;
                 }
                 else if (key == "autoClickerMouse") {
+                    if (enumLoad++ != 1)
+                        break;
                     G_CONFIG_MAIN.optionsConfig.autoClickerMouse = parseBool(value);
                 }
-                else if (key == "autoExit") {
-                    G_CONFIG_MAIN.optionsConfig.autoExit = parseBool(value);
-                }
                 else if (key == "blackColor") {
+                    if (enumLoad++ != 2)
+                        break;
                     G_CONFIG_MAIN.optionsConfig.blackColor = parseBool(value);
                 }
+                else if (key == "autoUpdate") {
+                    if (enumLoad++ != 3)
+                        break;
+                    G_CONFIG_MAIN.optionsConfig.autoUpdate = parseBool(value);
+                }
                 else if (key == "writeLogs") {
+                    if (enumLoad++ != 4)
+                        break;
                     G_CONFIG_MAIN.optionsConfig.writeLogs = parseBool(value);
                 }
-                else if (key == "autoUpdate") {
-                    G_CONFIG_MAIN.optionsConfig.autoUpdate = parseBool(value);
+                else if (key == "autoExit") {
+                    if (enumLoad++ != 5)
+                        break;
+                    G_CONFIG_MAIN.optionsConfig.autoExit = parseBool(value);
                 }
             }
             else if (section == "PlayerName") {
@@ -62,6 +74,8 @@ bool ConfigMainEngine::loadConfigMain() {
             }
         }
     }
+    if (enumLoad < 5)
+        saveConfigMain();
 
     return true;
 }
@@ -75,10 +89,10 @@ bool ConfigMainEngine::saveConfigMain() const {
     file << "[Options]" << std::endl;
     file << "autoClickerKey=" << (G_CONFIG_MAIN.optionsConfig.autoClickerKey ? "true" : "false") << std::endl;
     file << "autoClickerMouse=" << (G_CONFIG_MAIN.optionsConfig.autoClickerMouse ? "true" : "false") << std::endl;
-    file << "autoExit=" << (G_CONFIG_MAIN.optionsConfig.autoExit ? "true" : "false") << std::endl;
     file << "blackColor=" << (G_CONFIG_MAIN.optionsConfig.blackColor ? "true" : "false") << std::endl;
-    file << "writeLogs=" << (G_CONFIG_MAIN.optionsConfig.writeLogs ? "true" : "false") << std::endl;
     file << "autoUpdate=" << (G_CONFIG_MAIN.optionsConfig.autoUpdate ? "true" : "false") << std::endl;
+    file << "writeLogs=" << (G_CONFIG_MAIN.optionsConfig.writeLogs ? "true" : "false") << std::endl;
+    file << "autoExit=" << (G_CONFIG_MAIN.optionsConfig.autoExit ? "true" : "false") << std::endl;
 
     // Сохранение секции PlayerName
     file << "[PlayerName]" << std::endl;

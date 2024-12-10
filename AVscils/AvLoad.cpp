@@ -19,7 +19,7 @@ void update() {
         std::string latestVersion = jsonData["tag_name"];
 
         // Предположим, что currentVersion - это строка с текущей версией вашей программы
-        std::string currentVersion = "AutoLoad_1_18_15";
+        std::string currentVersion = "AutoLoad_1_18_16";
 
         if (latestVersion != currentVersion)
         {

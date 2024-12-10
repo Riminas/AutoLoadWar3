@@ -30,9 +30,9 @@ void SelectingNewPathMap::updateRegionFalse() {
 }
 
 void SelectingNewPathMap::selectingNewPathMap() {
-    updateRegionTrue();
     // Открытие диалогового окна для выбора папки и получение пути к выбранной папке
     initialize();
+    updateRegionTrue();
     std::wstring folderPath = run();
     updateRegionFalse();
     // Проверка, пуст ли путь
@@ -122,9 +122,9 @@ void SelectingNewPathMap::initialize() {
 
 void SelectingNewPathMap::initializeScrollbar(const float& windowWidth, const float& windowHeight)
 {
-    scrollbar.setSize(sf::Vector2f(10, windowHeight - 32));
-    scrollbar.setPosition(sf::Vector2f(m_Rect[2] - 14, m_Rect[1]));
-    scrollbarThumb.setFillColor(sf::Color(28, 28, 28));
+    scrollbar.setSize(sf::Vector2f(5, windowHeight - 32));
+    scrollbar.setPosition(sf::Vector2f(m_Rect[2] - 9, m_Rect[1]));
+    scrollbarThumb.setFillColor(sf::Color::White);//sf::Color(28, 28, 28)
     scrollbarThumb.setPosition(scrollbar.getPosition());
 
     backgroundDirectory.setFillColor(sf::Color(0, 60, 160, 80));
@@ -222,7 +222,7 @@ void SelectingNewPathMap::adjustScrollbar() {
     float visibleArea = (m_Rect[3] - m_Rect[1] - 72) / 30;//120 > 72
     float thumbSize = scrollbar.getSize().y * (visibleArea / directoryTexts.size());
     thumbSize = (std::max)(thumbSize, 20.0f);
-    scrollbarThumb.setSize(sf::Vector2f(10, thumbSize));
+    scrollbarThumb.setSize(sf::Vector2f(5, thumbSize));
 
     // Пересчитываем позицию thumb после изменения его размера
     float scrollbarRange = scrollbar.getSize().y - scrollbarThumb.getSize().y;

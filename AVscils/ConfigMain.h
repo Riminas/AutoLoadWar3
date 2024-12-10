@@ -13,10 +13,10 @@ struct OpenConfig {
 struct OptionsConfig {
     bool autoClickerKey{ true };
     bool autoClickerMouse{ true };
-    bool autoExit{ false };
-    bool writeLogs{ true };
-    bool autoUpdate{ true };
     bool blackColor{ true };
+    bool autoUpdate{ true };
+    bool writeLogs{ true };
+    bool autoExit{ false };
 
     //float timeDelay{ 600000 };
 };

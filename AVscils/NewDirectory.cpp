@@ -87,27 +87,29 @@ void NewDirectory::initializeWindow() {
 
 
 
-float NewDirectory::initializeDataCommands() {
+void NewDirectory::initializeDataCommands() {
 
-    m_PathWar3.initialize(G_CONFIG_MAPS.path, m_Texture);
+
     const float OFFSET_X = 32;
-    initializeSprite(m_TopLineCommandsUI, sf::Vector2f{ m_Rect[0], m_Rect[1] + 32 }, sf::Rect(0, 0, 512, 32));
-    float positionY = 64;
+    initializeSprite(m_TopLineCommandsUI, sf::Vector2f{ m_Rect[0], m_Rect[1] + 0 }, sf::Rect(0, 0, 512, 32));
+    float positionY = m_Rect[1] + 32;
     for (size_t i = 0; CommandsUI_0& commands : m_CommandsMain) {
         commands.initialize(G_CONFIG_MAPS.mainConfig[i].start, G_CONFIG_MAPS.mainConfig[i].cmd, m_Texture);
-        commands.setPosition(m_Rect[0], m_Rect[1] + positionY);
+        commands.setPosition(m_Rect[0], positionY);
         positionY += OFFSET_X;
 
         ++i;
     }
     for (size_t i = 0; CommandsUI_1& commands : m_CommandsUsers) {
         commands.initialize(G_CONFIG_MAPS.usersConfig[i].isVisibleButton, G_CONFIG_MAPS.usersConfig[i].start, G_CONFIG_MAPS.usersConfig[i].cmd, m_Texture);
-        commands.setPosition(m_Rect[0], m_Rect[1] + positionY);
+        commands.setPosition(m_Rect[0], positionY);
         positionY += OFFSET_X;
 
         ++i;
     }
-    return positionY;
+
+    m_PathWar3.initialize(G_CONFIG_MAPS.path, m_Texture);
+    m_PathWar3.setPosition(m_Rect[0], positionY+32);
 }
 
 void NewDirectory::initializeSettings() {
@@ -117,16 +119,16 @@ void NewDirectory::initializeSettings() {
     m_Options[1].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerMouse, "Авто нажатия правой кнопки мыши", m_Texture);
     m_Options[1].setPosition(m_Rect[0], m_Rect[1] + 42);
 
-    m_Options[2].initialize(G_CONFIG_MAIN.optionsConfig.autoExit, "Авто выход после быстрой загрузки", m_Texture);
-    m_Options[2].setPosition(m_Rect[0], m_Rect[1] + 74);
+    m_Options[2].initialize(G_CONFIG_MAIN.optionsConfig.blackColor, "Темная тема", m_Texture);
+    m_Options[2].setPosition(m_Rect[0], m_Rect[1]  + 74);
 
-    m_Options[3].initialize(G_CONFIG_MAIN.optionsConfig.blackColor, "Темная тема", m_Texture);
+    m_Options[3].initialize(G_CONFIG_MAIN.optionsConfig.autoUpdate, "Автоматическое обновление", m_Texture);
     m_Options[3].setPosition(m_Rect[0], m_Rect[1] + 106);
 
     m_Options[4].initialize(G_CONFIG_MAIN.optionsConfig.writeLogs, "Запись логов", m_Texture);
     m_Options[4].setPosition(m_Rect[0], m_Rect[1] + 138);
 
-    m_Options[5].initialize(G_CONFIG_MAIN.optionsConfig.autoUpdate, "Автоматическое обновление", m_Texture);
+    m_Options[5].initialize(G_CONFIG_MAIN.optionsConfig.autoExit, "Авто выход после быстрой загрузки", m_Texture);
     m_Options[5].setPosition(m_Rect[0], m_Rect[1] + 170);
 }
 
@@ -210,6 +212,7 @@ std::wstring NewDirectory::handleMousePress(sf::Event& event) {
         if(m_PathWar3.isClicked(mouseButton) && m_PathWar3.isClickedButton(mouseButton)) {
             SelectingNewPathMap().selectingNewPathMap();
             updateRegionTrue();
+            m_PathWar3.setString(G_CONFIG_MAPS.path);
         }
 
         //if (m_TopLineCommandsUI.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
@@ -277,8 +280,11 @@ std::wstring NewDirectory::handleMousePress(sf::Event& event) {
 
         bool isSave = false;
         checkAndToggle(0, G_CONFIG_MAIN.optionsConfig.autoClickerKey, isSave);
-        checkAndToggle(1, G_CONFIG_MAIN.optionsConfig.autoClickerMouse, isSave);
-        checkAndToggle(2, G_CONFIG_MAIN.optionsConfig.autoExit, isSave);
+        if(!isSave) checkAndToggle(1, G_CONFIG_MAIN.optionsConfig.autoClickerMouse, isSave);
+        if (!isSave) checkAndToggle(2, G_CONFIG_MAIN.optionsConfig.blackColor, isSave);
+        if (!isSave) checkAndToggle(3, G_CONFIG_MAIN.optionsConfig.autoUpdate, isSave);
+        if (!isSave) checkAndToggle(4, G_CONFIG_MAIN.optionsConfig.writeLogs, isSave);
+        if (!isSave) checkAndToggle(5, G_CONFIG_MAIN.optionsConfig.autoExit, isSave);
 
         if (isSave) {
             ConfigMainEngine ConfigMainEngine_;
