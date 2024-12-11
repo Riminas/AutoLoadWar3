@@ -17,6 +17,7 @@
 #include "ConfigMain.h"
 #include "ConfigMapsEngine.h"
 #include "FontLoader.h"
+#include "UpdateRegionRect.h"
 
 NOTIFYICONDATA nid;
 
@@ -49,7 +50,7 @@ bool Engine::updateWindowVisibility(const HWND& hWndWindow)
     if (IsWarcraftInFocus(hWndWindow)) {// Сравниваем имя окна с ожидаемым Warcraft III
         if (m_IsVisibleOwnerWindow) return true;
 
-        if (G_DATA_PATH.hWndWindowWar != hWndWindow) {// Если прошлое окно варкрафта нетожесамое что открыто сейчас
+        if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow) {// Если прошлое окно варкрафта нетожесамое что открыто сейчас
             // Инициализация объекта для работы с данными окна
             if (!NewDataAll().newWarcraft(hWndWindow)) {
                 G_WINDOW.setVisible(false);// Если данные необновлены, делаем окно невидимым
@@ -58,7 +59,7 @@ bool Engine::updateWindowVisibility(const HWND& hWndWindow)
             }
             G_WINDOW.setVisible(true);
             m_OwnerWindow.updateRect(hWndWindow);
-            if (m_IsActiveWindow[0])
+            if (G_BOOL_VISIBLE.isVisibleEngineFile)
                 m_EngineFileTip2.updateRect(hWndWindow);
         }
         //G_DATA_ALL.isMapsStart = true;
@@ -71,7 +72,7 @@ bool Engine::updateWindowVisibility(const HWND& hWndWindow)
             // Проверяем, есть ли новая информация для карт
             if (G_DATA_MAPS.m_IsNewInfo) {
                 // Если есть новая информация, сбрасываем состояние активности окна и обновляем данные карт
-                m_IsActiveWindow[0] = false;
+                G_BOOL_VISIBLE.isVisibleEngineFile = false;
                 G_DATA_MAPS.m_IsNewInfo = false;
                 G_CONFIG_MAPS.path = G_CONFIG_MAPS.lastPath;
             }
@@ -152,7 +153,7 @@ void Engine::draw(const bool isVisibleLoad) {
 
     if (m_IsVisibleOwnerWindow) {
 
-        if (m_IsActiveWindow[0])
+        if (G_BOOL_VISIBLE.isVisibleEngineFile)
             m_EngineFileTip2.draw();
     }
 
@@ -161,52 +162,56 @@ void Engine::draw(const bool isVisibleLoad) {
 
 void Engine::handleMouseButtonPressed(sf::Event& event)
 {
-    bool lastIsActiveWindow[] ={ m_IsActiveWindow[0], m_IsActiveWindow[1] };
+    bool lastIsActiveWindow[] ={ G_BOOL_VISIBLE.isVisibleEngineFile, G_BOOL_VISIBLE.isVisibleGuide };
     m_OwnerWindow.processingButtonMenu(event.mouseButton, lastIsActiveWindow);
     m_OwnerWindow.processingButton(event.mouseButton, lastIsActiveWindow);
 
     isInitialize(lastIsActiveWindow);
 
-    if (m_IsActiveWindow[0]) {
+    if (G_BOOL_VISIBLE.isVisibleEngineFile) {
         const int16_t numLainListHero = m_EngineFileTip2.mouseButtonPressed(event);
         if (numLainListHero >= 0) {
-            m_IsActiveWindow[0] = false;
+            G_BOOL_VISIBLE.isVisibleEngineFile = false;
             m_OwnerWindow.setIsVisibleMenu(false);
-            m_OwnerWindow.updateRegion(G_DATA_PATH.hWndWindowWar, 1u);
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 1);
 
             draw(true);
 
-            LoadManager(G_DATA_PATH.hWndWindowWar).executeLoad(m_EngineFileTip2.getPathListHero(numLainListHero));
-            ConfigMapsEngine(G_DATA_MAPS.m_NameMaps).startGameCoutCmd(G_DATA_PATH.hWndWindowWar);
+            LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).executeLoad(m_EngineFileTip2.getPathListHero(numLainListHero));
+            ConfigMapsEngine(G_DATA_MAPS.m_NameMaps).startGameCoutCmd(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
             if (G_CONFIG_MAIN.optionsConfig.autoExit)
                 G_WINDOW.close();
             else
             {
-                m_OwnerWindow.updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
+                UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
             }
         }
         else if (numLainListHero == -2) {
-            m_IsActiveWindow[0] = false;
-            m_OwnerWindow.updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
+            G_BOOL_VISIBLE.isVisibleEngineFile = false;
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
         }
     }
     m_Clock.restart();
 }
 
 inline void Engine::isInitialize(bool lastIsActiveWindow[]) {
-    if (lastIsActiveWindow[0] != m_IsActiveWindow[0]) {
-        m_IsActiveWindow[0] = lastIsActiveWindow[0];
+    if (lastIsActiveWindow[0] != G_BOOL_VISIBLE.isVisibleEngineFile) {
+        G_BOOL_VISIBLE.isVisibleEngineFile = lastIsActiveWindow[0];
         if (m_EngineFileTip2.initialize() == 0) {
-            m_IsActiveWindow[0] = false;
+            G_BOOL_VISIBLE.isVisibleEngineFile = false;
             m_OwnerWindow.setIsVisibleMenu(false);
-            m_OwnerWindow.updateRegion(G_DATA_PATH.hWndWindowWar, 0);
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
         }
-        if (m_IsActiveWindow[0]) {
-            m_EngineFileTip2.updateRect(G_DATA_PATH.hWndWindowWar);
+        if (G_BOOL_VISIBLE.isVisibleEngineFile) {
+            m_EngineFileTip2.updateRect(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
             m_EngineFileTip2.updateRegionTrue(m_OwnerWindow.getIsVisibleMenu());
+        }
+        else {
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
         }
     }
 }
+
 bool Engine::initialize() {
     FontLoader().loadPredefinedFonts();
 
@@ -219,11 +224,12 @@ bool Engine::initialize() {
 
     return false;
 }
+
 void Engine::checkKeyStates() {
     auto now = std::chrono::high_resolution_clock::now();
 
     // Проверка клавиш, если включен авто-кликер и версия Warcraft равна 1.26
-    if (G_CONFIG_MAIN.optionsConfig.autoClickerKey && G_DATA_PATH.versionWarcraft == 2) {
+    if (G_CONFIG_MAIN.optionsConfig.autoClickerKey && G_DATA_WARCRAFT.m_DataPath.versionWarcraft == 2) {
         // Check keys 0-9 (0x30-0x39), A-Z (0x41-0x5A), num0-num9 (0x60-0x69), and right mouse button (VK_RBUTTON)
         static const std::array<int, 36> keysToCheck = {
             0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, // 0-9

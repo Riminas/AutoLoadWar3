@@ -32,7 +32,6 @@ private:
     OwnerWindow m_OwnerWindow;
     EngineFileTip2 m_EngineFileTip2;
     sf::Clock m_Clock;
-    bool m_IsActiveWindow[2] = {false, false };
 
     bool m_IsLastActive = true;
     bool m_IsVisibleOwnerWindow = true;

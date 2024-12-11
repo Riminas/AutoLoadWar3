@@ -11,11 +11,13 @@
 #include "LoadManager.h"
 #include "EngineFileTip2.h"
 #include "EngineFileTip1.h"
-#include "NewDirectory.h"
+#include "Options.h"
 #include "SkillsUpgradeStart.h"
 #include "StringConvector.h"
 #include "HeroInfoEngine.h"
 #include "ConfigMaps.h"
+#include "ConfigMain.h"
+#include "UpdateRegionRect.h"
 
 short EngineFileTip2::initialize() {
     if (!engineFile() || G_HERO_INFO.size() == 0) {
@@ -83,46 +85,42 @@ std::wstring EngineFileTip2::file_time_to_wstring(const std::filesystem::file_ti
 }
 
 void EngineFileTip2::updateRect(const HWND& hWndWindow, const bool& isUpdataPosition) {
-    RECT rect;
-    if (GetClientRect(hWndWindow, &rect)) {
-        const int width = rect.right - rect.left;
-        const int height = rect.bottom - rect.top;
-        const float x = width - 441.0f;
-        float y = height / 4.0f * 3.0f - 20 - (G_HERO_INFO.size() * 25.0f + 25.0f);
 
-        if (y < 0) {
-            y = (height % 25) / 2.f;
+    const float x = G_DATA_WARCRAFT.m_DataRect.size.x - 441.0f;
+    float y = G_DATA_WARCRAFT.m_DataRect.size.y / 4.0f * 3.0f - 20 - (G_HERO_INFO.size() * 25.0f + 25.0f);
 
-            int num = (int)G_HERO_INFO.size() * 25;
+    if (y < 0) {
+        y = (G_DATA_WARCRAFT.m_DataRect.size.y % 25) / 2.f;
 
-            if (height < num) {
-                int num2 = (height / 25);
-                std::vector<HeroInfo> listHero{};
-                listHero.resize(num2);
-                std::vector<ListHeroDraw> listHeroDraw{};
-                listHeroDraw.resize(num2);
-                int j = 0;
-                for (size_t i = G_HERO_INFO.size() - num2; auto & p : listHero) {
-                    p = G_HERO_INFO[i];
-                    listHeroDraw[j] = m_ListHeroDraw[i+1];
-                    i++;
-                    j++;
-                }
-                G_HERO_INFO = listHero;
-                m_ListHeroDraw = listHeroDraw;
+        int num = (int)G_HERO_INFO.size() * 25;
+
+        if (G_DATA_WARCRAFT.m_DataRect.size.y < num) {
+            int num2 = (G_DATA_WARCRAFT.m_DataRect.size.y / 25);
+            std::vector<HeroInfo> listHero{};
+            listHero.resize(num2);
+            std::vector<ListHeroDraw> listHeroDraw{};
+            listHeroDraw.resize(num2);
+            int j = 0;
+            for (size_t i = G_HERO_INFO.size() - num2; auto & p : listHero) {
+                p = G_HERO_INFO[i];
+                listHeroDraw[j] = m_ListHeroDraw[i+1];
+                i++;
+                j++;
             }
-
-
-        }
-        else {
-
+            G_HERO_INFO = listHero;
+            m_ListHeroDraw = listHeroDraw;
         }
 
-        sf::Vector2f newPosition = sf::Vector2f(x, y);
 
-        if (isUpdataPosition)
-            updatePosition(newPosition);
     }
+    else {
+
+    }
+
+    sf::Vector2f newPosition = sf::Vector2f(x, y);
+
+    if (isUpdataPosition)
+        updatePosition(newPosition);
 }
 
 void EngineFileTip2::updatePosition(const sf::Vector2f& newPosition) {
@@ -137,56 +135,13 @@ void EngineFileTip2::updatePosition(const sf::Vector2f& newPosition) {
 }
 
 void EngineFileTip2::updateRegionTrue(const bool t_IsVisibleMenu) {
-
-    HWND hwnd = G_WINDOW.getSystemHandle();
-    HRGN region = CreateRectRgn(0, 0, 0, 0); // Пустой регион для комбинирования
-
-    {
-        HRGN HeroBar = CreateRectRgn(
+    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0,
+        {
             static_cast<int>(m_ListHeroDraw[0].shape.getPosition().x),
             static_cast<int>(m_ListHeroDraw[0].shape.getPosition().y),
             static_cast<int>(m_ListHeroDraw[0].shape.getPosition().x + m_ListHeroDraw[0].shape.getSize().x),
-            static_cast<int>(m_ListHeroDraw.back().shape.getPosition().y + m_ListHeroDraw[0].shape.getSize().y));
-        CombineRgn(region, region, HeroBar, RGN_OR);
-        DeleteObject(HeroBar);
-    }    
-    RECT rectClient;
-    RECT rectWindow;
-    GetClientRect(G_DATA_PATH.hWndWindowWar, &rectClient);
-    GetWindowRect(G_DATA_PATH.hWndWindowWar, &rectWindow);
-    const int width = rectClient.right - rectClient.left;
-    const int height = rectClient.bottom - rectClient.top;
-
-    const auto& cmd = G_CONFIG_MAPS.usersConfig;
-    const unsigned sum = 20 * (cmd[0].isVisibleButton + cmd[1].isVisibleButton + cmd[2].isVisibleButton + cmd[3].isVisibleButton + cmd[4].isVisibleButton);
-    const float x = width / 2.f - 50;
-    const float y = (height / 20.0f) * 15.75f - 9;
-    const unsigned sumX = static_cast<unsigned>(x) + rectWindow.left;
-    const unsigned sumY = static_cast<unsigned>(y) + rectWindow.top;
-
-    {
-        HRGN mainHorizontalBar = CreateRectRgn(
-            sumX - sum,
-            sumY,
-            sumX + 100,
-            sumY + 20);
-        CombineRgn(region, region, mainHorizontalBar, RGN_OR); // Добавляем горизонтальную часть
-        DeleteObject(mainHorizontalBar);
-    }
-    {
-        if (t_IsVisibleMenu) {
-            HRGN mainVerticalBar = CreateRectRgn(
-                sumX,
-                sumY - 100,
-                sumX + 20,
-                sumY + 60);
-            CombineRgn(region, region, mainVerticalBar, RGN_OR); // Добавляем вертикальную часть
-            DeleteObject(mainVerticalBar);
-        }
-    }
-
-
-    SetWindowRgn(hwnd, region, TRUE);
+            static_cast<int>(m_ListHeroDraw.back().shape.getPosition().y + m_ListHeroDraw[0].shape.getSize().y) 
+        });
 }
 
 std::wstring EngineFileTip2::getPathListHero(const int& i) {
@@ -196,30 +151,49 @@ std::wstring EngineFileTip2::getPathListHero(const int& i) {
 void EngineFileTip2::createHeroDraw(int index, unsigned int characterSize) {
     bool isLastElement = (index == G_HERO_INFO.size());
     m_ListHeroDraw[index].shape.setSize(sf::Vector2f(400, 23));
-    m_ListHeroDraw[index].shape.setFillColor(sf::Color::White);
-    m_ListHeroDraw[index].shape.setOutlineColor(sf::Color::Black);
+    if (G_CONFIG_MAIN.optionsConfig.blackColor) {
+        m_ListHeroDraw[index].shape.setFillColor(sf::Color(45, 45, 48));
+        m_ListHeroDraw[index].shape.setOutlineColor(sf::Color(28, 28, 28));
+    }
+    else {
+        m_ListHeroDraw[index].shape.setFillColor(sf::Color::White);
+        m_ListHeroDraw[index].shape.setOutlineColor(sf::Color::Black);
+    }
     m_ListHeroDraw[index].shape.setOutlineThickness(2);
 
     if (!isLastElement) {
         m_ListHeroDraw[index].text.setString(G_HERO_INFO[index].nameChar);
         m_ListHeroDraw[index].text.setFont(G_FONT_STANDART);
         m_ListHeroDraw[index].text.setCharacterSize(characterSize);
-        m_ListHeroDraw[index].text.setFillColor(sf::Color::Black);
 
         std::wstring strtData = file_time_to_wstring(G_HERO_INFO[index].latestTime);
         m_ListHeroDraw[index].textData.setString(strtData);
         m_ListHeroDraw[index].textData.setFont(G_FONT_STANDART);
         m_ListHeroDraw[index].textData.setCharacterSize(characterSize-6);
-        m_ListHeroDraw[index].textData.setFillColor(sf::Color::Black);
         m_ListHeroDraw[index].textData.setLineSpacing(0.6f);
+
+        if (G_CONFIG_MAIN.optionsConfig.blackColor) {
+            m_ListHeroDraw[index].text.setFillColor(sf::Color::White);
+            m_ListHeroDraw[index].textData.setFillColor(sf::Color::White);
+        }
+        else {
+            m_ListHeroDraw[index].text.setFillColor(sf::Color::Black);
+            m_ListHeroDraw[index].textData.setFillColor(sf::Color::Black);
+        }
     }
     else {
         std::wstring str = std::format(L"{:>20}", L"Отменить");
         m_ListHeroDraw[index].text.setString(str);
         m_ListHeroDraw[index].text.setFont(G_FONT_STANDART);
         m_ListHeroDraw[index].text.setCharacterSize(characterSize);
-        m_ListHeroDraw[index].text.setFillColor(sf::Color::Black);
 
         m_ListHeroDraw[index].textData.setString(L"\0");
+
+        if (G_CONFIG_MAIN.optionsConfig.blackColor) {
+            m_ListHeroDraw[index].text.setFillColor(sf::Color::White);
+        }
+        else {
+            m_ListHeroDraw[index].text.setFillColor(sf::Color::Black);
+        }
     }
 }

@@ -77,12 +77,13 @@ int main()
 
     if (FindWindow(NULL, L"AutoLoads") == NULL) {
 
-        ConfigMainEngine().loadConfigMain();
+        ConfigMainEngine().loadConfigMain();//должно полнится только 1 раз при старте программы
 
         //if (G_CONFIG_MAIN.optionsConfig.autoUpdate) {
         //    update();
         //}
 
+        LogError().logMessageW(L"\n\n------------------------------------------------------------------------");
         Engine().engine1();
     }
     else

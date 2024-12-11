@@ -176,6 +176,7 @@
   <ItemGroup>
     <ClCompile Include="AutoUpdate.cpp" />
     <ClCompile Include="AvLoad.cpp" />
+    <ClCompile Include="BoolVisibleMenu.cpp" />
     <ClCompile Include="ConfigMain.cpp" />
     <ClCompile Include="ConfigMainEngine.cpp" />
     <ClCompile Include="ConfigMaps.cpp" />
@@ -189,7 +190,7 @@
     <ClCompile Include="NewDataAll.cpp" />
     <ClCompile Include="DataAll.h" />
     <ClCompile Include="DataMaps.cpp" />
-    <ClCompile Include="DataPath.cpp" />
+    <ClCompile Include="DataWarcraft.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineFileTip1.cpp" />
     <ClCompile Include="EngineFileTip2.cpp" />
@@ -199,7 +200,7 @@
     <ClCompile Include="key.cpp" />
     <ClCompile Include="LoadDataFail.cpp" />
     <ClCompile Include="LoadManager.cpp" />
-    <ClCompile Include="NewDirectory.cpp" />
+    <ClCompile Include="Options.cpp" />
     <ClCompile Include="NewPathSaveCode.cpp" />
     <ClCompile Include="OptionActionsUi.h" />
     <ClCompile Include="OwnerWindow.cpp" />
@@ -226,7 +227,7 @@
     <ClInclude Include="ConfigMapsEngine.h" />
     <ClInclude Include="CoutGuide.h" />
     <ClInclude Include="DataMaps.h" />
-    <ClInclude Include="DataPath.h" />
+    <ClInclude Include="DataWarcraft.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineFileTip1.h" />
     <ClInclude Include="EngineFileTip2.h" />
@@ -236,13 +237,14 @@
     <ClInclude Include="HeroInfo.h" />
     <ClInclude Include="HeroInfoEngine.h" />
     <ClInclude Include="HeroInfoEngineFast.h" />
+    <ClInclude Include="BoolVisibleMenu.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="key.h" />
     <ClInclude Include="LoadDataFail.h" />
     <ClInclude Include="LoadManager.h" />
     <ClInclude Include="LogError.h" />
     <ClInclude Include="NewDataAll.h" />
-    <ClInclude Include="NewDirectory.h" />
+    <ClInclude Include="Options.h" />
     <ClInclude Include="NewPathSaveCode.h" />
     <ClInclude Include="OptionsUI.h" />
     <ClInclude Include="OwnerWindow.h" />
@@ -253,6 +255,7 @@
     <ClInclude Include="SkillsUpgradeStart.h" />
     <ClInclude Include="StringConvector.h" />
     <ClInclude Include="StringToString.h" />
+    <ClInclude Include="UpdateRegionRect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,6 +3,7 @@
 #include "LoadManager.h"
 #include "StringConvector.h"
 #include "LogError.h"
+#include "Global.h"
 
 ConfigMapsEngine::ConfigMapsEngine(const std::wstring& nameMaps)
 {
@@ -30,10 +31,10 @@ void ConfigMapsEngine::initializeDefaultConfig()
          { "-cam 150" }
          } };
 
-    ConfigMapsEngine::saveConfigMain();
+    ConfigMapsEngine::saveConfigMaps();
 }
 
-bool ConfigMapsEngine::loadConfigMain()
+bool ConfigMapsEngine::loadConfigMaps()
 {
     const std::wstring fullLine = LoadDataFail().loadDataFailW(m_FilePathFull);
     if (fullLine.empty()) {
@@ -107,7 +108,7 @@ bool ConfigMapsEngine::loadConfigMain()
     return true;
 }
 
-bool ConfigMapsEngine::saveConfigMain()
+bool ConfigMapsEngine::saveConfigMaps()
 {
     std::ofstream file(m_FilePathFull);
     if (!file.is_open()) {
@@ -143,7 +144,7 @@ bool ConfigMapsEngine::saveConfigMain()
     return true;
 }
 
-void ConfigMapsEngine::openConfigMain()
+void ConfigMapsEngine::openConfigMaps()
 {
     // Подготовка структуры для запуска процесса
     STARTUPINFO si = { sizeof(STARTUPINFO) };
@@ -171,13 +172,39 @@ void ConfigMapsEngine::openConfigMain()
         return;
     }
 
-    // Ожидание завершения процесса
-    WaitForSingleObject(pi.hProcess, INFINITE);
+    sf::Event event;
+    DWORD exitCode;
+    while (G_WINDOW.isOpen()) {
+        G_WINDOW.clear(sf::Color(255, 255, 255));
+        G_WINDOW.display();
+
+        if (GetExitCodeProcess(pi.hProcess, &exitCode)) {
+            if (exitCode != STILL_ACTIVE) {
+                break;
+            }
+        }
+        else {
+            break;
+        }
+
+        while (G_WINDOW.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                G_WINDOW.close();
+            }
+        }
+    }
+
+    //while (G_WINDOW.isOpen() && ) {
+
+    //    G_WINDOW.clear(sf::Color(255, 255, 255));
+    //    G_WINDOW.display();
+    //}
+    //// Ожидание завершения процесса
+    //WaitForSingleObject(pi.hProcess, INFINITE);
 
     // Закрытие дескрипторов процесса и потока
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
-    LogError().logMessage("блокнот закрыт.");
 
 
     //// Преобразуем std::string в LPCSTR (необходимый тип для ShellExecute)

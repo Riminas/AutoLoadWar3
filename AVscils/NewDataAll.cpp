@@ -2,11 +2,11 @@
 
 #include "Global.h"
 #include "getMapOpen.h"
-#include "NewDirectory.h"
+#include "Options.h"
 #include "NewDataAll.h"
 #include "ConfigMain.h"
 #include "ConfigMapsEngine.h"
-#include "DataPath.h"
+#include "DataWarcraft.h"
 #include "DataMaps.h"
 #include "ConfigMainEngine.h"
 #include "LoadDataFail.h"
@@ -17,11 +17,13 @@ NewDataAll::NewDataAll()
 {
 }
 
-void NewDataAll::newMaps(const bool& isNoDataCommands, const bool& isOptions)
+void NewDataAll::newMaps()//должнен обновить информацию об карте и все что заисит от нее
 {
+	const std::wstring newNameMaps = getMapOpen().getMapOpen1(G_DATA_WARCRAFT.m_DataPath.warPathDirectMaps);
     
-	getMapOpen getMapOpen_;
-	const std::wstring newNameMaps = getMapOpen_.getMapOpen1(G_DATA_PATH.warPathDirectMaps);
+    LogError().logMessageW(L"newNameMaps: " + newNameMaps);
+    LogError().logMessageW(L"G_DATA_MAPS.m_NameMapsFull: " + G_DATA_MAPS.m_NameMapsFull);
+
     if (newNameMaps == L"error") { 
         G_DATA_MAPS.isNewMaps = false;
         //G_DATA_ALL.isMapsStart = true;
@@ -32,53 +34,21 @@ void NewDataAll::newMaps(const bool& isNoDataCommands, const bool& isOptions)
     G_DATA_ALL.isMapsStart = true;
     bool isNewMaps = false;
     const bool isNewNameMaps = G_DATA_MAPS.m_NameMapsFull != newNameMaps;
-	if (isNoDataCommands || isOptions || isNewNameMaps) {
-        if (isNewNameMaps) {
-            G_DATA_MAPS.m_NameMapsFull = newNameMaps;
-            G_DATA_MAPS.NameMaps();
-            ConfigMapsEngine ConfigMapsEngine_(G_DATA_MAPS.m_NameMaps);
-            ConfigMapsEngine_.loadConfigMain();
-        }
+	if (isNewNameMaps) {
+        G_DATA_MAPS.m_NameMapsFull = newNameMaps;
+        G_DATA_MAPS.NameMaps();
+        ConfigMapsEngine ConfigMapsEngine_(G_DATA_MAPS.m_NameMaps);
+        ConfigMapsEngine_.loadConfigMaps();
 
-        const bool isNewDirectory{ (G_DATA_MAPS.isNewMaps == false && isNoDataCommands) || isOptions };
-        if (isNewDirectory) {
+        if (G_DATA_MAPS.isNewMaps == false) {
             static int num = { -1 };
             if (num == -1) {
-                num = PutSaveCode(G_DATA_PATH.warPathDirectSave);
+                num = PutSaveCode(G_DATA_WARCRAFT.m_DataPath.warPathDirectSave);
             }
-            if (num == 1 && !isOptions) {
+            if (num == 1) {
                 isNewMaps = true;
             }
-            else if (isOptions || (isNoDataCommands && ( num == 0))) {
-
-                NewDirectory().newDirectory();
-                //const int num2 = app.newDirectory();
-                //if (num2 == 3) { // if (utf8Text == "False") return 3; убрать выбор дириктории
-                //    G_CONFIG_MAPS.path.clear();
-                //    isNewMaps = false;
-                //}
-                //else if (num2 == 2) { // if (folderPath == L"Exet") return 2;
-                //}
-                //else if (num2 == 1) { //true
-                //    //if (G_CONFIG_MAPS.path == L"False")
-                //    //    G_CONFIG_MAPS.path = L"\0";
-                //    isNewMaps = true;
-                //}
-                //else if (num2 == 0) {// false
-                //    G_CONFIG_MAPS.path.clear();
-                //    isNewMaps = false;
-                //}
-                //if (G_CONFIG_MAPS.lastPath != G_CONFIG_MAPS.path) {
-                //    G_CONFIG_MAPS.lastPath = G_CONFIG_MAPS.path;
-                //    G_DATA_MAPS.m_IsNewInfo = true;
-                //}
-                //else {
-                //    isNewMaps = false;
-                //}
-            }
-            //else if (isNoDataCommands == false && num == 2) {
-            //    G_DATA_MAPS.m_IsNewInfo = true;
-            //}
+            else if (num == 0) { }
         }
 
         G_DATA_MAPS.isNewMaps = isNewMaps;
@@ -87,24 +57,9 @@ void NewDataAll::newMaps(const bool& isNoDataCommands, const bool& isOptions)
 	
 }
 
-bool NewDataAll::newWarcraft(const HWND& hWndWindow)
+bool NewDataAll::newWarcraft(const HWND& hWndWindow)//должнен обновить информацию об Warcrft 3 и все что заисит от нее
 {
-    RECT rectClient;
-    RECT rectWindow;
-    if (GetClientRect(hWndWindow, &rectClient) && GetWindowRect(hWndWindow, &rectWindow)) {
-        const int width = rectClient.right - rectClient.left;
-        const int height = rectClient.bottom - rectClient.top;
-        if (height < 300 || width < 300) {
-            return false;
-        }
-    }
-
-    if (!G_DATA_PATH.initializePaths(hWndWindow)) {
-        return false;
-    }
-    ConfigMainEngine ConfigMainEngine_;
-    ConfigMainEngine_.loadConfigMain();
-    return true;
+    return G_DATA_WARCRAFT.initializeDataWarcraft(hWndWindow);
 }
 
 int NewDataAll::PutSaveCode(const std::wstring& path) {
@@ -127,7 +82,7 @@ int NewDataAll::PutSaveCode(const std::wstring& path) {
 
 bool NewDataAll::loadDatFail(const std::wstring& fullPath) {
     ConfigMapsEngine ConfigMapsEngine_(G_DATA_MAPS.m_NameMaps);
-    ConfigMapsEngine_.loadConfigMain();
+    ConfigMapsEngine_.loadConfigMaps();
 
     if (!G_CONFIG_MAPS.path.empty() && std::filesystem::is_directory((fullPath + G_CONFIG_MAPS.path)))
         return true;

@@ -1,12 +1,12 @@
 #include <filesystem>
-#include "DataPath.h"
+#include "DataWarcraft.h"
 #include "LogError.h"
 
 #include "HeroInfoEngineFast.h"
 
 bool HeroInfoEngineFast::retrieveHeroDataFast(const std::wstring& saveCodePath) {
 
-    const std::wstring fullSavePath = G_DATA_PATH.warPathDirectSave + saveCodePath;
+    const std::wstring fullSavePath = G_DATA_WARCRAFT.m_DataPath.warPathDirectSave + saveCodePath;
 
     if (!std::filesystem::is_directory(fullSavePath)) {
         LogError().logErrorW(L"directory - (" + fullSavePath + L")");

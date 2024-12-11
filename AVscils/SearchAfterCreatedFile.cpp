@@ -1,4 +1,4 @@
-#include "DataPath.h"
+#include "DataWarcraft.h"
 #include <filesystem>
 #include <map>
 #include "SearchAfterCreatedFile.h"
@@ -8,7 +8,7 @@ std::wstring SearchAfterCreatedFile::searchAfterCreatedFile1() const
     // Use std::multimap to store directories with their modification times, automatically sorted
     std::multimap<std::filesystem::file_time_type, std::wstring> updated_dirs;
 
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(G_DATA_PATH.warPathDirectSave)) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(G_DATA_WARCRAFT.m_DataPath.warPathDirectSave)) {
         if (std::filesystem::is_directory(entry)) {
             auto last_write_time = std::filesystem::last_write_time(entry);
             if (last_write_time > start_time_) {
@@ -36,7 +36,7 @@ std::wstring SearchAfterCreatedFile::searchAfterCreatedFile1() const
 
 //#include "SFML/Graphics.hpp"
 //#include <Windows.h>
-//#include "DataPath.h"
+//#include "DataWarcraft.h"
 //#include <filesystem>
 //#include <string>
 //#include <vector>
@@ -47,7 +47,7 @@ std::wstring SearchAfterCreatedFile::searchAfterCreatedFile1() const
 //    std::vector<std::pair<std::wstring, std::filesystem::file_time_type>> updated_dirs;
 //    updated_dirs.reserve(4);
 //
-//    for (const auto& entry : std::filesystem::recursive_directory_iterator(G_DATA_PATH.warPathDirectSave)) {
+//    for (const auto& entry : std::filesystem::recursive_directory_iterator(G_DATA_WARCRAFT.m_DataPath.warPathDirectSave)) {
 //        if (std::filesystem::is_directory(entry)) {
 //            std::chrono::file_time last_write_time = std::filesystem::last_write_time(entry);
 //            if (last_write_time > start_time_) {

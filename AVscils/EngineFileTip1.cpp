@@ -6,14 +6,14 @@
 #include "getMapOpen.h"
 #include "LoadManager.h"
 #include "EngineFileTip1.h"
-#include "NewDirectory.h"
+#include "Options.h"
 #include "SkillsUpgradeStart.h"
 #include "HeroInfoEngine.h"
 #include "HeroInfoEngineFast.h"
 #include "ConfigMain.h"
 #include "ConfigMapsEngine.h"
 #include "LogError.h"
-#include "DataPath.h"
+#include "DataWarcraft.h"
 #include "DataMaps.h"
 
 void EngineFileTip1::engineFile()
@@ -50,16 +50,16 @@ void EngineFileTip1::engineTip1()
 
     LogError().logMessage("Герой: " + nameChar);
 
-    LoadManager LoadManager_(G_DATA_PATH.hWndWindowWar);
+    LoadManager LoadManager_(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
     LoadManager_.executeLoad(patc);
 
     //if (G_CONFIG_MAIN.optionsConfig.autoSkillsUpgrade) {
     //    const std::wstring& nameMaps(G_DATA_MAPS.m_NameMaps);
-    //    SkillsUpgradeStart ScilsUpgradeStart_(nameMaps, G_DATA_PATH.versionWarcraft);
+    //    SkillsUpgradeStart ScilsUpgradeStart_(nameMaps, G_DATA_WARCRAFT.m_DataPath.versionWarcraft);
     //    ScilsUpgradeStart_.skillsUpgradeStart();
     //}
     ConfigMapsEngine ConfigMapsEngine_(G_DATA_MAPS.m_NameMaps);
-    ConfigMapsEngine_.startGameCoutCmd(G_DATA_PATH.hWndWindowWar);
+    ConfigMapsEngine_.startGameCoutCmd(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
 }
 
 

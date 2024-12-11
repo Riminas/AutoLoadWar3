@@ -51,7 +51,7 @@
     <ClCompile Include="StringToString.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="NewDirectory.cpp">
+    <ClCompile Include="Options.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="NewPathSaveCode.cpp">
@@ -75,7 +75,7 @@
     <ClCompile Include="DataMaps.cpp">
       <Filter>Исходные файлы\Data</Filter>
     </ClCompile>
-    <ClCompile Include="DataPath.cpp">
+    <ClCompile Include="DataWarcraft.cpp">
       <Filter>Исходные файлы\Data</Filter>
     </ClCompile>
     <ClCompile Include="NewDataAll.cpp">
@@ -126,6 +126,9 @@
     <ClCompile Include="AutoUpdate.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="BoolVisibleMenu.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AVscils.rc">
@@ -165,7 +168,7 @@
     <ClInclude Include="StringToString.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="NewDirectory.h">
+    <ClInclude Include="Options.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="NewPathSaveCode.h">
@@ -195,7 +198,7 @@
     <ClInclude Include="DataMaps.h">
       <Filter>Файлы заголовков\Data</Filter>
     </ClInclude>
-    <ClInclude Include="DataPath.h">
+    <ClInclude Include="DataWarcraft.h">
       <Filter>Файлы заголовков\Data</Filter>
     </ClInclude>
     <ClInclude Include="CommandsUI_1.h">
@@ -243,11 +246,17 @@
     <ClInclude Include="HeroInfoEngineFast.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="AutoUpdate.h">
-      <Filter>Исходные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="json.hpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateRegionRect.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="BoolVisibleMenu.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoUpdate.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

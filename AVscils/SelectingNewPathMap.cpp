@@ -2,19 +2,20 @@
 #include "Global.h"
 #include <functional>
 #include <filesystem>
-#include "DataPath.h"
+#include "DataWarcraft.h"
 
 #include "ConfigMapsEngine.h"
 #include "DataMaps.h"
 #include <unordered_set>
 #include "LogError.h"
 #include "ConfigMain.h"
+#include "UpdateRegionRect.h"
 
 
 
 
 SelectingNewPathMap::SelectingNewPathMap()
-    : rootDirectory(L"CustomMapData", G_DATA_PATH.warPathDirectSave),
+    : rootDirectory(L"CustomMapData", G_DATA_WARCRAFT.m_DataPath.warPathDirectSave),
     scrollOffset(0),
     isScrolling(false),
     scrollSpeed(1.0f),
@@ -22,19 +23,12 @@ SelectingNewPathMap::SelectingNewPathMap()
 {
 }
 
-void SelectingNewPathMap::updateRegionFalse() {
-    HWND hwnd = G_WINDOW.getSystemHandle();
-
-    HRGN region = CreateRectRgn(0, 0, 0, 0); // Пустой регион для комбинирования
-    SetWindowRgn(hwnd, region, TRUE);
-}
-
 void SelectingNewPathMap::selectingNewPathMap() {
     // Открытие диалогового окна для выбора папки и получение пути к выбранной папке
     initialize();
-    updateRegionTrue();
+    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
     std::wstring folderPath = run();
-    updateRegionFalse();
+    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// перенести ближе к выводу
     // Проверка, пуст ли путь
     if (folderPath == L"Exit") {
         return;//2
@@ -55,7 +49,7 @@ void SelectingNewPathMap::selectingNewPathMap() {
     }
 
     G_CONFIG_MAPS.path = folderPath;
-    ConfigMapsEngine(G_DATA_MAPS.m_NameMaps).saveConfigMain();
+    ConfigMapsEngine(G_DATA_MAPS.m_NameMaps).saveConfigMaps();
     return; //1 Успешное выполнение
 }
 
@@ -81,7 +75,6 @@ inline void SelectingNewPathMap::initializeSprite(sf::Sprite& rectangle, const s
     rectangle.setTextureRect(rect);
     rectangle.setPosition(position);
 }
-
 
 void SelectingNewPathMap::initialize() {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
@@ -353,10 +346,10 @@ std::wstring SelectingNewPathMap::run() {
         if (IsWindowInFocus(hWndWindow)) {
 
             if (isActive == false) {
-                if (G_DATA_PATH.hWndWindowWar != hWndWindow)
+                if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow)
                     return std::wstring();
                 isActive = true;
-                updateRegionTrue();
+                UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
             }
 
             sf::Event event;
@@ -386,7 +379,7 @@ std::wstring SelectingNewPathMap::run() {
         }
         else {
             if (isActive) {
-                updateRegionFalse();
+                UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// перенести ближе к выводу
             }
             isActive = false;
             sf::Event event;
@@ -399,24 +392,6 @@ std::wstring SelectingNewPathMap::run() {
     }
     return std::wstring();
 }
-
-void SelectingNewPathMap::updateRegionTrue() {
-    HWND hwnd = G_WINDOW.getSystemHandle();
-
-    HRGN region = CreateRectRgn(0, 0, 0, 0); // Пустой регион для комбинирования
-    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-    int windowHeight = desktop.height * 2 / 3 + 50;
-    HRGN OptionBar = CreateRectRgn(
-        desktop.width / 2 - 256,
-        desktop.height / 2 - windowHeight / 2 - 48,
-        desktop.width / 2 + 256,
-        desktop.height / 2 + windowHeight / 2);
-    CombineRgn(region, region, OptionBar, RGN_OR);
-    DeleteObject(OptionBar);
-
-    SetWindowRgn(hwnd, region, TRUE);
-}
-
 
 void SelectingNewPathMap::toggleDirectory(DirectoryEntry& directory) {
     directory.isOpen = !directory.isOpen;

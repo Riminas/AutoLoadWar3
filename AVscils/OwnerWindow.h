@@ -18,7 +18,6 @@ public:
 
 	void activeGameTrue(const HWND& hWndWindow);
 	void activeGameFalse();
-	void updateRegion(const HWND& hWndWindow, const uint8_t t_NumMenu = 0) const;
 	void updateRect(const HWND& hWndWindow);
 	void UpdateWinow2();
 
@@ -44,7 +43,5 @@ private:
 	CoutGuide m_CoutGuide;
 
 	const int m_ConstSize{ 20 };
-	bool m_IsVisibleMenu = false;
-	bool m_IsVisibleMainMenu = true;
 };
 

@@ -23,7 +23,6 @@ public:
     void selectingNewPathMap();
 private:
     void initialize();
-    void updateRegionFalse();
     void initializeText(sf::Text& text, const std::wstring& textString, const sf::Vector2f& position, const sf::Color& color, const float& letterSpacing) const;
     void initializeRectangle(sf::RectangleShape& rectangle, const sf::Vector2f& size, const sf::Vector2f& position, const sf::Color& color) const;
     void initializeSprite(sf::Sprite& rectangle, const sf::Vector2f& position, const sf::IntRect& rect) const;
@@ -37,8 +36,6 @@ private:
     void handleScroll(sf::Event& event);
     void handleMouseMove(sf::Event& event);
 
-
-    void updateRegionTrue();
     void toggleDirectory(DirectoryEntry& directory);
     std::wstring newPath();
     // ѕќћ≈Ќя“№ посто€нный вызов фукции определени€ размеров монитора на positionLeftTop

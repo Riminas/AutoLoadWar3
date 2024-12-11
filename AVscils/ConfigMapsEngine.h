@@ -11,9 +11,9 @@ class ConfigMapsEngine {
 public:
     ConfigMapsEngine(const std::wstring& nameMaps);
     void initializeDefaultConfig();
-    bool loadConfigMain();
-    bool saveConfigMain();
-    void openConfigMain();
+    bool loadConfigMaps();
+    bool saveConfigMaps();
+    void openConfigMaps();
 
     void startGameCoutCmd(const HWND& hWndWindow);
 private:

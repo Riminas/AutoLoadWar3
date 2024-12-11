@@ -27,6 +27,7 @@
 #include <Windows.h>
 #include <thread>
 #include "FontLoader.h"
+#include "ConfigMain.h"
 
 class CoutGuide {
 private:
@@ -59,7 +60,12 @@ public:
     }
 
     void draw() {
-        m_Window.clear(sf::Color::White);
+        if (G_CONFIG_MAIN.optionsConfig.blackColor) {
+            m_Window.clear(sf::Color(45, 45, 48));
+        }
+        else {
+            m_Window.clear(sf::Color::White);
+        }
 
         // Отрисовка только тех строк, которые видимы в окне
         for (const auto& text : m_TextLines) {
@@ -156,7 +162,12 @@ private:
             textLine.setFont(G_FONT_STANDART);
             textLine.setString(line);
             textLine.setCharacterSize(14);
-            textLine.setFillColor(sf::Color::Black);
+            if (G_CONFIG_MAIN.optionsConfig.blackColor) {
+                textLine.setFillColor(sf::Color::White);
+            }
+            else {
+                textLine.setFillColor(sf::Color::Black);
+            }
             textLine.setPosition(10.f, yPosition);
             m_TextLines.push_back(textLine);
             yPosition += m_LineHeight; // Смещение по высоте для каждой строки

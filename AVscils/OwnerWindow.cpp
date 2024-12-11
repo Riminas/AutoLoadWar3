@@ -11,7 +11,7 @@
 #include "LoadManager.h"
 #include "EngineFileTip1.h"
 #include "getMapOpen.h"
-#include "NewDirectory.h"
+#include "Options.h"
 #include "SkillsUpgradeStart.h"
 #include "ConfigMaps.h"
 #include "ConfigMain.h"
@@ -22,6 +22,8 @@
 #include "CoutGuide.h"
 #include "SelectingNewPathMap.h"
 #include "LogError.h"
+#include "BoolVisibleMenu.h"
+#include "UpdateRegionRect.h"
 
 void OwnerWindow::initialize() {
 
@@ -51,12 +53,11 @@ void OwnerWindow::initialize() {
 void OwnerWindow::draw(const bool t_isVisibleLoad) {
 
     if (t_isVisibleLoad) {
-        LogError().logError("Thil_1_1");
         G_WINDOW.draw(m_SpriteIsLoad);
         return;
     }
 
-    if (!m_IsVisibleMainMenu) {
+    if (!G_BOOL_VISIBLE.isVisibleMainMenu) {
         G_WINDOW.draw(m_ShapeFalseVisibleMainMenu);
         return;
     }
@@ -71,7 +72,7 @@ void OwnerWindow::draw(const bool t_isVisibleLoad) {
     if (m_CoutGuide.isActive)
         m_CoutGuide.draw();
     
-    if (!m_IsVisibleMenu)
+    if (!G_BOOL_VISIBLE.isVisibleMenu)
         return;
 
     m_ButtonsMenu.draw(G_WINDOW);
@@ -84,45 +85,48 @@ void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, boo
     const int numButton = mouseButtonPressed(event, isWindow2Visible);
 
     if (numButton == -5) {
-        LoadManager(G_DATA_PATH.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAIN.playerName }, false);
+        LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAIN.playerName }, false);
     }
     else if (numButton == -4) {
-        m_IsVisibleMainMenu = true;
-        updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
+        G_BOOL_VISIBLE.isVisibleMainMenu = true;
+        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
     }
     else if (numButton == -3) {
-        m_IsVisibleMainMenu = false;
-        updateRegion(G_DATA_PATH.hWndWindowWar, 3u);
+        G_BOOL_VISIBLE.isVisibleMainMenu = false;
+        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 3);
     }
     else if (numButton == 0) {
-        m_IsVisibleMenu = !m_IsVisibleMenu;
-        updateRegion(G_DATA_PATH.hWndWindowWar);
+        G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
+        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);//нужно передать позицию а ообще нужно все осноные позиции при старте программы записать
     }
     else if (numButton == 2) {
-        if (G_CONFIG_MAPS.path.size() <= 1) {
+
+        LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAPS.mainConfig[1].cmd }, false);
+        // так как неработает убрано
+       /* if (G_CONFIG_MAPS.path.size() <= 1) {
             std::chrono::file_time now = std::chrono::file_clock::now();
             std::filesystem::file_time_type threshold_time = now - std::chrono::seconds(10);
 
-            LoadManager(G_DATA_PATH.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAPS.mainConfig[1].cmd }, false);
+            LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAPS.mainConfig[1].cmd }, false);
 
             Sleep(1000);
             G_CONFIG_MAPS.path = SearchAfterCreatedFile(threshold_time).searchAfterCreatedFile1();
-            size_t pos = G_CONFIG_MAPS.path.find(G_DATA_PATH.warPathDirectSave);
+            size_t pos = G_CONFIG_MAPS.path.find(G_DATA_WARCRAFT.m_DataPath.warPathDirectSave);
             if (pos != std::wstring::npos) {
-                G_CONFIG_MAPS.path.erase(pos, G_DATA_PATH.warPathDirectSave.length());
+                G_CONFIG_MAPS.path.erase(pos, G_DATA_WARCRAFT.m_DataPath.warPathDirectSave.length());
             }
-            ConfigMapsEngine(G_DATA_MAPS.m_NameMaps).saveConfigMain();
+            ConfigMapsEngine(G_DATA_MAPS.m_NameMaps).saveConfigMaps();
         }
         else {
-            LoadManager(G_DATA_PATH.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAPS.mainConfig[1].cmd }, false);
-        }
+            LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAPS.mainConfig[1].cmd }, false);
+        }*/
     }
     else if (numButton == 1 || numButton >= 3 && numButton < 10) {
-        LoadManager LoadManager_(G_DATA_PATH.hWndWindowWar);
+        LoadManager LoadManager_(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
         LoadManager_.sendLoadDataCommands({ G_CONFIG_MAPS.mainConfig[numButton - 1].cmd }, false);
     }
     else if (numButton >= 10 && numButton < 20) {
-        LoadManager LoadManager_(G_DATA_PATH.hWndWindowWar);
+        LoadManager LoadManager_(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
         LoadManager_.sendLoadDataCommands({ G_CONFIG_MAPS.usersConfig[numButton - 10].cmd }, false);
     }
 }
@@ -132,11 +136,11 @@ inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& ev
     sf::Vector2f mouseButton = { static_cast<float>(event.x), static_cast<float>(event.y) };
     if (m_Buttons.isClicked(mouseButton)) {
         mouseButton.x = mouseButton.x - m_ButtonsMenu.getPositionX();
-        if (mouseButton.x >= 0 && mouseButton.x < 19.84) { return 0; }
-        else if (mouseButton.x >= 19.84 && mouseButton.x < 39.68) { return 1; }
-        else if (mouseButton.x >= 39.68 && mouseButton.x < 59.52) { return 2; }
-        else if (mouseButton.x >= 59.52 && mouseButton.x < 79.36) { return 3; }
-        else if (mouseButton.x >= 79.36 && mouseButton.x < 99.2) { return 4; }
+        if (mouseButton.x < 19.84) { return 0; }
+        else if (mouseButton.x < 39.68) { return 1; }
+        else if (mouseButton.x < 59.52) { return 2; }
+        else if (mouseButton.x < 79.36) { return 3; }
+        else if (mouseButton.x < 99.2) { return 4; }
     }
     else if (m_ButtonsUsers[0].isClicked(mouseButton, G_CONFIG_MAPS.usersConfig[0].isVisibleButton)) { return 10; }
     else if (m_ButtonsUsers[1].isClicked(mouseButton, G_CONFIG_MAPS.usersConfig[1].isVisibleButton)) { return 11; }
@@ -151,71 +155,77 @@ inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& ev
 }
 
 void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event, bool isWindow2Visible[]) {
-    if (!m_IsVisibleMenu)
+    if (!G_BOOL_VISIBLE.isVisibleMenu)
         return;
 
     switch (mouseButtonMenuPressed(event, isWindow2Visible)) {
     case -2: return;
     case -1: G_WINDOW.close(); return;
     case 0: {//загрузка последнего сохранения
-        if (!G_CONFIG_MAPS.path.empty()) {
-            m_IsVisibleMenu = !m_IsVisibleMenu;
+        if (G_CONFIG_MAPS.path.size() >= 3) {
+            G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
             if (isWindow2Visible[0]) {
                 isWindow2Visible[0] = false;
             }
 
-            LogError().logError("Thil_1");
-            updateRegion(G_DATA_PATH.hWndWindowWar, 1u);
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 1);
 
-            LogError().logError("Thil_2");
             G_WINDOW.clear(sf::Color(255, 255, 255));
             draw(true);
             G_WINDOW.display();
-            LogError().logError("Thil_3");
 
             EngineFileTip1().engineFile();
-            LogError().logError("Thil_4");
 
-            updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
-            LogError().logError("Thil_5");
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
 
             if (G_CONFIG_MAIN.optionsConfig.autoExit)
                 G_WINDOW.close();
         }
         else {
-            LogError().logError("G_CONFIG_MAPS.path.empty()");
+            LogError().logErrorW(L"Путь до папки с сохранениями не указон. карта: " + G_DATA_MAPS.m_NameMapsFull);
+
             SelectingNewPathMap().selectingNewPathMap();
-            m_IsVisibleMenu = !m_IsVisibleMenu;
-            updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
+
+            if (G_CONFIG_MAPS.path.empty()) {
+                LogError().logMessageW(L"новый путь до папки с сохранениями: " + G_CONFIG_MAPS.path);
+            }
+            else {
+                LogError().logMessageW(L"Пользоатель невыбрал нувый путь до папки с сохранениями");
+            }
+
+            G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
         }
 
         break;
     }
     case 1: {//список героев
-        if (!G_CONFIG_MAPS.path.empty()) {
+        if (G_CONFIG_MAPS.path.size() >= 3) {
             isWindow2Visible[0] = !isWindow2Visible[0];
-            updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
         }
         else {
             SelectingNewPathMap().selectingNewPathMap();
-            m_IsVisibleMenu = !m_IsVisibleMenu;
-            updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
+            G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
         }
         break;
     }
     case 2: {//натройки
-        NewDataAll().newMaps(true, true);
-        m_IsVisibleMenu = !m_IsVisibleMenu;
+        Options().options();
+
+        G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
         isWindow2Visible[0] = false;
-        updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
+        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+
 
         if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
         else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
+
         break;
     }
     case 3: {//вывод гайда
         isWindow2Visible[0] = false;
-        updateRegion(G_DATA_PATH.hWndWindowWar, 0u);
+        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
         UpdateWinow2();
 
         //if (m_CoutGuide.isActive)
@@ -240,11 +250,11 @@ inline int OwnerWindow::mouseButtonMenuPressed(const sf::Event::MouseButtonEvent
         return -2;
 
     mouseButton.y = mouseButton.y - m_ButtonsMenu.getPositionY();
-    if (mouseButton.y >= 0 && mouseButton.y < 19.84) { return -1; }
-    else if (mouseButton.y >= 19.84 && mouseButton.y < 39.68) { return 3; }
-    else if (mouseButton.y >= 39.68 && mouseButton.y < 59.52) { return 2; }
-    else if (mouseButton.y >= 59.52 && mouseButton.y < 79.36) { return 1; }
-    else if (mouseButton.y >= 79.36 && mouseButton.y < 99.2) { return 0; }
+    if (mouseButton.y < 19.84) { return -1; }
+    else if (mouseButton.y < 39.68) { return 3; }
+    else if (mouseButton.y < 59.52) { return 2; }
+    else if (mouseButton.y < 79.36) { return 1; }
+    else if (mouseButton.y < 99.2) { return 0; }
 
     return -2;
 
@@ -271,21 +281,11 @@ static void setAlwaysOnTop(const HWND& hwnd)  {
 }
 
 void OwnerWindow::setupWindow() {
-    //G_WINDOW.create(sf::VideoMode(
-    //    sf::VideoMode::getDesktopMode().width - 2,
-    //    sf::VideoMode::getDesktopMode().height - 2),
-    //    "AutoLoads", sf::Style::None);
-
-    //HWND hwnd = G_WINDOW.getSystemHandle();
-
-    //SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
-    //SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    //SetLayeredWindowAttributes(hwnd, RGB(0, 255, 0), 0, LWA_COLORKEY);
 
     // Создаем окно без рамки
     G_WINDOW.create(sf::VideoMode(
-        sf::VideoMode::getDesktopMode().width-2,
-        sf::VideoMode::getDesktopMode().height-2),
+        sf::VideoMode::getDesktopMode().width - 2,
+        sf::VideoMode::getDesktopMode().height - 2),
         "AutoLoads", sf::Style::None);
 
     // Получаем хэндл окна SFML
@@ -310,136 +310,27 @@ void OwnerWindow::setupWindow() {
         }).detach();
 }
 
-void OwnerWindow::updateRegion(const HWND& hWndWindow, const uint8_t t_NumMenu) const {
-    HWND hwnd = G_WINDOW.getSystemHandle();
-
-    HRGN region = CreateRectRgn(0, 0, 0, 0); // Пустой регион для комбинирования
-
-    RECT rectClient;
-    RECT rectWindow;
-    if (GetClientRect(hWndWindow, &rectClient) && GetWindowRect(hWndWindow, &rectWindow)) {
-        const int width = rectClient.right - rectClient.left;
-        const int height = rectClient.bottom - rectClient.top;
-
-        switch (t_NumMenu) 
-        {
-            case 1:// сообщение об загрузке
-            {
-                const int widthCenter = width / 2;
-                const int heightCenter = height / 2;
-                HRGN loadBar = CreateRectRgn(
-                    widthCenter - 96,
-                    heightCenter - 70,
-                    widthCenter + 96,
-                    heightCenter - 32);
-                CombineRgn(region, region, loadBar, RGN_OR);
-                DeleteObject(loadBar);
-                break;
-            }
-            //case 2:// меню настроек
-            //{
-            //    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-            //    float windowHeight = desktop.height * 2.f / 3.f + 50;
-            //    HRGN OptionBar = CreateRectRgn(
-            //        static_cast<float>(desktop.width) / 2.f - 256.f,
-            //        static_cast<float>(desktop.height) / 2.f - windowHeight / 2.f-32,
-            //        static_cast<float>(desktop.width) / 2.f + 256.f,
-            //        static_cast<float>(desktop.height) / 2.f + windowHeight / 2.f);
-            //    CombineRgn(region, region, OptionBar, RGN_OR);
-            //    DeleteObject(OptionBar);
-            //    break;
-            //}
-            case 3://кнопка(показачать оновные кнопки)(разернуть)
-            {
-                RECT rectWindow;
-                GetWindowRect(hWndWindow, &rectWindow);
-                const int width = rectWindow.left + (rectClient.right - rectClient.left) / 2;
-                HRGN loadBar = CreateRectRgn(
-                    width - 5,
-                    rectWindow.top + 2,
-                    width + 5,
-                    rectWindow.top + 10);
-                CombineRgn(region, region, loadBar, RGN_OR);
-                DeleteObject(loadBar);
-                break;
-            }
-            case 0:
-            default:
-            {
-                const auto& cmd = G_CONFIG_MAPS.usersConfig;
-                const int sum = 20 * (cmd[0].isVisibleButton + cmd[1].isVisibleButton + cmd[2].isVisibleButton + cmd[3].isVisibleButton + cmd[4].isVisibleButton);
-                const int x = width / 2 - 50;
-                const int y = static_cast<int>((height / static_cast<float>(20)) * 15.75f - 9);
-                const int sumX = x + rectWindow.left;
-                const int sumY = y + rectWindow.top;
-
-                {
-                    HRGN mainHorizontalBar = CreateRectRgn(
-                        sumX - sum,
-                        sumY,
-                        sumX + 100,
-                        sumY + 20);
-                    CombineRgn(region, region, mainHorizontalBar, RGN_OR); // Добавляем горизонтальную часть
-                    DeleteObject(mainHorizontalBar);
-                }
-                {
-                    if (m_IsVisibleMenu) {
-                        HRGN mainVerticalBar = CreateRectRgn(
-                            sumX,
-                            sumY - 100,
-                            sumX + 20,
-                            sumY + 60);
-                        CombineRgn(region, region, mainVerticalBar, RGN_OR); // Добавляем вертикальную часть
-                        DeleteObject(mainVerticalBar);
-                    }
-                }
-                break;
-            }
-        };
-
-        SetWindowRgn(hwnd, region, TRUE);
-    }
-    else {
-        SetWindowRgn(hwnd, region, TRUE);
-    }
-}
-
 void OwnerWindow::activeGameTrue(const HWND& hWndWindow) {
     G_WINDOW.setFramerateLimit(20);
-    if(m_IsVisibleMainMenu)
-        updateRegion(hWndWindow);
+    if(G_BOOL_VISIBLE.isVisibleMainMenu)
+        UpdateRegionRect().updateRegion(hWndWindow, 0);
     else
-        updateRegion(hWndWindow, 3);
+        UpdateRegionRect().updateRegion(hWndWindow, 3);
 }
 
 void OwnerWindow::updateRect(const HWND& hWndWindow) {
-    RECT rectClient;
-    RECT rectWindow;
-    if (GetClientRect(hWndWindow, &rectClient) && GetWindowRect(hWndWindow, &rectWindow)) {
-        const int width = rectClient.right - rectClient.left;
-        const int height = rectClient.bottom - rectClient.top;
 
-        const float x = width / 2.f - 50;
-        const float y = (height / 20.0f) * 15.75f - 10;
+    const float x = G_DATA_WARCRAFT.m_DataRect.size.x / 2.f - 50;
+    const float y = (G_DATA_WARCRAFT.m_DataRect.size.y / 20.0f) * 15.75f - 10;
 
-        sf::Vector2f newPosition = sf::Vector2f(x, y);
-        const sf::Vector2f windowPoition = sf::Vector2f(static_cast<float>(rectWindow.left), static_cast<float>(rectWindow.top));
-        const sf::Vector2f windowWidthHeight = sf::Vector2f(static_cast<float>(width), static_cast<float>(height));
-        updatePosition(newPosition, windowPoition, windowWidthHeight);
-    }
+    sf::Vector2f newPosition = sf::Vector2f(x, y);
+    const sf::Vector2f windowPoition = sf::Vector2f(static_cast<float>(G_DATA_WARCRAFT.m_DataRect.position.x), static_cast<float>(G_DATA_WARCRAFT.m_DataRect.position.y));
+    const sf::Vector2f windowWidthHeight = sf::Vector2f(static_cast<float>(G_DATA_WARCRAFT.m_DataRect.size.x), static_cast<float>(G_DATA_WARCRAFT.m_DataRect.size.y));
+    updatePosition(newPosition, windowPoition, windowWidthHeight);
 }
 
 void OwnerWindow::activeGameFalse() {
-
-
-    // Получаем хэндл окна SFML
-    HWND hwnd = G_WINDOW.getSystemHandle();
-    HRGN region = CreateRectRgn(0, 0, 0, 0); // Пустой регион для комбинирования
-    SetWindowRgn(hwnd, region, TRUE);
-
-    G_WINDOW.clear(sf::Color(255, 255, 255));
-    G_WINDOW.display();
-
+    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);
     G_WINDOW.setFramerateLimit(3);
 }
 
@@ -484,6 +375,6 @@ void OwnerWindow::updatePosition(const sf::Vector2f& newPosition, const sf::Vect
 
 
 
-void OwnerWindow::setIsVisibleMenu(const bool t_IsVisibleMenu) { m_IsVisibleMenu = t_IsVisibleMenu; }
-const bool OwnerWindow::getIsVisibleMenu() const { return m_IsVisibleMenu; }
+void OwnerWindow::setIsVisibleMenu(const bool t_IsVisibleMenu) { G_BOOL_VISIBLE.isVisibleMenu = t_IsVisibleMenu; }
+const bool OwnerWindow::getIsVisibleMenu() const { return G_BOOL_VISIBLE.isVisibleMenu; }
 

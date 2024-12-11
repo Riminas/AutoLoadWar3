@@ -5,7 +5,7 @@
 #include "LoadDataFail.h"
 #include "StringConvector.h"
 #include "HeroInfoEngine.h"
-#include "DataPath.h"
+#include "DataWarcraft.h"
 #include "ConfigMapsEngine.h"
 #include "DataMaps.h"
 #include "LogError.h"
@@ -13,7 +13,7 @@
 
 bool HeroInfoEngine::retrieveHeroData(const std::wstring& saveCodePath) {
 
-    const std::wstring fullSavePath = G_DATA_PATH.warPathDirectSave + saveCodePath;
+    const std::wstring fullSavePath = G_DATA_WARCRAFT.m_DataPath.warPathDirectSave + saveCodePath;
     LogError().logError("Thil_3_1_1");
 
     if (!std::filesystem::is_directory(fullSavePath)) {
