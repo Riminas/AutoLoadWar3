@@ -30,6 +30,7 @@ void Engine::engine1() {
         hWndWindow = GetForegroundWindow();
 
         if (hWndWindow != nullptr && updateWindowVisibility(hWndWindow)) {
+            SetWindowPos(G_WINDOW.getSystemHandle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
             processEvents();//обработка взаимодейстия с кнопками задершка по фпс тут
             draw();//вывод
         }
@@ -382,7 +383,6 @@ void LaunchProgramWithAdminRights(LPCWSTR programPath) {
         }
     }
 }
-
 // Обработчик событий окна
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {

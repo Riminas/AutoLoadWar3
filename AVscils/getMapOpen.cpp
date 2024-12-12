@@ -2,6 +2,7 @@
 #include "getMapOpen.h"
 #include "LogError.h"
 #include <regex>
+#include <Windows.h>
 
 std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path) 
 {
@@ -25,8 +26,10 @@ std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path)
         for (const auto& entry : std::filesystem::recursive_directory_iterator(folder_path)) {
             if (std::filesystem::is_directory(entry.path())) {
                 continue; // Пропускаем директории, если это необходимо
-            }
+            }//каким метод в с++20 winApi можно узнать об том кто использует .txt файл и недает пользоаться другим процессам
+            //с++20 winApi как узнать мой процесс использует .txt файл или чужой
             const std::filesystem::path path = entry.path();
+            GetFileHandleState
             if (checkFile(path, m_nameFile))
                 break;
         }

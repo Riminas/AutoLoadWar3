@@ -22,7 +22,8 @@ void NewDataAll::newMaps()//должнен обновить информацию об карте и все что заиси
 	const std::wstring newNameMaps = getMapOpen().getMapOpen1(G_DATA_WARCRAFT.m_DataPath.warPathDirectMaps);
     
     LogError().logMessageW(L"newNameMaps: " + newNameMaps);
-    LogError().logMessageW(L"G_DATA_MAPS.m_NameMapsFull: " + G_DATA_MAPS.m_NameMapsFull);
+    LogError().logMessageW(L"NameMaps: " + G_DATA_MAPS.m_NameMaps);
+    LogError().logMessageW(L"NameMapsFull: " + G_DATA_MAPS.m_NameMapsFull);
 
     if (newNameMaps == L"error") { 
         G_DATA_MAPS.isNewMaps = false;

@@ -344,6 +344,7 @@ std::wstring SelectingNewPathMap::run() {
 
         //HWND hWndWindow = FindWindow(NULL, L"Warcraft III");
         if (IsWindowInFocus(hWndWindow)) {
+            SetWindowPos(G_WINDOW.getSystemHandle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
             if (isActive == false) {
                 if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow)

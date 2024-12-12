@@ -274,12 +274,27 @@ inline void OwnerWindow::initializeButtonsUsersDataCommands() {
     m_ButtonsUsers[4].initialize({ 640, 128, 128, 128 }, m_TextureButton);
 }
 
-
 // Функция для установки окна поверх всех других окон
 static void setAlwaysOnTop(const HWND& hwnd)  {
     SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 }
-
+//
+//LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+//    switch (uMsg) {
+//    case WM_ACTIVATE: {
+//        // Если окно теряет активное состояние, устанавливаем его на верхний уровень
+//        if (LOBYTE(wParam) == WA_INACTIVE) {
+//            setAlwaysOnTop(hwnd);
+//        }
+//        break;
+//    }
+//    case WM_DESTROY: {
+//        PostQuitMessage(0);
+//        return 0;
+//    }
+//    }
+//    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+//}
 void OwnerWindow::setupWindow() {
 
     // Создаем окно без рамки
@@ -300,14 +315,16 @@ void OwnerWindow::setupWindow() {
 
     //Устанавливаем окно поверх всех других окон
     setAlwaysOnTop(hwnd);
+    //SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+    //SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
 
-    // Запускаем таймер в отдельном потоке для периодического обновления окна
-    std::thread([hwnd]() {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            setAlwaysOnTop(hwnd);
-        }
-        }).detach();
+    //// Запускаем таймер в отдельном потоке для периодического обновления окна
+    //std::thread([hwnd]() {
+    //    while (true) {
+    //        std::this_thread::sleep_for(std::chrono::seconds(1));
+    //        setAlwaysOnTop(hwnd);
+    //    }
+    //    }).detach();
 }
 
 void OwnerWindow::activeGameTrue(const HWND& hWndWindow) {
@@ -316,6 +333,7 @@ void OwnerWindow::activeGameTrue(const HWND& hWndWindow) {
         UpdateRegionRect().updateRegion(hWndWindow, 0);
     else
         UpdateRegionRect().updateRegion(hWndWindow, 3);
+    m_CoutGuide.m_Window.setVisible(true);
 }
 
 void OwnerWindow::updateRect(const HWND& hWndWindow) {
@@ -331,6 +349,7 @@ void OwnerWindow::updateRect(const HWND& hWndWindow) {
 
 void OwnerWindow::activeGameFalse() {
     UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);
+    m_CoutGuide.m_Window.setVisible(false);
     G_WINDOW.setFramerateLimit(3);
 }
 
