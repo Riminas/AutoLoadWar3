@@ -149,17 +149,7 @@ void Engine::processEvents()
 }
 
 void Engine::draw(const bool isVisibleLoad) {
-    //G_WINDOW.clear(sf::Color(255, 255, 255));
-    // Очищаем буфер
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-     // Очищаем буфер
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-
-    // Включаем смешивание для прозрачности
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    G_WINDOW.clear(sf::Color(255, 255, 255));
 
     m_OwnerWindow.draw(isVisibleLoad);
 
@@ -168,9 +158,6 @@ void Engine::draw(const bool isVisibleLoad) {
         if (G_BOOL_VISIBLE.isVisibleEngineFile)
             m_EngineFileTip2.draw();
     }
-
-    // Принудительно завершаем все операции рендеринга
-    glFinish();
 
     G_WINDOW.display();
 }

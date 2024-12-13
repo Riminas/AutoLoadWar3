@@ -183,7 +183,7 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
             if (G_CONFIG_MAIN.optionsConfig.autoExit)
                 G_WINDOW.close();
         }
-        else {
+        else if (!G_DATA_MAPS.m_NameMaps.empty()) {
             LogError().logErrorW(L"Путь до папки с сохранениями не указон. карта: " + G_DATA_MAPS.m_NameMapsFull);
 
             SelectingNewPathMap().selectingNewPathMap();
@@ -205,7 +205,7 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
         if (G_CONFIG_MAPS.path.size() >= 3) {
             isWindow2Visible[0] = !isWindow2Visible[0];
         }
-        else {
+        else if (!G_DATA_MAPS.m_NameMaps.empty()) {
             SelectingNewPathMap().selectingNewPathMap();
             G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
             UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
@@ -359,9 +359,9 @@ static void setAlwaysOnTop(const HWND& hwnd)  {
     void OwnerWindow::setupWindow() {
     // Создаем окно без рамки
     G_WINDOW.create(sf::VideoMode(
-        sf::VideoMode::getDesktopMode().width - 2,
-        sf::VideoMode::getDesktopMode().height - 2),
-        "AutoLoads", sf::Style::None | sf::Style::Titlebar);
+        sf::VideoMode::getDesktopMode().width-2,
+        sf::VideoMode::getDesktopMode().height-2),
+        "AutoLoads", sf::Style::None);
 
     // Получаем хэндл окна SFML
     HWND hwnd = G_WINDOW.getSystemHandle();
@@ -372,18 +372,18 @@ static void setAlwaysOnTop(const HWND& hwnd)  {
     // Устанавливаем окно "поверх всех окон" без активации
     SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
-    SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT);
+    SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_NOACTIVATE );
 
     //Устанавливаем окно поверх всех других окон
     setAlwaysOnTop(hwnd);
 
     // Запускаем таймер в отдельном потоке для периодического обновления окна
-    std::thread([hwnd]() {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            setAlwaysOnTop(hwnd);
-        }
-        }).detach();
+    //std::thread([hwnd]() {
+    //    while (true) {
+    //        std::this_thread::sleep_for(std::chrono::seconds(1));
+    //        setAlwaysOnTop(hwnd);
+    //    }
+    //    }).detach();
 }
 
 void OwnerWindow::activeGameTrue(const HWND& hWndWindow) {
@@ -397,10 +397,10 @@ void OwnerWindow::activeGameTrue(const HWND& hWndWindow) {
 
 void OwnerWindow::updateRect(const HWND& hWndWindow) {
 
-    const float x = G_DATA_WARCRAFT.m_DataRect.size.x / 2.f - 50;
-    const float y = (G_DATA_WARCRAFT.m_DataRect.size.y / 20.0f) * 15.75f - 10;
+    const float x = G_DATA_WARCRAFT.m_DataRect.size.x / 2.f - 50;//-50-8
+    const float y = (G_DATA_WARCRAFT.m_DataRect.size.y / 20.0f) * 15.75f - 10;//-10-31
 
-    sf::Vector2f newPosition = sf::Vector2f(x/*-4*/, y/*-32*/);
+    sf::Vector2f newPosition = sf::Vector2f(x, y);
     const sf::Vector2f windowPoition = sf::Vector2f(static_cast<float>(G_DATA_WARCRAFT.m_DataRect.position.x), static_cast<float>(G_DATA_WARCRAFT.m_DataRect.position.y));
     const sf::Vector2f windowWidthHeight = sf::Vector2f(static_cast<float>(G_DATA_WARCRAFT.m_DataRect.size.x), static_cast<float>(G_DATA_WARCRAFT.m_DataRect.size.y));
     updatePosition(newPosition, windowPoition, windowWidthHeight);
