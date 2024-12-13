@@ -1,8 +1,5 @@
 {
     "files.associations": {
-        "xstring": "cpp",
-        "filesystem": "cpp",
-        "chrono": "cpp",
         "algorithm": "cpp",
         "any": "cpp",
         "array": "cpp",
@@ -10,6 +7,7 @@
         "bit": "cpp",
         "cctype": "cpp",
         "charconv": "cpp",
+        "chrono": "cpp",
         "clocale": "cpp",
         "cmath": "cpp",
         "codecvt": "cpp",
@@ -24,6 +22,7 @@
         "ctime": "cpp",
         "cwchar": "cpp",
         "exception": "cpp",
+        "filesystem": "cpp",
         "format": "cpp",
         "forward_list": "cpp",
         "fstream": "cpp",
@@ -76,6 +75,7 @@
         "xlocnum": "cpp",
         "xloctime": "cpp",
         "xmemory": "cpp",
+        "xstring": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp"

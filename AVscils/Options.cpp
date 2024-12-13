@@ -24,6 +24,10 @@
 Options::Options()
 {
     initializeWindow();
+    if (G_DATA_MAPS.m_NameMaps.empty()) {
+        numMenu = 3;
+        initializeSprite(topBackground, sf::Vector2f{ m_Rect[0], m_Rect[1] - 32 }, { 0, 352, 512, 32 });
+    }
 }
 
 inline void Options::initializeText(sf::Text& text, const std::wstring& textString, const sf::Vector2f& position, 
@@ -76,11 +80,10 @@ void Options::initializeWindow() {
     initializeSprite(topBackground, sf::Vector2f{ m_Rect[0], m_Rect[1] - 32 }, { 0, 320, 512, 32 });
     initializeSprite(bottomBackground, sf::Vector2f{ m_Rect[0],  m_Rect[3]  }, { 0, 416, 512, 32 });
     
-    
-    // РњРµРЅСЋ РЅР°СЃС‚СЂРѕР№РєРё РєРѕРјР°РЅРґ
+    // Меню настройки команд
     initializeDataCommands();
     
-    // РњРµРЅСЋ РЅР°СЃС‚СЂРѕРµРє
+    // Меню настроек
     initializeSettings();
 
     G_WINDOW.setFramerateLimit(60);
@@ -114,30 +117,30 @@ void Options::initializeDataCommands() {
 }
 
 void Options::initializeSettings() {
-    m_Options[0].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerKey, "РђРІС‚Рѕ РЅР°Р¶Р°С‚РёСЏ РєР»Р°РІРёС€", m_Texture);
+    m_Options[0].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerKey, L"Авто нажатие клавишь", m_Texture);
     m_Options[0].setPosition(m_Rect[0], m_Rect[1] + 10);
 
-    m_Options[1].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerMouse, "РђРІС‚Рѕ РЅР°Р¶Р°С‚РёСЏ РїСЂР°РІРѕР№ РєРЅРѕРїРєРё РјС‹С€Рё", m_Texture);
+    m_Options[1].initialize(G_CONFIG_MAIN.optionsConfig.autoClickerMouse, L"Авто нажатия правой кнопки мыши", m_Texture);
     m_Options[1].setPosition(m_Rect[0], m_Rect[1] + 42);
 
-    m_Options[2].initialize(G_CONFIG_MAIN.optionsConfig.blackColor, "РўРµРјРЅР°СЏ С‚РµРјР°", m_Texture);
+    m_Options[2].initialize(G_CONFIG_MAIN.optionsConfig.blackColor, L"Темная тема", m_Texture);
     m_Options[2].setPosition(m_Rect[0], m_Rect[1]  + 74);
 
-    m_Options[3].initialize(G_CONFIG_MAIN.optionsConfig.autoUpdate, "РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ", m_Texture);
+    m_Options[3].initialize(G_CONFIG_MAIN.optionsConfig.autoUpdate, L"Автоматическое обновление", m_Texture);
     m_Options[3].setPosition(m_Rect[0], m_Rect[1] + 106);
 
-    m_Options[4].initialize(G_CONFIG_MAIN.optionsConfig.writeLogs, "Р—Р°РїРёСЃСЊ Р»РѕРіРѕРІ", m_Texture);
+    m_Options[4].initialize(G_CONFIG_MAIN.optionsConfig.writeLogs, L"Запись логов", m_Texture);
     m_Options[4].setPosition(m_Rect[0], m_Rect[1] + 138);
 
-    m_Options[5].initialize(G_CONFIG_MAIN.optionsConfig.autoExit, "РђРІС‚Рѕ РІС‹С…РѕРґ РїРѕСЃР»Рµ Р±С‹СЃС‚СЂРѕР№ Р·Р°РіСЂСѓР·РєРё", m_Texture);
+    m_Options[5].initialize(G_CONFIG_MAIN.optionsConfig.autoExit, L"Авто выход после быстрой загрузки", m_Texture);
     m_Options[5].setPosition(m_Rect[0], m_Rect[1] + 170);
 }
 
 void Options::options() {
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//РїРµСЂРЅРµСЃС‚Рё РїРµСЂРµРґ РѕС‡РёСЃС‚РєРѕР№ СЌРєСЂР°РЅР°
-    // РћС‚РєСЂС‹С‚РёРµ РґРёР°Р»РѕРіРѕРІРѕРіРѕ РѕРєРЅР° РґР»СЏ РІС‹Р±РѕСЂР° РїР°РїРєРё Рё РїРѕР»СѓС‡РµРЅРёРµ РїСѓС‚Рё Рє РІС‹Р±СЂР°РЅРЅРѕР№ РїР°РїРєРµ
+    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
+    // Открытие диалогового окна для выбора папки и получение пути к выбранной папке
     std::wstring folderPath = run();
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// РїРµСЂРµРЅРµСЃС‚Рё Р±Р»РёР¶Рµ Рє РІС‹РІРѕРґСѓ
+    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// перенести ближе к выводу
 }
 
 void Options::drawWindow() {
@@ -183,12 +186,12 @@ std::wstring Options::handleMousePress(sf::Event& event) {
 
     if (topBackground.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
         const sf::Vector2f mouseButton2{ mouseButton.x - topBackground.getPosition().x, mouseButton.y - topBackground.getPosition().y };
-        if (numMenu == 3 &&/*mouseButton2.x >= 0 && */mouseButton2.x < 384) {// РЅР°СЃС‚СЂРѕРµРє РєР°СЂС‚С‹
+        if (!G_DATA_MAPS.m_NameMaps.empty() && numMenu == 3 &&/*mouseButton2.x >= 0 && */mouseButton2.x < 384) {// настроек карты
             initializeSprite(topBackground, sf::Vector2f{ m_Rect[0], m_Rect[1] - 32 }, { 0, 320, 512, 32 });
             numMenu = 2;
             return L"";
         }
-        else if (numMenu == 2 && /*mouseButton2.x >= 448 && */mouseButton2.x < 512) {// РЅР°СЃС‚СЂРѕРµРє
+        else if (numMenu == 2 && /*mouseButton2.x >= 448 && */mouseButton2.x < 512) {// настроек
             initializeSprite(topBackground, sf::Vector2f{ m_Rect[0], m_Rect[1] - 32 }, { 0, 352, 512, 32 });
             numMenu = 3;
             return L"";
@@ -215,7 +218,7 @@ std::wstring Options::handleMousePress(sf::Event& event) {
     }
         if(m_PathWar3.isClicked(mouseButton) && m_PathWar3.isClickedButton(mouseButton)) {
             SelectingNewPathMap().selectingNewPathMap();
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//РїРµСЂРЅРµСЃС‚Рё РїРµСЂРµРґ РѕС‡РёСЃС‚РєРѕР№ СЌРєСЂР°РЅР°
+            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
             m_PathWar3.setString(G_CONFIG_MAPS.path);
 }
 
@@ -224,7 +227,7 @@ std::wstring Options::handleMousePress(sf::Event& event) {
         //    if (mouseButton2.x >= 0 && mouseButton2.x < 32) {
         //        //updateConfigMaps();
         //        SelectingNewPathMap().selectingNewPathMap();
-        //        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//РїРµСЂРЅРµСЃС‚Рё РїРµСЂРµРґ РѕС‡РёСЃС‚РєРѕР№ СЌРєСЂР°РЅР°
+        //        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
         //    }
         //}
 
@@ -299,12 +302,12 @@ std::wstring Options::handleMousePress(sf::Event& event) {
 
 
 void Options::updateConfigMaps() {
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// РїРµСЂРµРЅРµСЃС‚Рё Р±Р»РёР¶Рµ Рє РІС‹РІРѕРґСѓ
+    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// перенести ближе к выводу
 
     const std::array<CmdEntry, 5> usersConfigLast = G_CONFIG_MAPS.usersConfig;
 
     ConfigMapsEngine ConfigMapsEngine_(G_DATA_MAPS.m_NameMaps);
-    ConfigMapsEngine_.openConfigMaps();//СѓР±СЂР°С‚СЊ РѕС‚РєСЂС‹С‚РёРµ Р±Р»РѕРєРЅРѕС‚Р°, РµСЃР»Рё РЅР°Р№РґСѓ Р·Р°РјСѓРЅСѓ РёР·Р·Р° Р±Р°РіР°(РїРµСЂРµС‚Р°СЃРєРёРІР°РЅСЏ Р±Р»РѕРєРЅРѕС‚Р° Р±Р°РіР°РµС‚ СЌРєСЂР°РЅ РёР·Р·Р° РѕР¶РёРґР°РЅРёСЏ Р·Р°РµСЂС€РµРЅРёСЏ СЂРµРґР°РєС‚РёСЂРѕР°РЅРёСЏ Р±Р»РѕРєРЅРѕС‚Р°)
+    ConfigMapsEngine_.openConfigMaps();
     ConfigMapsEngine_.loadConfigMaps();
 
     for (uint8_t i{ 0 }; CmdEntry& comand : G_CONFIG_MAPS.usersConfig) {
@@ -317,28 +320,28 @@ void Options::updateConfigMaps() {
     }
 
     initializeDataCommands();
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//РїРµСЂРЅРµСЃС‚Рё РїРµСЂРµРґ РѕС‡РёСЃС‚РєРѕР№ СЌРєСЂР°РЅР°
+    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
 }
 
 bool Options::IsWindowInFocus(const HWND& hWnd) const {
     if (hWnd == NULL) {
-        //std::wcout << L"РќРµС‚ Р°РєС‚РёРІРЅРѕРіРѕ РѕРєРЅР°!" << std::endl;
+        //std::wcout << L"Нет активного окна!" << std::endl;
         return 0;
     }
 
-    // Р‘СѓС„РµСЂ РґР»СЏ РёРјРµРЅРё РѕРєРЅР°
+    // Буфер для имени окна
     wchar_t windowTitle[256];
     
-    // РџРѕР»СѓС‡Р°РµРј РёРјСЏ РѕРєРЅР°
+    // Получаем имя окна
     int length = GetWindowText(hWnd, windowTitle, sizeof(windowTitle) / sizeof(windowTitle[0]));
     if (length == 0) {
-        //std::wcout << L"РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РёРјСЏ РѕРєРЅР°!" << std::endl;
+        //std::wcout << L"Не удалось получить имя окна!" << std::endl;
         return 0;
     }
 
-    // РЎСЂР°РІРЅРёРІР°РµРј РёРјСЏ РѕРєРЅР° СЃ РѕР¶РёРґР°РµРјС‹Рј
+    // Сравниваем имя окна с ожидаемым
     if (wcscmp(windowTitle, L"Warcraft III") != 0) {
-        //std::wcout << L"РРјСЏ Р°РєС‚РёРІРЅРѕРіРѕ РѕРєРЅР° РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ 'Warcraft III'" << windowTitle << std::endl;
+        //std::wcout << L"Имя активного окна не совпадает с 'Warcraft III'" << windowTitle << std::endl;
         return 0;
     }
 
@@ -352,7 +355,7 @@ std::wstring Options::run() {
     bool isActive = true;
     while (G_WINDOW.isOpen()) {
 
-        // РџРѕР»СѓС‡Р°РµРј РґРµСЃРєСЂРёРїС‚РѕСЂ Р°РєС‚РёРІРЅРѕРіРѕ РѕРєРЅР°
+        // Получаем дескриптор активного окна
         HWND hWndWindow = GetForegroundWindow();
 
         //HWND hWndWindow = FindWindow(NULL, L"Warcraft III");

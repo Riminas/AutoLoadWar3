@@ -247,7 +247,7 @@
     <ClInclude Include="NewDataAll.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="NewPathSaveCode.h" />
-    <ClInclude Include="OptionsUI.h" />
+    <ClInclude Include="OptionsUi.h" />
     <ClInclude Include="OwnerWindow.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CommandsUI_0.h" />

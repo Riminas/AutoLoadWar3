@@ -29,41 +29,43 @@ bool DataWarcraft::initializeDataWarcraft(const HWND hWndWindow)
     if(!m_DataRect.initializeDataRect(hWndWindow))
         return false;
 
+    m_DataPath.hWndWindowWar = hWndWindow;
     return true;
 }
 
 
 bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
 {
-    // РџРѕР»СѓС‡Р°РµРј РїСѓС‚СЊ Рє Р·Р°РїСѓС‰РµРЅРЅРѕРјСѓ РїСЂРѕС†РµСЃСЃСѓ Warcraft
+
+    // Получаем путь к запущенному процессу Warcraft
     const std::wstring pathWstr = openWarcraft3(hWndWindow);
     if (pathWstr.empty() || pathWstr == L"C:\\Windows\\explorer.exe")
         return false;
 
-    // РћРїСЂРµРґРµР»СЏРµРј РІРµСЂСЃРёСЋ РїРѕ РёРјРµРЅРё РёСЃРїРѕР»РЅСЏРµРјРѕРіРѕ С„Р°Р№Р»Р°
+    // Определяем версию по имени исполняемого файла
     std::filesystem::path filePath(pathWstr);
     if (!std::filesystem::exists(filePath) || !std::filesystem::is_regular_file(filePath)) {
-        LogError().logError("РќРµ СѓРґР°Р»РѕСЃСЊ РѕРїСЂРµРґРµР»РёС‚СЊ РІРµСЂСЃРёСЋ Warcraft");
+        LogError().logError("Не удалось определить версию Warcraft");
         return false;
     }
 
     std::wstring filename = filePath.filename().wstring();
     if (filename == L"Warcraft III.exe") {
-        LogError().logMessage("Р’РµСЂСЃРёСЏ Warcraft 1.36 " + filePath.string());
+        LogError().logMessage("Версия Warcraft 1.36 " + filePath.string());
         versionWarcraft = 0;
     }
     else if (filename == L"war3.exe") {
-        LogError().logMessage("Р’РµСЂСЃРёСЏ Warcraft 1.26 " + filePath.string());
+        LogError().logMessage("Версия Warcraft 1.26 " + filePath.string());
         versionWarcraft = 1;
     }
     else {
-        LogError().logError("РќРµРёР·РІРµСЃС‚РЅР°СЏ РІРµСЂСЃРёСЏ Warcraft");
+        LogError().logError("Неизвестная версия Warcraft");
         versionWarcraft = -1;
         return false;
     }
 
     {//1.36
-        // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїСѓС‚Рё Рє РїР°РїРєРµ СЃ РєР°СЂС‚Р°РјРё
+        // Инициализация пути к папке с картами
         PWSTR documentsPath = nullptr;
         if (FAILED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &documentsPath))) {
             LogError().logError("SHGetKnownFolderPath()");
@@ -77,7 +79,7 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
         if (std::filesystem::exists(basePath)) {
             if(versionWarcraft == 0)
                 warPathDirectMaps = basePath + L"\\Maps";
-            warPathDirectSave[0] = basePath + L"\\Warcraft III\\CustomMapData";
+            warPathDirectSave[0] = basePath + L"\\CustomMapData";
         }
     }
 
@@ -88,11 +90,18 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
                 pathFile << filePath.wstring();
                 pathFile.close();
             }
-            warPathDirectSave[1] = filePath.wstring();
-            warPathDirectMaps += warPathDirectSave[1] + L"\\Maps";
+
+            size_t pos = filePath.wstring().find_last_of(L"\\");
+            if (pos != std::wstring::npos) {
+                warPathDirectSave[1] = filePath.wstring().substr(0, pos);
+                warPathDirectMaps = warPathDirectSave[1] + L"\\Maps";
+            }
+            if (!std::filesystem::exists(warPathDirectSave[1])) {
+                warPathDirectSave[1].clear();
+            }
         }
         else if (versionWarcraft == 0) {
-            // Р—Р°РіСЂСѓР¶Р°РµРј РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїСѓС‚Рё РёР· С„Р°Р№Р»Р° РєРѕРЅС„РёРіСѓСЂР°С†РёРё
+            // Загружаем дополнительные пути из файла конфигурации
             std::wifstream pathFile(L"DataAutoLoad\\PathWar3.dat");
             if (pathFile.is_open()) {
                 std::wstring line;
@@ -113,13 +122,12 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
 
     
 
-    // Р›РѕРіРёСЂСѓРµРј РІСЃРµ РїСѓС‚Рё
+    // Логируем все пути
     LogError().logMessageW(L"------------------------------------------------------------------------");
-    LogError().logMessageW(L"РџСѓС‚СЊ РґРѕ РїР°РїРєРё СЃ РєР°СЂС‚Р°РјРё: (" + warPathDirectMaps + L")");
-    LogError().logMessageW(L"РџСѓС‚СЊ РґРѕ РїР°РїРєРё СЃ СЃРѕС…СЂР°РЅРµРЅРёСЏРјРё 1.36: (" + warPathDirectSave[0] + L")");
-    LogError().logMessageW(L"РџСѓС‚СЊ РґРѕ РїР°РїРєРё СЃ СЃРѕС…СЂР°РЅРµРЅРёСЏРјРё 1.26: (" + warPathDirectSave[1] + L")");
+    LogError().logMessageW(L"Путь до папки с картами: (" + warPathDirectMaps + L")");
+    LogError().logMessageW(L"Путь до папки с сохранениями 1.36: (" + warPathDirectSave[0] + L")");
+    LogError().logMessageW(L"Путь до папки с сохранениями 1.26: (" + warPathDirectSave[1] + L")");
 
-    hWndWindowWar = hWndWindow;
     return true;
 }
 
@@ -136,7 +144,7 @@ std::wstring DataWarcraft::DataPath::openWarcraft3(const HWND hWndWindow) {
             return path;
         }
 
-        LogError().logError("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ РїСЂРѕС†РµСЃСЃ: " + std::to_string(GetLastError()));
+        LogError().logError("Не удалось открыть процесс: " + std::to_string(GetLastError()));
         return L"";
     }
 
@@ -146,7 +154,7 @@ std::wstring DataWarcraft::DataPath::openWarcraft3(const HWND hWndWindow) {
         return processName;
     }
     else {
-        LogError().logErrorW(L"РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РёРјСЏ РїСЂРѕС†РµСЃСЃР°: " + std::to_wstring(GetLastError()));
+        LogError().logErrorW(L"Не удалось получить имя процесса: " + std::to_wstring(GetLastError()));
     }
 
     CloseHandle(hProcess);
@@ -162,10 +170,10 @@ bool DataWarcraft::DataRect::initializeDataRect(const HWND hWndWindow)
     if(!GetClientRect(hWndWindow, &rectClient)/* || !GetWindowRect(hWndWindow, &rectWindow)*/)
         return false;
 
-    size.x = static_cast<float>(rectClient.right - rectClient.left);
-    size.y = static_cast<float>(rectClient.bottom - rectClient.top);
+    size.x = rectClient.right - rectClient.left;
+    size.y = rectClient.bottom - rectClient.top;
 
-    if (size.x < 300 || size.y < 300)// РџСЂРѕРІРµСЂРєР° РјРёРЅРёРјР°Р»СЊРЅРѕРіРѕ СЂР°Р·РјРµСЂР° РѕРєРЅР°
+    if (size.x < 300 || size.y < 300)// Проверка минимального размера окна
         return false;
 
     position.x = rectClient.left;

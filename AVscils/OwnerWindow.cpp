@@ -24,6 +24,8 @@
 #include "LogError.h"
 #include "BoolVisibleMenu.h"
 #include "UpdateRegionRect.h"
+#include <sfml/OpenGL.hpp>
+#include <gl/GL.h>
 
 void OwnerWindow::initialize() {
 
@@ -295,36 +297,93 @@ static void setAlwaysOnTop(const HWND& hwnd)  {
 //    }
 //    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 //}
-void OwnerWindow::setupWindow() {
+    //void OwnerWindow::setupWindow() {
+    //    // Настройки OpenGL
+    //    sf::ContextSettings settings;
+    //    settings.depthBits = 24;
+    //    settings.stencilBits = 8;
+    //    settings.antialiasingLevel = 4;
+    //    settings.majorVersion = 3;
+    //    settings.minorVersion = 0;
+    //    settings.attributeFlags = sf::ContextSettings::Default;
 
+    //    // Создаем окно с поддержкой OpenGL
+    //    G_WINDOW.create(sf::VideoMode(
+    //        sf::VideoMode::getDesktopMode().width - 2,
+    //        sf::VideoMode::getDesktopMode().height - 2),
+    //        "AutoLoads",
+    //        sf::Style::None,
+    //        settings);
+
+    //    HWND hwnd = G_WINDOW.getSystemHandle();
+    //    activeGameFalse();
+
+    //    // Включаем вертикальную синхронизацию
+    //    G_WINDOW.setVerticalSyncEnabled(true);
+
+    //    G_WINDOW.setPosition(sf::Vector2i(1, 1));
+
+    //    // Настраиваем стили окна
+    //    SetWindowLongPtr(hwnd, GWL_EXSTYLE,
+    //        WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST | WS_EX_COMPOSITED);
+    //    // Устанавливаем прозрачность
+    //    SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
+
+    //    // Инициализация OpenGL состояний
+    //    glEnable(GL_BLEND);
+    //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //    // Устанавливаем viewport
+    //    GLint viewport[4];
+    //    glGetIntegerv(GL_VIEWPORT, viewport);
+    //    glViewport(0, 0, viewport[2], viewport[3]);
+
+    //    // Настраиваем проекцию
+    //    glMatrixMode(GL_PROJECTION);
+    //    glLoadIdentity();
+    //    glOrtho(0, viewport[2], viewport[3], 0, -1, 1);
+    //    glMatrixMode(GL_MODELVIEW);
+    //    glLoadIdentity();
+
+    //    // Поток для поддержания окна поверх других
+    //    std::thread([hwnd]() {
+    //        while (true) {
+    //            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    //            SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+    //            InvalidateRect(hwnd, NULL, FALSE);
+    //            UpdateWindow(hwnd);
+    //        }
+    //        }).detach();
+    //}
+
+    void OwnerWindow::setupWindow() {
     // Создаем окно без рамки
     G_WINDOW.create(sf::VideoMode(
         sf::VideoMode::getDesktopMode().width - 2,
         sf::VideoMode::getDesktopMode().height - 2),
-        "AutoLoads", sf::Style::None);
+        "AutoLoads", sf::Style::None | sf::Style::Titlebar);
 
     // Получаем хэндл окна SFML
     HWND hwnd = G_WINDOW.getSystemHandle();
     activeGameFalse();
 
     G_WINDOW.setPosition(sf::Vector2i(1, 1));
+    UpdateWindow(hwnd);
     // Устанавливаем окно "поверх всех окон" без активации
     SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-    // Применяем WS_EX_NOACTIVATE для предотвращения активации
-    SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+
+    SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT);
 
     //Устанавливаем окно поверх всех других окон
     setAlwaysOnTop(hwnd);
-    //SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-    //SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
 
-    //// Запускаем таймер в отдельном потоке для периодического обновления окна
-    //std::thread([hwnd]() {
-    //    while (true) {
-    //        std::this_thread::sleep_for(std::chrono::seconds(1));
-    //        setAlwaysOnTop(hwnd);
-    //    }
-    //    }).detach();
+    // Запускаем таймер в отдельном потоке для периодического обновления окна
+    std::thread([hwnd]() {
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            setAlwaysOnTop(hwnd);
+        }
+        }).detach();
 }
 
 void OwnerWindow::activeGameTrue(const HWND& hWndWindow) {
@@ -341,7 +400,7 @@ void OwnerWindow::updateRect(const HWND& hWndWindow) {
     const float x = G_DATA_WARCRAFT.m_DataRect.size.x / 2.f - 50;
     const float y = (G_DATA_WARCRAFT.m_DataRect.size.y / 20.0f) * 15.75f - 10;
 
-    sf::Vector2f newPosition = sf::Vector2f(x, y);
+    sf::Vector2f newPosition = sf::Vector2f(x/*-4*/, y/*-32*/);
     const sf::Vector2f windowPoition = sf::Vector2f(static_cast<float>(G_DATA_WARCRAFT.m_DataRect.position.x), static_cast<float>(G_DATA_WARCRAFT.m_DataRect.position.y));
     const sf::Vector2f windowWidthHeight = sf::Vector2f(static_cast<float>(G_DATA_WARCRAFT.m_DataRect.size.x), static_cast<float>(G_DATA_WARCRAFT.m_DataRect.size.y));
     updatePosition(newPosition, windowPoition, windowWidthHeight);

@@ -31,27 +31,10 @@ void EngineFileTip1::engineFile()
 
 void EngineFileTip1::engineTip1()
 {
-    std::wstring patc;
-    std::string nameChar;
-
-    if (G_HERO_INFO.size() > 1) {
-        auto latestTime = std::filesystem::file_time_type();
-        for (const auto& p : G_HERO_INFO) {
-            if (p.latestTime > latestTime) {
-                latestTime = p.latestTime;
-                patc = p.path;
-                nameChar = p.nameChar;
-            }
-        }
-    }
-    else{
-        patc = G_HERO_INFO[0].path;// patc = G_HERO_INFO.front().path
-    }
-
-    LogError().logMessage("Герой: " + nameChar);
+    LogError().logMessage("Герой: " + G_HERO_INFO[0].nameChar);
 
     LoadManager LoadManager_(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
-    LoadManager_.executeLoad(patc);
+    LoadManager_.executeLoad(G_HERO_INFO[0].path);
 
     //if (G_CONFIG_MAIN.optionsConfig.autoSkillsUpgrade) {
     //    const std::wstring& nameMaps(G_DATA_MAPS.m_NameMaps);

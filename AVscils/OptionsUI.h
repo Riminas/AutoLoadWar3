@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Global.h"
+#include <string>
+#include "StringConvector.h"
 
 // Структура для хранения данных
 class OptionsUI {
@@ -10,7 +12,7 @@ private:
     bool m_Value{ 0 };
 public:
     // Конструктор для инициализации данных
-    void initialize(const bool t_Value, const std::string& str, const sf::Texture& texture)
+    void initialize(const bool t_Value, const std::wstring str, const sf::Texture& texture)
     {
         m_Value = t_Value;
 

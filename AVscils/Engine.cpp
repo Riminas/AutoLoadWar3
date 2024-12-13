@@ -19,6 +19,9 @@
 #include "FontLoader.h"
 #include "UpdateRegionRect.h"
 
+#include <SFML/OpenGL.hpp>
+#include <gl/GL.h>
+
 NOTIFYICONDATA nid;
 
 void Engine::engine1() {
@@ -30,9 +33,8 @@ void Engine::engine1() {
         hWndWindow = GetForegroundWindow();
 
         if (hWndWindow != nullptr && updateWindowVisibility(hWndWindow)) {
-            SetWindowPos(G_WINDOW.getSystemHandle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-            processEvents();//��������� ������������� � �������� �������� �� ��� ���
-            draw();//�����
+            processEvents();//       
+            draw();//
         }
         else {
             sf::Event event;
@@ -42,19 +44,19 @@ void Engine::engine1() {
         }
     }
 
-     //������� ������ �� ���� ��� ��������
+     //     
     Shell_NotifyIcon(NIM_DELETE, &nid);
 }
 
 bool Engine::updateWindowVisibility(const HWND& hWndWindow)
 {
-    if (IsWarcraftInFocus(hWndWindow)) {// ���������� ��� ���� � ��������� Warcraft III
+    if (IsWarcraftInFocus(hWndWindow)) {//      Warcraft III
         if (m_IsVisibleOwnerWindow) return true;
 
-        if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow) {// ���� ������� ���� ��������� ����������� ��� ������� ������
-            // ������������� ������� ��� ������ � ������� ����
+        if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow) {//        
+            //       
             if (!NewDataAll().newWarcraft(hWndWindow)) {
-                G_WINDOW.setVisible(false);// ���� ������ �����������, ������ ���� ���������
+                G_WINDOW.setVisible(false);//   ,   
                 m_IsVisibleOwnerWindow = false;
                 return false;
             }
@@ -64,21 +66,21 @@ bool Engine::updateWindowVisibility(const HWND& hWndWindow)
                 m_EngineFileTip2.updateRect(hWndWindow, false);
         }
         //G_DATA_ALL.isMapsStart = true;
-        NewDataAll().newMaps();//��������� � ����� ��� ����������� ����� ����� ��� ���
+        NewDataAll().newMaps();//        
 
-        // ���������� ������� ��������� ���� ���������
+        //     
         m_OwnerWindow.activeGameTrue(hWndWindow);
 
-        {//��������� �� updateWindowVisibility(Visibility)
-            // ���������, ���� �� ����� ���������� ��� ����
+        {//  updateWindowVisibility(Visibility)
+            // ,      
             if (G_DATA_MAPS.m_IsNewInfo) {
-                // ���� ���� ����� ����������, ���������� ��������� ���������� ���� � ��������� ������ ����
+                //    ,        
                 G_BOOL_VISIBLE.isVisibleEngineFile = false;
                 G_DATA_MAPS.m_IsNewInfo = false;
                 G_CONFIG_MAPS.path = G_CONFIG_MAPS.lastPath;
             }
         }
-        // ���������� ������� ��������� ��� ���������
+        //     
         m_IsVisibleOwnerWindow = true;
 
         return true;
@@ -101,7 +103,7 @@ bool Engine::updateWindowVisibility(const HWND& hWndWindow)
 //
 //    wchar_t windowTitle[256];
 //
-//    // �������� ��� ���� � ����� ��������� �� ���������� � "Warcraft III"
+//    //          "Warcraft III"
 //    if (GetWindowTextW(hWnd, windowTitle, (int)std::size(windowTitle)) > 0 &&
 //        wcscmp(windowTitle, L"Warcraft III") == 0) {
 //        return true;
@@ -112,13 +114,13 @@ bool Engine::updateWindowVisibility(const HWND& hWndWindow)
 bool Engine::IsWarcraftInFocus(const HWND& hWnd) {
     wchar_t windowTitle[256];
 
-    // �������� ��� ����
+    //   
     int length = GetWindowText(hWnd, windowTitle, sizeof(windowTitle) / sizeof(windowTitle[0]));
     if (length == 0) {
         return 0;
     }
 
-    // ���������� ��� ���� � ���������
+    //     
     if (wcscmp(windowTitle, L"Warcraft III") != 0) {
         return 0;
     }
@@ -141,14 +143,23 @@ void Engine::processEvents()
     if (m_OwnerWindow.getCoutGuideActive())
         m_OwnerWindow.processingGuide();
     
-    // �������� ��������� ������ ��� ����-�������
     if (G_CONFIG_MAIN.optionsConfig.autoClickerKey || G_CONFIG_MAIN.optionsConfig.autoClickerMouse) {
-        checkKeyStates();
+        checkInputState();
     }
 }
 
 void Engine::draw(const bool isVisibleLoad) {
-    G_WINDOW.clear(sf::Color(255, 255, 255));
+    //G_WINDOW.clear(sf::Color(255, 255, 255));
+    // Очищаем буфер
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+     // Очищаем буфер
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+
+    // Включаем смешивание для прозрачности
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_OwnerWindow.draw(isVisibleLoad);
 
@@ -157,6 +168,9 @@ void Engine::draw(const bool isVisibleLoad) {
         if (G_BOOL_VISIBLE.isVisibleEngineFile)
             m_EngineFileTip2.draw();
     }
+
+    // Принудительно завершаем все операции рендеринга
+    glFinish();
 
     G_WINDOW.display();
 }
@@ -226,48 +240,47 @@ bool Engine::initialize() {
     return false;
 }
 
-void Engine::checkKeyStates() {
+void Engine::checkInputState() {
     auto now = std::chrono::high_resolution_clock::now();
 
     // работает только если Warcraft 1.26
     if (G_CONFIG_MAIN.optionsConfig.autoClickerKey && G_DATA_WARCRAFT.m_DataPath.versionWarcraft == 1) {
-        // Check keys 0-9 (0x30-0x39), A-Z (0x41-0x5A), num0-num9 (0x60-0x69), and right mouse button (VK_RBUTTON)
-        static const std::array<int, 46> keysToCheck = {
-            0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, // 0-9
-            0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, // num0-num9
-            0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, // A-J
-            0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, // K-T
-            0x55, 0x56, 0x57, 0x58, 0x59, 0x5A // U-Z
+        static const std::array<int, 46> inputCodes = {
+            0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
+            0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
+            0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A,
+            0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54,
+            0x55, 0x56, 0x57, 0x58, 0x59, 0x5A
         };
 
-        for (int keyNum : keysToCheck) {
-            if (GetAsyncKeyState(keyNum) & 0x8000) { // ������� ������
-                checkKeyPress(keyNum, now);
+        for (int inputCode : inputCodes) {
+            if (GetAsyncKeyState(inputCode) & 0x8000) {
+                processInput(inputCode, currentTime);
                 return;
             }
-            else if (keyNum == keyPressId) {
-                keyPressId = -1;
+            else if (inputCode == m_lastInputCode) {
+                m_lastInputCode = -1;
             }
         }
     }
 
     if (G_CONFIG_MAIN.optionsConfig.autoClickerMouse) {
-        // �������� ������ ������ ���� (VK_RBUTTON)
-        if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)// ������ ������ ���� ������
-            checkMousePress(now);
-        else if (VK_RBUTTON == keyPressId) {
-            keyPressId = -1;
+        //     (VK_RBUTTON)
+        if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)//    
+            checkMouseInput(now);
+        else if (VK_RBUTTON == m_lastInputCode) {
+            m_lastInputCode = -1;
         }
     }
 }
 
-void Engine::checkKeyPress(int keyNum, auto& now) {
-    if (keyPressId != keyNum) {//���� ������ ����� ��� ���� ������
-        keyPressId = keyNum;
-        keyPressClock = now;
+void Engine::processInput(int keyNum, auto& now) {
+    if (m_lastInputCode != keyNum) {//     
+        m_lastInputCode = keyNum;
+        currentTime = now;
     }
     else {
-        int64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressClock).count();//�������� ������� ������ ������� � �������
+        int64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - currentTime).count();//     
         if (elapsed >= 250) {
             key key_;
             while (GetAsyncKeyState(keyNum) & 0x8000) {
@@ -275,19 +288,19 @@ void Engine::checkKeyPress(int keyNum, auto& now) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(2));
             }
 
-            keyPressId = -1;
+            m_lastInputCode = -1;
             return;
         }
     }
 }
 
-void Engine::checkMousePress(auto& now) {
-    if (keyPressId != VK_RBUTTON) {
-        keyPressId = VK_RBUTTON;
-        keyPressClock = now;
+void Engine::checkMouseInput(auto& now) {
+    if (m_lastInputCode != VK_RBUTTON) {
+        m_lastInputCode = VK_RBUTTON;
+        currentTime = now;
     }
     else {
-        int64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressClock).count();
+        int64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - currentTime).count();
         if (elapsed >= 400) {
             key key_;
             while (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
@@ -295,50 +308,31 @@ void Engine::checkMousePress(auto& now) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
 
-            key_.keyVK(VK_RBUTTON, false); // ���������� ������ ������ ����
-            keyPressId = -1;
+            key_.keyVK(VK_RBUTTON, false); //    
+            m_lastInputCode = -1;
             return;
         }
     }
 }
 
-// ��������� ��� ������ � ����
 #define WM_TRAYICON (WM_USER + 1)
 #define ID_TRAY_APP_ICON 5000
 #define ID_TRAY_EXIT 3000
 #define ID_TRAY_WARCRAFT 4000
 #define ID_WARCRAFT_MENU_START 5000
 
-// ���������� ����������
 HWND hWnd;
-std::map<std::wstring, std::wstring> buttonPaths; // ��� �������� ���� ������ � ����� ��������
+std::map<std::wstring, std::wstring> buttonPaths;
 
-bool LoadButtonData(const wchar_t* filename) {
-    HANDLE hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (hFile == INVALID_HANDLE_VALUE) {
+bool LoadConfigData(const wchar_t* filename) {
+    std::ifstream file(filename, std::ios::binary);
+    if (!file.is_open()) {
         return false;
     }
 
-    DWORD fileSize = GetFileSize(hFile, NULL);
-    if (fileSize == INVALID_FILE_SIZE || fileSize == 0) {
-        CloseHandle(hFile);
-        return false;
-    }
-
-    char* buffer = new char[fileSize + 1];
-    DWORD bytesRead;
-    BOOL result = ReadFile(hFile, buffer, fileSize, &bytesRead, NULL);
-    CloseHandle(hFile);
-
-    if (!result || bytesRead == 0) {
-        delete[] buffer;
-        return false;
-    }
-
-    buffer[bytesRead] = '\0'; // ��������� null-����������
-
-    std::string content(buffer);
-    delete[] buffer;
+    std::string content((std::istreambuf_iterator<char>(file)),
+        std::istreambuf_iterator<char>());
+    file.close();
 
     StringConvector StringConvector_;
     std::wstring wcontent = StringConvector_.utf8_to_utf16(content);
@@ -354,13 +348,12 @@ bool LoadButtonData(const wchar_t* filename) {
         size_t bracketPos = line.find(L']');
         if (bracketPos != std::wstring::npos) {
             std::wstring buttonName = line.substr(1, bracketPos - 1);
-            std::wstring programPath = line.substr(bracketPos + 2); // ���������� "] "
+            std::wstring programPath = line.substr(bracketPos + 2);
             if (programPath[programPath.size() - 1] == L'\r')
                 programPath.erase(programPath.size() - 1);
 
-            // ���������, ���������� �� programPath �� ����� A-Z ��� a-z
             if (!programPath.empty() && !iswalpha(programPath[0])) {
-                programPath.erase(0, 1); // ������� ������ ������
+                programPath.erase(0, 1);
             }
 
             buttonPaths[buttonName] = programPath;
@@ -370,7 +363,6 @@ bool LoadButtonData(const wchar_t* filename) {
     return !buttonPaths.empty();
 }
 
-// ������� ������� ��������� � ������� ��������������
 void LaunchProgramWithAdminRights(LPCWSTR programPath) {
     SHELLEXECUTEINFO sei = { sizeof(SHELLEXECUTEINFO) };
     sei.lpVerb = L"runas";
@@ -380,44 +372,39 @@ void LaunchProgramWithAdminRights(LPCWSTR programPath) {
     if (!ShellExecuteEx(&sei)) {
         DWORD dwError = GetLastError();
         if (dwError == ERROR_CANCELLED) {
-            MessageBox(NULL, L"������ ��������� ��� ������� �������������.", L"����������", MB_OK | MB_ICONINFORMATION);
+            MessageBox(NULL, L"    .", L"", MB_OK | MB_ICONINFORMATION);
         }
     }
 }
-// ���������� ������� ����
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_TRAYICON:
         if (lParam == WM_RBUTTONUP) {
-            // ������� ����������� ����
             HMENU hMenu = CreatePopupMenu();
 
-            // ���������, ��������� �� ������ �� StartPath.ini
             if (!buttonPaths.empty()) {
                 HMENU hWarcraftMenu = CreatePopupMenu();
-                // ��������� �������� � ������� Warcraft
                 int buttonId = ID_WARCRAFT_MENU_START;
                 for (const auto& [buttonName, programPath] : buttonPaths) {
                     AppendMenu(hWarcraftMenu, MF_STRING, buttonId++, buttonName.c_str());
                 }
                 AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hWarcraftMenu, TEXT("Warcraft"));
-                AppendMenu(hMenu, MF_SEPARATOR, 0, NULL); // ��������� �������������� �����
+                AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
             }
 
             AppendMenu(hMenu, MF_STRING, ID_TRAY_EXIT, TEXT("Exit"));
 
-            // ���������� ����
             POINT pt;
             GetCursorPos(&pt);
             SetForegroundWindow(hwnd);
             TrackPopupMenu(hMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN, pt.x, pt.y + 35, 0, hwnd, NULL);
-            PostMessage(hwnd, WM_NULL, 0, 0); // ��� ������ ������������� ��������� �������� � ����
+            PostMessage(hwnd, WM_NULL, 0, 0);
             DestroyMenu(hMenu);
         }
         break;
     case WM_COMMAND:
         if (LOWORD(wParam) == ID_TRAY_EXIT) {
-            // ��������� ����������
+            //  
             Shell_NotifyIcon(NIM_DELETE, &nid);
             PostQuitMessage(0);
             G_WINDOW.close();
@@ -442,33 +429,25 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 void Engine::initializeTree() {
-
-    // �������� HWND ����
     hWnd = G_WINDOW.getSystemHandle();
     std::wstring wstr = L"AVLoad_Tree";
-    // ������������ ����� ���� ��� ��������� �������
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WindowProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, wstr.c_str(), NULL };
     RegisterClassEx(&wc);
-    // ������� ��������� ���� ��� ��������� �������
     hWnd = CreateWindow(wstr.c_str(), L"AVLoad Tree", WS_OVERLAPPEDWINDOW, 0, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, wc.hInstance, NULL);
 
-    // �������� ������ �� ����� StartPath.ini
-    if (!LoadButtonData(L"DataAutoLoad\\StartPath.ini")) {
-        buttonPaths.clear(); // ������� ������, ���� ���� ���� ��� �� ����������
+    //     StartPath.ini
+    if (!LoadConfigData(L"DataAutoLoad\\StartPath.ini")) {
+        buttonPaths.clear();
     }
 
-    // ����������� ���� � ����
     MinimizeToTray();
 }
 
-// ������� ��� �������� ������ �� �����
 HICON LoadIconFromFile(const wchar_t* filename) {
     return (HICON)LoadImage(NULL, filename, IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 }
 
-// ������� ��� ������������ ���� � ����
 void Engine::MinimizeToTray() {
-    // ������� ������ � ����
     ZeroMemory(&nid, sizeof(NOTIFYICONDATA));
     nid.cbSize = sizeof(NOTIFYICONDATA);
     nid.hWnd = hWnd;

@@ -70,8 +70,6 @@
 
 int main()
 {
-    SetConsoleOutputCP(CP_UTF8); // Устанавливаем кодировку консоли на UTF-8
-
     std::locale::global(std::locale("Russian"));
     std::cout.imbue(std::locale());
 

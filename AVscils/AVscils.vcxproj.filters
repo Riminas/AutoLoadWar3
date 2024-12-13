@@ -231,9 +231,6 @@
     <ClInclude Include="SelectingNewPathMap.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="OptionsUI.h">
-      <Filter>Файлы заголовков\UI</Filter>
-    </ClInclude>
     <ClInclude Include="FontLoader.h">
       <Filter>Файлы заголовков\Data</Filter>
     </ClInclude>
@@ -260,6 +257,9 @@
     </ClInclude>
     <ClInclude Include="ListHeroDraw.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsUi.h">
+      <Filter>Файлы заголовков\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

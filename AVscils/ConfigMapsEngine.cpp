@@ -63,7 +63,7 @@ bool ConfigMapsEngine::loadConfigMaps()
             if (!std::getline(iss, value))
                 value = "";
             if (section == L"Path") {
-                if (value.empty()) {
+                if (value.size() < 3) {
                     G_CONFIG_MAPS.path = { L"" };
                 }
                 else {

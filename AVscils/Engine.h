@@ -21,12 +21,13 @@ private:
     bool initialize();
 
 
+
     void initializeTree();
     void MinimizeToTray();
 
-    void checkKeyStates();
-    void checkKeyPress(int keyNum, auto& now);
-    void checkMousePress(auto& now);
+    void checkInputState();
+    void processInput(int inputCode, auto& currentTime);
+    void checkMouseInput(auto& now);
 
 
     OwnerWindow m_OwnerWindow;
@@ -38,8 +39,8 @@ private:
     bool m_NewIsVisible = true;
 
 
-    int keyPressId{ 0 };
-    std::chrono::high_resolution_clock::time_point keyPressClock{};
+    int m_lastInputCode{ 0 };
+    std::chrono::high_resolution_clock::time_point currentTime{};
     //std::unordered_map<int, std::chrono::high_resolution_clock::time_point> keyPressTimes;
     int currentKey = -1;  // Track the currently pressed key
 };

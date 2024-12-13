@@ -1,10 +1,6 @@
 #include "getMapOpen.h"
 #include "LogError.h"
 #include <regex>
-#include <Windows.h>
-#include <filesystem>
-#include <fstream>
-#include "DataWarcraft.h"
 
 namespace {
     constexpr char MAP_30_MINUTES[] = "30 minutes";
@@ -12,9 +8,9 @@ namespace {
     constexpr char WAR3_HEADER[] = "HM3W";
 }
 
-std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path) 
+std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path)
 {
-    if (!std::filesystem::is_directory(folder_path)) {
+    if (!std::filesystem::is_directory(folder_path.c_str())) {
         LogError().logErrorW(L"Put(not \"Maps\" directory) - (" + folder_path + L")");
         return L"error";
     }
@@ -29,57 +25,60 @@ std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path)
         LogError().logError(std::string("Error processing map: ") + e.what());
         return L"error";
     }
+
+    return L"error";
 }
 
-bool getMapOpen::findUsedMapFile(const std::wstring& folder_path) 
+bool getMapOpen::findUsedMapFile(const std::wstring& folder_path)
 {
-    DWORD processId = 0;
-    GetWindowThreadProcessId(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, &processId);
-    
     for (const auto& entry : std::filesystem::recursive_directory_iterator(folder_path)) {
-        if (!entry.is_regular_file()) {
-            continue;
+        if (std::filesystem::is_directory(entry.path())) {
+            continue; // Пропускаем директории, если это необходимо
         }
-        
-        if (isFileUsedByProcess(entry.path(), processId)) {
-            m_nameFile = entry.path().wstring();
+        const std::filesystem::path path = entry.path();
+        if (checkFile(path, m_nameFile))
             return true;
-        }
     }
     return false;
 }
 
-bool getMapOpen::isFileUsedByProcess(const std::filesystem::path& path, DWORD processId) 
-{
-    HANDLE fileHandle = CreateFileW(
-        path.c_str(),
-        GENERIC_READ,
-        FILE_SHARE_READ | FILE_SHARE_WRITE,
-        nullptr,
-        OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        nullptr
-    );
-
-    if (fileHandle != INVALID_HANDLE_VALUE) {
-        CloseHandle(fileHandle);
-        return false;
+bool getMapOpen::checkFile(const std::filesystem::path& filePath, std::wstring& nameFile) {
+    std::fstream file;
+    file.open(filePath);
+    if (!file.is_open()) {
+        ////std::lock_guard<std::mutex> lock(m_Mtx);
+        nameFile = filePath.wstring();
+        return true;
     }
-
-    if (GetLastError() != ERROR_SHARING_VIOLATION) {
-        return false;
-    }
-
-    HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, processId);
-    if (!processHandle) {
-        return false;
-    }
-
-    CloseHandle(processHandle);
-    return true;
+    file.close();
+    return false;
 }
 
-std::wstring getMapOpen::processMapFile() 
+std::string getMapOpen::removeColorCodes(std::string str)
+{
+    std::string result;
+    result.reserve(str.size());
+
+    for (std::size_t i = 0; i < str.size(); ++i) {
+        if (str[i] == '|') {
+            if (i + 1 < str.size()) {
+                if (str[i + 1] == 'r' || str[i + 1] == 'R') {
+                    i += 1;
+                    continue;
+                }
+                if ((str[i + 1] == 'c' || str[i + 1] == 'C') && i + 9 < str.size()) {
+                    i += 9;
+                    continue;
+                }
+            }
+        }
+        result += str[i];
+    }
+
+    return result;
+}
+
+std::wstring getMapOpen::processMapFile()
 {
     std::ifstream file(m_nameFile);
     if (!file) {
@@ -115,35 +114,11 @@ std::wstring getMapOpen::processMapFile()
     if (containsOnlyEnglishCharacters(content) && content != DEFAULT_MAP_NAME) {
         return std::wstring(content.begin(), content.end());
     }
-    
+
     return std::filesystem::path(m_nameFile).filename().wstring();
 }
 
-std::string getMapOpen::removeColorCodes(std::string str) 
-{
-    std::string result;
-    result.reserve(str.size());
-
-    for (std::size_t i = 0; i < str.size(); ++i) {
-        if (str[i] == '|') {
-            if (i + 1 < str.size()) {
-                if (str[i + 1] == 'r' || str[i + 1] == 'R') {
-                    i += 1;
-                    continue;
-                }
-                if ((str[i + 1] == 'c' || str[i + 1] == 'C') && i + 9 < str.size()) {
-                    i += 9;
-                    continue;
-                }
-            }
-        }
-        result += str[i];
-    }
-    
-    return result;
-}
-
-bool getMapOpen::containsOnlyEnglishCharacters(const std::string& text) 
+bool getMapOpen::containsOnlyEnglishCharacters(const std::string& text)
 {
     static const std::regex englishRegex(R"(^[A-Za-z0-9 .\$;@!^+=/<>#?*,\"'&:_~()\-\[\]]*$)");
     return std::regex_match(text, englishRegex);
