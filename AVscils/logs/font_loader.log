@@ -1,0 +1,12 @@
+[MESSAGE] 
+
+------------------------------------------------------------------------
+[MESSAGE] Версия Warcraft 1.26 C:\Users\Aio\Documents\Warcraft 1.26\war3.exe
+[MESSAGE] ------------------------------------------------------------------------
+[MESSAGE] Путь до папки с картами: (C:\Users\Aio\Documents\Warcraft 1.26\war3.exe\Maps)
+[MESSAGE] Путь до папки с сохранениями 1.36: (C:\Users\Aio\Documents\Warcraft III\Warcraft III\CustomMapData)
+[MESSAGE] Путь до папки с сохранениями 1.26: (C:\Users\Aio\Documents\Warcraft 1.26\war3.exe)
+[ERROR]   Put(not "Maps" directory) - (C:\Users\Aio\Documents\Warcraft 1.26\war3.exe\Maps)
+[MESSAGE] newNameMaps: error
+[MESSAGE] NameMaps: 
+[MESSAGE] NameMapsFull: 

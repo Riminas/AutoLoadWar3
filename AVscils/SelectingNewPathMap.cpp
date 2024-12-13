@@ -15,7 +15,8 @@
 
 
 SelectingNewPathMap::SelectingNewPathMap()
-    : rootDirectory(L"CustomMapData", G_DATA_WARCRAFT.m_DataPath.warPathDirectSave),
+    : rootDirectory(L"CustomMapData", G_DATA_WARCRAFT.m_DataPath.warPathDirectSave[G_DATA_WARCRAFT.m_DataPath.versionWarcraft]),
+    //rootDirectory2(L"CustomMapData", G_DATA_WARCRAFT.m_DataPath.warPathDirectSave[1]),
     scrollOffset(0),
     isScrolling(false),
     scrollSpeed(1.0f),
@@ -180,7 +181,7 @@ void SelectingNewPathMap::updateDirectoryTexts() {
                 sf::Text dirText(subDir.name, G_FONT_STANDART, 14);
                 dirText.setFillColor(sf::Color::White);
                 dirText.setPosition(sf::Vector2f(38 + indent, yOffset + m_Rect[1])); // Смещение текста для размещения треугольника
-                directoryTexts.push_back(dirText);
+                directoryTexts.push_back(std::move(dirText));
 
                 if (!subDir.subDirectories.empty()) { // Проверяем, есть ли подкаталоги
                     sf::Sprite triangle; // Создаем треугольник
@@ -194,7 +195,7 @@ void SelectingNewPathMap::updateDirectoryTexts() {
                     else {
                         triangle.setTextureRect(sf::Rect{ 0, 608, 32, 32 });
                     }
-                    directoryTriangles.push_back(triangle); // Добавляем треугольник
+                    directoryTriangles.push_back(std::move(triangle)); // Добавляем треугольник
                 }
 
                 if (isBackgroundDirectory == false && subDir.fullPath == openDirectoryEntry.fullPath && (yOffset + m_Rect[1] >= 60 && yOffset <= m_Rect[3] - 60)) {

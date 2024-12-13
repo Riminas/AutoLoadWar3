@@ -39,7 +39,7 @@ private:
 
 
     int keyPressId{ 0 };
-    std::chrono::high_resolution_clock::time_point keyPress—lock{};
+    std::chrono::high_resolution_clock::time_point keyPressClock{};
     //std::unordered_map<int, std::chrono::high_resolution_clock::time_point> keyPressTimes;
     int currentKey = -1;  // Track the currently pressed key
 };

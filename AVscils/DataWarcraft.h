@@ -2,22 +2,22 @@
 #include <string>
 #include <wtypes.h>
 #include <sfml/Graphics.hpp>
+#include <array>
 
 
 
-//информация об запущенном Warcraft III
+//   Warcraft III
 class DataWarcraft
 {
 private:
     struct DataPath {
         bool initializeDataPath(const HWND hWndWindow);
 
-        int versionWarcraft = 0; // 0-нет 1-(ref) 2-(stand) 
+        int versionWarcraft = 0; // 0-РЅРµС‚ 1-(ref) 2-(stand) 
 
         HWND hWndWindowWar = NULL;
-
-        std::wstring warPathDirectMaps = L"\0";
-        std::wstring warPathDirectSave = L"\0";
+        std::wstring warPathDirectMaps;
+        std::array<std::wstring, 2> warPathDirectSave;
     private:
         std::wstring openWarcraft3(const HWND hWndWindow);
     };

@@ -1,18 +1,4 @@
 #pragma once
-//#include <SFML/Graphics.hpp>
-//class CoutGuide
-//{
-//public:
-//	void coutGuide();
-//	void initialize();
-//	void draw();
-//	void processEvents();
-//private:
-//	sf::RenderWindow m_Windom2;
-//};
-//
-//
-#pragma once
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -28,13 +14,15 @@
 #include <thread>
 #include "FontLoader.h"
 #include "ConfigMain.h"
+//#include <cstdio>  // РґР»СЏ _popen/_pclose
 
 class CoutGuide {
 private:
-    std::vector<sf::Text> m_TextLines; // Хранение строк текста как отдельных объектов
+    std::vector<sf::Text> m_TextLines; //      
     std::wstring m_FilePath = { L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
-    float m_ScrollOffset; // Смещение для скроллинга
-    const float m_LineHeight = 30.f; // Высота строки текста
+    //std::string m_GuideUrl; // Р”РѕР±Р°РІР»СЏРµРј РїРµСЂРµРјРµРЅРЅСѓСЋ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ URL
+    float m_ScrollOffset; // 
+    const float m_LineHeight = 30.f; // 
 public:
     bool isActive = false;
     sf::RenderWindow m_Window;
@@ -67,7 +55,7 @@ public:
             m_Window.clear(sf::Color::White);
         }
 
-        // Отрисовка только тех строк, которые видимы в окне
+        // 
         for (const auto& text : m_TextLines) {
             if (text.getPosition().y + m_LineHeight >= 0 && text.getPosition().y <= m_Window.getSize().y) {
                 m_Window.draw(text);
@@ -93,38 +81,38 @@ public:
     }
 
     void initializeWindow() {
-        // Размер окна
+        // 
         int windowWidth = 512;
         int windowHeight = sf::VideoMode::getDesktopMode().height / 3;
 
         m_Window.create(sf::VideoMode(windowWidth, windowHeight), "AutoLoadsGuide",
             sf::Style::Resize | sf::Style::Close);
-        // Создаем окно с возможностью изменения размера и перемещения
+        // 
 
         //m_Window.setVisible(false);
 
-        // Получаем системный дескриптор окна
+        // 
         HWND hwnd = m_Window.getSystemHandle();
 
         //LONG style = GetWindowLong(hwnd, GWL_STYLE);
-        //style &= ~(WS_MINIMIZEBOX | WS_MAXIMIZEBOX); // Убираем кнопки "Свернуть" и "Развернуть"
+        //style &= ~(WS_MINIMIZEBOX | WS_MAXIMIZEBOX); // 
         //SetWindowLong(hwnd, GWL_STYLE, style);
 
         SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~(WS_MINIMIZEBOX | WS_MAXIMIZEBOX));
         SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
 
-        // Центрируем окно
+        // 
         int screenWidth = sf::VideoMode::getDesktopMode().width;
         int screenHeight = sf::VideoMode::getDesktopMode().height;
         int posX = (screenWidth - windowWidth);
         int posY = (screenHeight - windowHeight) / 2;
         m_Window.setPosition(sf::Vector2i(posX, posY));
 
-        // Устанавливаем окно поверх всех других окон
+        // 
         setAlwaysOnTop2(hwnd);
 
-        //// Запускаем таймер в отдельном потоке для периодического обновления окна
+        //// 
         //std::thread([hwnd]() {
         //    while (true) {
         //        std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -133,7 +121,7 @@ public:
         //    }).detach();
     }
 private:
-    // Функция для установки окна поверх всех других окон
+    // 
     static void setAlwaysOnTop2(const HWND& hwnd) {
         SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
     }
@@ -143,50 +131,98 @@ private:
     }
 
     void loadFileContent() {
-        // Открываем файл и читаем его содержимое
+        m_TextLines.clear();
         std::string fileContent;
-        for (const auto& entry : std::filesystem::directory_iterator(m_FilePath)) {
-            if (std::filesystem::is_regular_file(entry) && entry.path().extension() == ".txt") {
-                fileContent = LoadDataFail().loadDataFail(m_FilePath + L"/" + entry.path().filename().wstring());
-                break;
+        bool contentLoaded = false;
+
+        // РЎРЅР°С‡Р°Р»Р° РїСЂРѕР±СѓРµРј Р·Р°РіСЂСѓР·РёС‚СЊ РёР· URL РµСЃР»Рё РѕРЅ Р·Р°РґР°РЅ
+        //if (!m_GuideUrl.empty()) {
+        //    fileContent = loadFromUrl(m_GuideUrl);
+        //    contentLoaded = !fileContent.empty();
+        //}
+
+        // Р•СЃР»Рё РЅРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ РёР· URL, РїСЂРѕР±СѓРµРј Р»РѕРєР°Р»СЊРЅС‹Р№ С„Р°Р№Р»
+        if (!contentLoaded) {
+            for (const auto& entry : std::filesystem::directory_iterator(m_FilePath)) {
+                if (std::filesystem::is_regular_file(entry) && entry.path().extension() == ".txt") {
+                    fileContent = LoadDataFail().loadDataFail(m_FilePath + L"/" + entry.path().filename().wstring());
+                    contentLoaded = true;
+                    break;
+                }
             }
         }
 
-        // Разбиваем текст на строки
+        if (!contentLoaded || fileContent.empty()) {
+            sf::Text emptyText;
+            emptyText.setFont(G_FONT_STANDART);
+            emptyText.setString("Р“Р°Р№Рґ РїСѓСЃС‚ РёР»Рё РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚");
+            emptyText.setCharacterSize(14);
+            emptyText.setFillColor(G_CONFIG_MAIN.optionsConfig.blackColor ? sf::Color::White : sf::Color::Black);
+            
+            sf::FloatRect textBounds = emptyText.getLocalBounds();
+            emptyText.setPosition(
+                (m_Window.getSize().x - textBounds.width) / 2.f,
+                (m_Window.getSize().y - textBounds.height) / 2.f
+            );
+            
+            m_TextLines.push_back(std::move(emptyText));
+            return;
+        }
+
+        // РћСЃС‚Р°Р»СЊРЅРѕР№ РєРѕРґ Р·Р°РіСЂСѓР·РєРё С‚РµРєСЃС‚Р° РѕСЃС‚Р°РµС‚СЃСЏ Р±РµР· РёР·РјРµРЅРµРЅРёР№
         std::stringstream fileStream(fileContent);
         std::string line;
-        float yPosition = 10.f; // Начальная позиция текста по Y
+        float yPosition = 10.f;
 
         while (std::getline(fileStream, line)) {
+            if (line.empty()) continue;
+
             sf::Text textLine;
             textLine.setFont(G_FONT_STANDART);
             textLine.setString(line);
             textLine.setCharacterSize(14);
-            if (G_CONFIG_MAIN.optionsConfig.blackColor) {
-                textLine.setFillColor(sf::Color::White);
-            }
-            else {
-                textLine.setFillColor(sf::Color::Black);
-            }
+            textLine.setFillColor(G_CONFIG_MAIN.optionsConfig.blackColor ? sf::Color::White : sf::Color::Black);
             textLine.setPosition(10.f, yPosition);
-            m_TextLines.push_back(textLine);
-            yPosition += m_LineHeight; // Смещение по высоте для каждой строки
+            m_TextLines.push_back(std::move(textLine));
+            yPosition += m_LineHeight;
         }
     }
+
+    //std::string loadFromUrl(const std::string& url) {
+    //    // РСЃРїРѕР»СЊР·СѓРµРј curl РґР»СЏ Р·Р°РіСЂСѓР·РєРё СЃРѕРґРµСЂР¶РёРјРѕРіРѕ
+    //    std::string command = "curl -s \"" + url + "\"";
+    //    std::string result;
+    //    
+    //    FILE* pipe = _popen(command.c_str(), "r");
+    //    if (!pipe) return "";
+    //    
+    //    char buffer[128];
+    //    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+    //        result += buffer;
+    //    }
+    //    
+    //    _pclose(pipe);
+    //    return result;
+    //}
 
     void handleScroll(float delta) {
         const float scrollSpeed = 40.f;
         m_ScrollOffset -= delta * scrollSpeed;
 
-        // Ограничиваем прокрутку
+        // 
         float minOffset = 0.f;
         float maxOffset = (std::max)(0.f, static_cast<float>(m_TextLines.size()) * m_LineHeight - m_Window.getSize().y);
         m_ScrollOffset = std::clamp(m_ScrollOffset, minOffset, maxOffset);
 
-        // Обновляем позиции строк с учетом смещения
+        // 
         for (size_t i = 0; i < m_TextLines.size(); ++i) {
             float yPosition = 10.f + i * m_LineHeight - m_ScrollOffset;
             m_TextLines[i].setPosition(10.f, yPosition);
         }
     }
+
+    //void setGuideUrl(const std::string& url) {
+    //    m_GuideUrl = url;
+    //    initialize();
+    //}
 };

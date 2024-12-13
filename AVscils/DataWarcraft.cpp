@@ -1,4 +1,3 @@
-
 #include <filesystem>
 #include <fstream>
 #include <ranges>
@@ -36,99 +35,122 @@ bool DataWarcraft::initializeDataWarcraft(const HWND hWndWindow)
 
 bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
 {
+    // РџРѕР»СѓС‡Р°РµРј РїСѓС‚СЊ Рє Р·Р°РїСѓС‰РµРЅРЅРѕРјСѓ РїСЂРѕС†РµСЃСЃСѓ Warcraft
     const std::wstring pathWstr = openWarcraft3(hWndWindow);
-
     if (pathWstr.empty() || pathWstr == L"C:\\Windows\\explorer.exe")
         return false;
 
-
-    std::wstring pathWar = L"\0";
+    // РћРїСЂРµРґРµР»СЏРµРј РІРµСЂСЃРёСЋ РїРѕ РёРјРµРЅРё РёСЃРїРѕР»РЅСЏРµРјРѕРіРѕ С„Р°Р№Р»Р°
     std::filesystem::path filePath(pathWstr);
-    if (std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath)) {
-        std::wstring filename = filePath.filename().wstring();
-
-        if (filename == L"Warcraft III.exe") {
-            LogError().logMessage("путь до 1.36 " + filePath.string());
-            versionWarcraft = 1;
-        }
-        else if (filename == L"war3.exe") {
-            LogError().logMessage("путь до 1.26 " + filePath.string());
-            versionWarcraft = 2;
-            pathWar = filePath.parent_path().wstring();
-        }
-        else {
-            versionWarcraft = 0;
-        }
+    if (!std::filesystem::exists(filePath) || !std::filesystem::is_regular_file(filePath)) {
+        LogError().logError("РќРµ СѓРґР°Р»РѕСЃСЊ РѕРїСЂРµРґРµР»РёС‚СЊ РІРµСЂСЃРёСЋ Warcraft");
+        return false;
     }
 
-    if (versionWarcraft == 1) {
-        PWSTR path = NULL;
-        HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path);
-        if (!SUCCEEDED(hr)) {
+    std::wstring filename = filePath.filename().wstring();
+    if (filename == L"Warcraft III.exe") {
+        LogError().logMessage("Р’РµСЂСЃРёСЏ Warcraft 1.36 " + filePath.string());
+        versionWarcraft = 0;
+    }
+    else if (filename == L"war3.exe") {
+        LogError().logMessage("Р’РµСЂСЃРёСЏ Warcraft 1.26 " + filePath.string());
+        versionWarcraft = 1;
+    }
+    else {
+        LogError().logError("РќРµРёР·РІРµСЃС‚РЅР°СЏ РІРµСЂСЃРёСЏ Warcraft");
+        versionWarcraft = -1;
+        return false;
+    }
+
+    {//1.36
+        // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїСѓС‚Рё Рє РїР°РїРєРµ СЃ РєР°СЂС‚Р°РјРё
+        PWSTR documentsPath = nullptr;
+        if (FAILED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &documentsPath))) {
             LogError().logError("SHGetKnownFolderPath()");
             return false;
         }
 
-        std::wstring str = path;
+        std::wstring basePath = documentsPath;
+        CoTaskMemFree(documentsPath);
+        basePath += L"\\Warcraft III";
 
-        // Освобождаем память, выделенную SHGetKnownFolderPath
-        CoTaskMemFree(path);
-
-        str += L"\\Warcraft III";
-
-        if (!std::filesystem::is_directory(str)) {
-            LogError().logMessageW(L"directory Warcraft III(" + str + L")");
-            return false;
+        if (std::filesystem::exists(basePath)) {
+            if(versionWarcraft == 0)
+                warPathDirectMaps = basePath + L"\\Maps";
+            warPathDirectSave[0] = basePath + L"\\Warcraft III\\CustomMapData";
         }
-
-        LogError().logMessageW(L"------------------------------------------------------------------------");
-
-        warPathDirectMaps = str + L"\\Maps";
-        LogError().logMessageW(L"Путь до папки с картами:(" + warPathDirectMaps + L")");
-        warPathDirectSave = str + L"\\CustomMapData";
-        LogError().logMessageW(L"путь до папки с сохранениями:" + warPathDirectSave + L")");
     }
-    else if (versionWarcraft == 2) {
-        LogError().logMessageW(L"------------------------------------------------------------------------");
-        warPathDirectMaps = pathWar + L"\\Maps";
-        LogError().logMessageW(L"Путь до папки с картами:(" + warPathDirectMaps + L")");
-        warPathDirectSave = pathWar;
-        LogError().logMessageW(L"путь до папки с сохранениями:" + warPathDirectSave + L")");
+
+    {//1.26
+        if (versionWarcraft == 1) {
+            if (!std::filesystem::exists(L"DataAutoLoad\\PathWar3.dat")) {
+                std::wofstream pathFile(L"DataAutoLoad\\PathWar3.dat");
+                pathFile << filePath.wstring();
+                pathFile.close();
+            }
+            warPathDirectSave[1] = filePath.wstring();
+            warPathDirectMaps += warPathDirectSave[1] + L"\\Maps";
+        }
+        else if (versionWarcraft == 0) {
+            // Р—Р°РіСЂСѓР¶Р°РµРј РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїСѓС‚Рё РёР· С„Р°Р№Р»Р° РєРѕРЅС„РёРіСѓСЂР°С†РёРё
+            std::wifstream pathFile(L"DataAutoLoad\\PathWar3.dat");
+            if (pathFile.is_open()) {
+                std::wstring line;
+                std::getline(pathFile, line);
+                if (!line.empty()) {
+                    size_t pos = line.find(L"\\war3.exe");
+                    if (pos != std::wstring::npos) {
+                        line = line.substr(0, pos);
+                    }
+                    if (std::filesystem::exists(line)) {
+                        warPathDirectSave[1] = line;
+                    }
+                }
+                pathFile.close();
+            }
+        }
     }
+
+    
+
+    // Р›РѕРіРёСЂСѓРµРј РІСЃРµ РїСѓС‚Рё
+    LogError().logMessageW(L"------------------------------------------------------------------------");
+    LogError().logMessageW(L"РџСѓС‚СЊ РґРѕ РїР°РїРєРё СЃ РєР°СЂС‚Р°РјРё: (" + warPathDirectMaps + L")");
+    LogError().logMessageW(L"РџСѓС‚СЊ РґРѕ РїР°РїРєРё СЃ СЃРѕС…СЂР°РЅРµРЅРёСЏРјРё 1.36: (" + warPathDirectSave[0] + L")");
+    LogError().logMessageW(L"РџСѓС‚СЊ РґРѕ РїР°РїРєРё СЃ СЃРѕС…СЂР°РЅРµРЅРёСЏРјРё 1.26: (" + warPathDirectSave[1] + L")");
 
     hWndWindowWar = hWndWindow;
-
     return true;
 }
 
 std::wstring DataWarcraft::DataPath::openWarcraft3(const HWND hWndWindow) {
 
-    DWORD processId;
+    DWORD processId = 0;
     GetWindowThreadProcessId(hWndWindow, &processId);
 
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
-    if (hProcess == NULL) {
+    if (!hProcess) {
         std::wstring path;
-        NewPathSaveCode NewPathSaveCode_;
-        if (NewPathSaveCode_.newPathSaveCode(path)) {
+        NewPathSaveCode newPathSaveCode_;
+        if (newPathSaveCode_.newPathSaveCode(path)) {
             return path;
         }
 
-        LogError().logError("неудалось открыть процесс: " + std::to_string(GetLastError()));
-        return L"\0";
+        LogError().logError("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ РїСЂРѕС†РµСЃСЃ: " + std::to_string(GetLastError()));
+        return L"";
     }
 
     WCHAR processName[MAX_PATH];
-    if (GetModuleFileNameEx(hProcess, NULL, processName, MAX_PATH)) {
+    if (GetModuleFileNameEx(hProcess, nullptr, processName, MAX_PATH)) {
         CloseHandle(hProcess);
         return processName;
     }
     else {
-        LogError().logErrorW(L"Неудалось полчить имя процесса: " + std::to_wstring(GetLastError()));
+        LogError().logErrorW(L"РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РёРјСЏ РїСЂРѕС†РµСЃСЃР°: " + std::to_wstring(GetLastError()));
     }
 
     CloseHandle(hProcess);
-    return L"\0";
+    return L"";
 }
 
 
@@ -140,10 +162,10 @@ bool DataWarcraft::DataRect::initializeDataRect(const HWND hWndWindow)
     if(!GetClientRect(hWndWindow, &rectClient)/* || !GetWindowRect(hWndWindow, &rectWindow)*/)
         return false;
 
-    size.x = rectClient.right - rectClient.left;
-    size.y = rectClient.bottom - rectClient.top;
+    size.x = static_cast<float>(rectClient.right - rectClient.left);
+    size.y = static_cast<float>(rectClient.bottom - rectClient.top);
 
-    if (size.x < 300 || size.y < 300)// а надо ли? вроде это чтобы окна ошибок варкрафта несщитались за окно игр аркрафта
+    if (size.x < 300 || size.y < 300)// РџСЂРѕРІРµСЂРєР° РјРёРЅРёРјР°Р»СЊРЅРѕРіРѕ СЂР°Р·РјРµСЂР° РѕРєРЅР°
         return false;
 
     position.x = rectClient.left;

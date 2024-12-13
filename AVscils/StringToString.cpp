@@ -60,9 +60,9 @@ std::vector<std::wstring> StringToString::removeString(const std::wstring& t_fil
             std::wregex englishRegex(L"^[0-9]*$");
             bool oneNumber = std::regex_match(transformedWord, englishRegex);
             if(transformedWord.size() == 1 && oneNumber)
-                strVector.push_back(transformedWord);
+                strVector.push_back(std::move(transformedWord));
             else if(transformedWord.size() == 2 && transformedWord[0] == L's' && (transformedWord[1] >= L'0'  && transformedWord[1] <= L'9'))
-                strVector.push_back(transformedWord);
+                strVector.push_back(std::move(transformedWord));
             break;
         }
         if (transformedWord.find(L"rpg") != std::string::npos) {
@@ -71,7 +71,7 @@ std::vector<std::wstring> StringToString::removeString(const std::wstring& t_fil
             if(!(transformedWord[size + 3] >= L'0' && transformedWord[size + 3] <= L'9' && transformedWord.size() == size + 4))
                 transformedWord = transformedWord.substr(0, size + 3);
         }
-        strVector.push_back(transformedWord);
+        strVector.push_back(std::move(transformedWord));
     }
 
     if (!isStrRpg) {//

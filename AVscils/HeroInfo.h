@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <filesystem>
+#include <chrono>
+#include <vector>
 
 struct HeroInfo
 {

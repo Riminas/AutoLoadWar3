@@ -1,102 +1,150 @@
-
 #include "getMapOpen.h"
 #include "LogError.h"
 #include <regex>
 #include <Windows.h>
+#include <filesystem>
+#include <fstream>
+#include "DataWarcraft.h"
+
+namespace {
+    constexpr char MAP_30_MINUTES[] = "30 minutes";
+    constexpr char DEFAULT_MAP_NAME[] = "Just another Warcraft III map";
+    constexpr char WAR3_HEADER[] = "HM3W";
+}
 
 std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path) 
 {
-    if (std::filesystem::is_directory(folder_path.c_str())) {
-
-        //std::vector<std::thread> threads;
-        //for (const auto& entry : std::filesystem::recursive_directory_iterator(folder_path)) {
-        //    if (std::filesystem::is_directory(entry.path())) {
-        //        continue; // Пропускаем директории, если это необходимо
-        //    }
-        //    threads.emplace_back([&](const std::filesystem::path& path) {
-        //        checkFile(path, m_nameFile);
-        //        }, entry.path());
-        //}
-
-        //for (auto& t : threads) {
-        //    t.join();
-        //}
-
-
-        for (const auto& entry : std::filesystem::recursive_directory_iterator(folder_path)) {
-            if (std::filesystem::is_directory(entry.path())) {
-                continue; // Пропускаем директории, если это необходимо
-            }//каким метод в с++20 winApi можно узнать об том кто использует .txt файл и недает пользоаться другим процессам
-            //с++20 winApi как узнать мой процесс использует .txt файл или чужой
-            const std::filesystem::path path = entry.path();
-            GetFileHandleState
-            if (checkFile(path, m_nameFile))
-                break;
-        }
-
-
-        if (!m_nameFile.empty()) {
-
-            std::ifstream fil(m_nameFile);
-            std::string str;
-            getline(fil, str);
-
-            if (str.substr(0, 4) == "HM3W") str = str.substr(5);
-            int i = 0;
-            while (str[i] == '\0') { i++; }
-            str = str.substr(i);
-
-            if (str.substr(0, 10) == "30 minutes") { return L"30minutes"; }
-
-            i = 0;
-            while (str[i] != '\0') { i++; }
-            str = str.substr(0, i);
-
-            for (int j = 0; j < str.size(); j++) {
-                if (str[j] == '|') {
-                    if (str[j + 1] == 'r' || str[j + 1] == 'R') {
-                        str = str.substr(0, j) + str.substr(j+2);
-                        break;
-                    }
-                    else if (str[j+1] == 'c' || str[j+1] == 'C') {
-                        str = str.substr(0, j) + str.substr(j + 10);
-                    }
-                }
-            }
-
-            if (containsOnlyEnglishCharacters(str) && str != "Just another Warcraft III map") {
-                return { str.begin(), str.end() };
-            }
-            else {
-                std::filesystem::path path = m_nameFile;
-                return path.filename().wstring();
-            }
-
-        }
-        else {
-            LogError().logError("not \"m_nameFile\" - (" + m_nameFile + ")");
-        }
+    if (!std::filesystem::is_directory(folder_path)) {
+        LogError().logErrorW(L"Put(not \"Maps\" directory) - (" + folder_path + L")");
+        return L"error";
     }
-    else {
-        LogError().logErrorW(L"Put(not \"Maps\" directory) - ( " + folder_path + L" )");
+
+    try {
+        if (!findUsedMapFile(folder_path)) {
+            return L"error";
+        }
+        return processMapFile();
     }
-    return L"error";
+    catch (const std::exception& e) {
+        LogError().logError(std::string("Error processing map: ") + e.what());
+        return L"error";
+    }
 }
 
-bool getMapOpen::checkFile(const std::filesystem::path& filePath, std::string& nameFile) {
-    std::fstream file;
-    file.open(filePath);
-    if (!file.is_open()) {
-        ////std::lock_guard<std::mutex> lock(m_Mtx);
-        nameFile = filePath.string();
-        return true;
+bool getMapOpen::findUsedMapFile(const std::wstring& folder_path) 
+{
+    DWORD processId = 0;
+    GetWindowThreadProcessId(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, &processId);
+    
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(folder_path)) {
+        if (!entry.is_regular_file()) {
+            continue;
+        }
+        
+        if (isFileUsedByProcess(entry.path(), processId)) {
+            m_nameFile = entry.path().wstring();
+            return true;
+        }
     }
-    file.close();
     return false;
 }
 
-bool getMapOpen::containsOnlyEnglishCharacters(const std::string& text) {
-    // Регулярное выражение для проверки английских символов, цифр, пробелов, точек и дефисов
-    std::regex englishRegex("^[A-Za-z0-9 .\\$\\;\\@\\!\\^\\+\\=\\/\\<\\>\\#\\?\\*\\,\\\"\\\'\\&\\:\\_\\~\\(\\)\\-\\[\\]]*$");
+bool getMapOpen::isFileUsedByProcess(const std::filesystem::path& path, DWORD processId) 
+{
+    HANDLE fileHandle = CreateFileW(
+        path.c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nullptr,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        nullptr
+    );
+
+    if (fileHandle != INVALID_HANDLE_VALUE) {
+        CloseHandle(fileHandle);
+        return false;
+    }
+
+    if (GetLastError() != ERROR_SHARING_VIOLATION) {
+        return false;
+    }
+
+    HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, processId);
+    if (!processHandle) {
+        return false;
+    }
+
+    CloseHandle(processHandle);
+    return true;
+}
+
+std::wstring getMapOpen::processMapFile() 
+{
+    std::ifstream file(m_nameFile);
+    if (!file) {
+        throw std::runtime_error("Cannot open map file");
+    }
+
+    std::string content;
+    std::getline(file, content);
+    file.close();
+
+    // РЈРґР°Р»СЏРµРј WAR3 Р·Р°РіРѕР»РѕРІРѕРє РµСЃР»Рё РµСЃС‚СЊ
+    if (content.compare(0, 4, WAR3_HEADER) == 0) {
+        content.erase(0, 4);
+    }
+
+    // РЈРґР°Р»СЏРµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РЅСѓР»РµРІС‹Рµ Р±Р°Р№С‚С‹
+    content.erase(0, content.find_first_not_of('\0'));
+
+    // РџСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёР°Р»СЊРЅСѓСЋ РєР°СЂС‚Сѓ
+    if (content.compare(0, sizeof(MAP_30_MINUTES) - 1, MAP_30_MINUTES) == 0) {
+        return L"30minutes";
+    }
+
+    // РћР±СЂРµР·Р°РµРј РїРѕ РїРµСЂРІРѕРјСѓ РЅСѓР»РµРІРѕРјСѓ Р±Р°Р№С‚Сѓ
+    std::size_t pos = content.find('\0');
+    if (pos != std::string::npos) {
+        content.erase(pos);
+    }
+
+    content = removeColorCodes(std::move(content));
+
+    // Р’РѕР·РІСЂР°С‰Р°РµРј РёРјСЏ РєР°СЂС‚С‹ РёР»Рё РёРјСЏ С„Р°Р№Р»Р°
+    if (containsOnlyEnglishCharacters(content) && content != DEFAULT_MAP_NAME) {
+        return std::wstring(content.begin(), content.end());
+    }
+    
+    return std::filesystem::path(m_nameFile).filename().wstring();
+}
+
+std::string getMapOpen::removeColorCodes(std::string str) 
+{
+    std::string result;
+    result.reserve(str.size());
+
+    for (std::size_t i = 0; i < str.size(); ++i) {
+        if (str[i] == '|') {
+            if (i + 1 < str.size()) {
+                if (str[i + 1] == 'r' || str[i + 1] == 'R') {
+                    i += 1;
+                    continue;
+                }
+                if ((str[i + 1] == 'c' || str[i + 1] == 'C') && i + 9 < str.size()) {
+                    i += 9;
+                    continue;
+                }
+            }
+        }
+        result += str[i];
+    }
+    
+    return result;
+}
+
+bool getMapOpen::containsOnlyEnglishCharacters(const std::string& text) 
+{
+    static const std::regex englishRegex(R"(^[A-Za-z0-9 .\$;@!^+=/<>#?*,\"'&:_~()\-\[\]]*$)");
     return std::regex_match(text, englishRegex);
 }

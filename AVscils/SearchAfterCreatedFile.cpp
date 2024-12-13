@@ -8,15 +8,8 @@ std::wstring SearchAfterCreatedFile::searchAfterCreatedFile1() const
     // Use std::multimap to store directories with their modification times, automatically sorted
     std::multimap<std::filesystem::file_time_type, std::wstring> updated_dirs;
 
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(G_DATA_WARCRAFT.m_DataPath.warPathDirectSave)) {
-        if (std::filesystem::is_directory(entry)) {
-            auto last_write_time = std::filesystem::last_write_time(entry);
-            if (last_write_time > start_time_) {
-                // Insert into multimap, key is the last_write_time, value is the directory path
-                updated_dirs.emplace(last_write_time, entry.path().wstring());
-            }
-        }
-    }
+    recursiveDirectoryIteratorFor(G_DATA_WARCRAFT.m_DataPath.warPathDirectSave[G_DATA_WARCRAFT.m_DataPath.versionWarcraft], updated_dirs);
+    //recursiveDirectoryIteratorFor(G_DATA_WARCRAFT.m_DataPath.warPathDirectSave[1], updated_dirs);
 
     // Traverse in reverse order to go from newest to oldest modified directory
     for (auto it = updated_dirs.rbegin(); it != updated_dirs.rend(); ++it) {
@@ -29,6 +22,20 @@ std::wstring SearchAfterCreatedFile::searchAfterCreatedFile1() const
     }
 
     return L"00"; // Return "0" if no suitable directory is found
+}
+
+inline void SearchAfterCreatedFile::recursiveDirectoryIteratorFor(const std::wstring_view path, std::multimap<std::filesystem::file_time_type, std::wstring>& updated_dirs) const {
+    if (!path.empty()) {
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(std::wstring(path))) {
+            if (std::filesystem::is_directory(entry)) {
+                auto last_write_time = std::filesystem::last_write_time(entry);
+                if (last_write_time > start_time_) {
+                    // Insert into multimap, key is the last_write_time, value is the directory path
+                    updated_dirs.emplace(last_write_time, entry.path().wstring());
+                }
+            }
+        }
+    }
 }
 
 

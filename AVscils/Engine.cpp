@@ -31,8 +31,8 @@ void Engine::engine1() {
 
         if (hWndWindow != nullptr && updateWindowVisibility(hWndWindow)) {
             SetWindowPos(G_WINDOW.getSystemHandle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-            processEvents();//обработка взаимодейстия с кнопками задершка по фпс тут
-            draw();//вывод
+            processEvents();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ
+            draw();//пїЅпїЅпїЅпїЅпїЅ
         }
         else {
             sf::Event event;
@@ -42,43 +42,43 @@ void Engine::engine1() {
         }
     }
 
-     //Удаляем иконку из трея при закрытии
+     //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     Shell_NotifyIcon(NIM_DELETE, &nid);
 }
 
 bool Engine::updateWindowVisibility(const HWND& hWndWindow)
 {
-    if (IsWarcraftInFocus(hWndWindow)) {// Сравниваем имя окна с ожидаемым Warcraft III
+    if (IsWarcraftInFocus(hWndWindow)) {// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Warcraft III
         if (m_IsVisibleOwnerWindow) return true;
 
-        if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow) {// Если прошлое окно варкрафта нетожесамое что открыто сейчас
-            // Инициализация объекта для работы с данными окна
+        if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow) {// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             if (!NewDataAll().newWarcraft(hWndWindow)) {
-                G_WINDOW.setVisible(false);// Если данные необновлены, делаем окно невидимым
+                G_WINDOW.setVisible(false);// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 m_IsVisibleOwnerWindow = false;
                 return false;
             }
             G_WINDOW.setVisible(true);
             m_OwnerWindow.updateRect(hWndWindow);
             if (G_BOOL_VISIBLE.isVisibleEngineFile)
-                m_EngineFileTip2.updateRect(hWndWindow);
+                m_EngineFileTip2.updateRect(hWndWindow, false);
         }
         //G_DATA_ALL.isMapsStart = true;
-        NewDataAll().newMaps();//перенести в сесто где проверяется новая карта или нет
+        NewDataAll().newMaps();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ
 
-        // Активируем игровое состояние окна владельца
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         m_OwnerWindow.activeGameTrue(hWndWindow);
 
-        {//перенести из updateWindowVisibility(Visibility)
-            // Проверяем, есть ли новая информация для карт
+        {//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ updateWindowVisibility(Visibility)
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             if (G_DATA_MAPS.m_IsNewInfo) {
-                // Если есть новая информация, сбрасываем состояние активности окна и обновляем данные карт
+                // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
                 G_BOOL_VISIBLE.isVisibleEngineFile = false;
                 G_DATA_MAPS.m_IsNewInfo = false;
                 G_CONFIG_MAPS.path = G_CONFIG_MAPS.lastPath;
             }
         }
-        // Активируем игровое состояние для подсказок
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         m_IsVisibleOwnerWindow = true;
 
         return true;
@@ -101,7 +101,7 @@ bool Engine::updateWindowVisibility(const HWND& hWndWindow)
 //
 //    wchar_t windowTitle[256];
 //
-//    // Получаем имя окна и сразу проверяем на совпадение с "Warcraft III"
+//    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ "Warcraft III"
 //    if (GetWindowTextW(hWnd, windowTitle, (int)std::size(windowTitle)) > 0 &&
 //        wcscmp(windowTitle, L"Warcraft III") == 0) {
 //        return true;
@@ -112,13 +112,13 @@ bool Engine::updateWindowVisibility(const HWND& hWndWindow)
 bool Engine::IsWarcraftInFocus(const HWND& hWnd) {
     wchar_t windowTitle[256];
 
-    // Получаем имя окна
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     int length = GetWindowText(hWnd, windowTitle, sizeof(windowTitle) / sizeof(windowTitle[0]));
     if (length == 0) {
         return 0;
     }
 
-    // Сравниваем имя окна с ожидаемым
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     if (wcscmp(windowTitle, L"Warcraft III") != 0) {
         return 0;
     }
@@ -141,7 +141,7 @@ void Engine::processEvents()
     if (m_OwnerWindow.getCoutGuideActive())
         m_OwnerWindow.processingGuide();
     
-    // Проверка состояния клавиш при авто-кликере
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     if (G_CONFIG_MAIN.optionsConfig.autoClickerKey || G_CONFIG_MAIN.optionsConfig.autoClickerMouse) {
         checkKeyStates();
     }
@@ -204,7 +204,7 @@ inline void Engine::isInitialize(bool lastIsActiveWindow[]) {
             UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
         }
         if (G_BOOL_VISIBLE.isVisibleEngineFile) {
-            m_EngineFileTip2.updateRect(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
+            m_EngineFileTip2.updateRect(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, true);
             m_EngineFileTip2.updateRegionTrue(m_OwnerWindow.getIsVisibleMenu());
         }
         else {
@@ -229,18 +229,19 @@ bool Engine::initialize() {
 void Engine::checkKeyStates() {
     auto now = std::chrono::high_resolution_clock::now();
 
-    // Проверка клавиш, если включен авто-кликер и версия Warcraft равна 1.26
-    if (G_CONFIG_MAIN.optionsConfig.autoClickerKey && G_DATA_WARCRAFT.m_DataPath.versionWarcraft == 2) {
+    // СЂР°Р±РѕС‚Р°РµС‚ С‚РѕР»СЊРєРѕ РµСЃР»Рё Warcraft 1.26
+    if (G_CONFIG_MAIN.optionsConfig.autoClickerKey && G_DATA_WARCRAFT.m_DataPath.versionWarcraft == 1) {
         // Check keys 0-9 (0x30-0x39), A-Z (0x41-0x5A), num0-num9 (0x60-0x69), and right mouse button (VK_RBUTTON)
-        static const std::array<int, 36> keysToCheck = {
+        static const std::array<int, 46> keysToCheck = {
             0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, // 0-9
+            0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, // num0-num9
             0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, // A-J
             0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, // K-T
             0x55, 0x56, 0x57, 0x58, 0x59, 0x5A // U-Z
         };
 
         for (int keyNum : keysToCheck) {
-            if (GetAsyncKeyState(keyNum) & 0x8000) { // Клавиша нажата
+            if (GetAsyncKeyState(keyNum) & 0x8000) { // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 checkKeyPress(keyNum, now);
                 return;
             }
@@ -251,8 +252,8 @@ void Engine::checkKeyStates() {
     }
 
     if (G_CONFIG_MAIN.optionsConfig.autoClickerMouse) {
-        // Проверка правой кнопки мыши (VK_RBUTTON)
-        if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)// Правая кнопка мыши нажата
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (VK_RBUTTON)
+        if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             checkMousePress(now);
         else if (VK_RBUTTON == keyPressId) {
             keyPressId = -1;
@@ -261,12 +262,12 @@ void Engine::checkKeyStates() {
 }
 
 void Engine::checkKeyPress(int keyNum, auto& now) {
-    if (keyPressId != keyNum) {//если кнопка первй раз была нажата
+    if (keyPressId != keyNum) {//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         keyPressId = keyNum;
-        keyPressСlock = now;
+        keyPressClock = now;
     }
     else {
-        int64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressСlock).count();//проверка сколько прошло времени с нажатия
+        int64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressClock).count();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (elapsed >= 250) {
             key key_;
             while (GetAsyncKeyState(keyNum) & 0x8000) {
@@ -283,10 +284,10 @@ void Engine::checkKeyPress(int keyNum, auto& now) {
 void Engine::checkMousePress(auto& now) {
     if (keyPressId != VK_RBUTTON) {
         keyPressId = VK_RBUTTON;
-        keyPressСlock = now;
+        keyPressClock = now;
     }
     else {
-        int64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressСlock).count();
+        int64_t elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressClock).count();
         if (elapsed >= 400) {
             key key_;
             while (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
@@ -294,23 +295,23 @@ void Engine::checkMousePress(auto& now) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
 
-            key_.keyVK(VK_RBUTTON, false); // Отпускание правой кнопки мыши
+            key_.keyVK(VK_RBUTTON, false); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             keyPressId = -1;
             return;
         }
     }
 }
 
-// Константы для иконки в трее
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
 #define WM_TRAYICON (WM_USER + 1)
 #define ID_TRAY_APP_ICON 5000
 #define ID_TRAY_EXIT 3000
 #define ID_TRAY_WARCRAFT 4000
 #define ID_WARCRAFT_MENU_START 5000
 
-// Глобальные переменные
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 HWND hWnd;
-std::map<std::wstring, std::wstring> buttonPaths; // Для хранения имен кнопок и путей программ
+std::map<std::wstring, std::wstring> buttonPaths; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 bool LoadButtonData(const wchar_t* filename) {
     HANDLE hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -334,7 +335,7 @@ bool LoadButtonData(const wchar_t* filename) {
         return false;
     }
 
-    buffer[bytesRead] = '\0'; // Добавляем null-терминатор
+    buffer[bytesRead] = '\0'; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ null-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     std::string content(buffer);
     delete[] buffer;
@@ -353,13 +354,13 @@ bool LoadButtonData(const wchar_t* filename) {
         size_t bracketPos = line.find(L']');
         if (bracketPos != std::wstring::npos) {
             std::wstring buttonName = line.substr(1, bracketPos - 1);
-            std::wstring programPath = line.substr(bracketPos + 2); // Пропускаем "] "
+            std::wstring programPath = line.substr(bracketPos + 2); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "] "
             if (programPath[programPath.size() - 1] == L'\r')
                 programPath.erase(programPath.size() - 1);
 
-            // Проверяем, начинается ли programPath на букву A-Z или a-z
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ programPath пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ A-Z пїЅпїЅпїЅ a-z
             if (!programPath.empty() && !iswalpha(programPath[0])) {
-                programPath.erase(0, 1); // Удаляем первый символ
+                programPath.erase(0, 1); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             }
 
             buttonPaths[buttonName] = programPath;
@@ -369,7 +370,7 @@ bool LoadButtonData(const wchar_t* filename) {
     return !buttonPaths.empty();
 }
 
-// Функция запуска программы с правами администратора
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 void LaunchProgramWithAdminRights(LPCWSTR programPath) {
     SHELLEXECUTEINFO sei = { sizeof(SHELLEXECUTEINFO) };
     sei.lpVerb = L"runas";
@@ -379,44 +380,44 @@ void LaunchProgramWithAdminRights(LPCWSTR programPath) {
     if (!ShellExecuteEx(&sei)) {
         DWORD dwError = GetLastError();
         if (dwError == ERROR_CANCELLED) {
-            MessageBox(NULL, L"Запуск программы был отменен пользователем.", L"Информация", MB_OK | MB_ICONINFORMATION);
+            MessageBox(NULL, L"пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.", L"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ", MB_OK | MB_ICONINFORMATION);
         }
     }
 }
-// Обработчик событий окна
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_TRAYICON:
         if (lParam == WM_RBUTTONUP) {
-            // Создаем контекстное меню
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             HMENU hMenu = CreatePopupMenu();
 
-            // Проверяем, загружены ли данные из StartPath.ini
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ StartPath.ini
             if (!buttonPaths.empty()) {
                 HMENU hWarcraftMenu = CreatePopupMenu();
-                // Добавляем элементы в подменю Warcraft
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Warcraft
                 int buttonId = ID_WARCRAFT_MENU_START;
                 for (const auto& [buttonName, programPath] : buttonPaths) {
                     AppendMenu(hWarcraftMenu, MF_STRING, buttonId++, buttonName.c_str());
                 }
                 AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hWarcraftMenu, TEXT("Warcraft"));
-                AppendMenu(hMenu, MF_SEPARATOR, 0, NULL); // Добавляем разделительную линию
+                AppendMenu(hMenu, MF_SEPARATOR, 0, NULL); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             }
 
             AppendMenu(hMenu, MF_STRING, ID_TRAY_EXIT, TEXT("Exit"));
 
-            // Показываем меню
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             POINT pt;
             GetCursorPos(&pt);
             SetForegroundWindow(hwnd);
             TrackPopupMenu(hMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN, pt.x, pt.y + 35, 0, hwnd, NULL);
-            PostMessage(hwnd, WM_NULL, 0, 0); // Эта строка предотвращает возможные проблемы с меню
+            PostMessage(hwnd, WM_NULL, 0, 0); // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
             DestroyMenu(hMenu);
         }
         break;
     case WM_COMMAND:
         if (LOWORD(wParam) == ID_TRAY_EXIT) {
-            // Закрываем приложение
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             Shell_NotifyIcon(NIM_DELETE, &nid);
             PostQuitMessage(0);
             G_WINDOW.close();
@@ -442,32 +443,32 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 void Engine::initializeTree() {
 
-    // Получаем HWND окна
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ HWND пїЅпїЅпїЅпїЅ
     hWnd = G_WINDOW.getSystemHandle();
     std::wstring wstr = L"AVLoad_Tree";
-    // Регистрируем класс окна для обработки событий
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WindowProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, wstr.c_str(), NULL };
     RegisterClassEx(&wc);
-    // Создаем невидимое окно для обработки событий
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     hWnd = CreateWindow(wstr.c_str(), L"AVLoad Tree", WS_OVERLAPPEDWINDOW, 0, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, wc.hInstance, NULL);
 
-    // Загрузка данных из файла StartPath.ini
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ StartPath.ini
     if (!LoadButtonData(L"DataAutoLoad\\StartPath.ini")) {
-        buttonPaths.clear(); // Удаляем кнопки, если файл пуст или не существует
+        buttonPaths.clear(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     }
 
-    // Сворачиваем окно в трей
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
     MinimizeToTray();
 }
 
-// Функция для загрузки иконки из файла
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 HICON LoadIconFromFile(const wchar_t* filename) {
     return (HICON)LoadImage(NULL, filename, IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 }
 
-// Функция для сворачивания окна в трей
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
 void Engine::MinimizeToTray() {
-    // Создаем иконку в трее
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
     ZeroMemory(&nid, sizeof(NOTIFYICONDATA));
     nid.cbSize = sizeof(NOTIFYICONDATA);
     nid.hWnd = hWnd;

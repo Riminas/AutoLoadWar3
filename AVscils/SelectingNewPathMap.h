@@ -56,6 +56,7 @@ private:
     sf::Sprite topBackground;// содержит optionsButton DataCommandsButton 
     sf::Sprite bottomBackground;
     DirectoryEntry rootDirectory;
+    //DirectoryEntry rootDirectory2;
     std::vector<sf::Text> directoryTexts;
     std::vector<sf::Sprite> directoryTriangles; // треугольники попробовать перенести их в текст
     float scrollOffset = 0;

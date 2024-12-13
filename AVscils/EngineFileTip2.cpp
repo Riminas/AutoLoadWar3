@@ -18,15 +18,17 @@
 #include "ConfigMaps.h"
 #include "ConfigMain.h"
 #include "UpdateRegionRect.h"
+#include "ListHeroDraw.h"
 
 short EngineFileTip2::initialize() {
-    if (!engineFile() || G_HERO_INFO.size() == 0) {
-        //MessageBox(NULL, L"ÕÂÛ‰‡Î‡Ò¸ Ì‡ÈÚË ÔÓÙ˚", L"Error", MB_OK | MB_ICONEXCLAMATION);
+    if (!engineFile() || G_HERO_INFO.empty()) {
+        // MessageBox(NULL, L"–ù–µ—Ç –¥–∞–Ω–Ω—ã—Ö –≥–µ—Ä–æ–µ–≤", L"Error", MB_OK | MB_ICONEXCLAMATION);
         return 0;
     }
 
+    m_ListHeroDraw.clear();
     m_ListHeroDraw.resize(G_HERO_INFO.size() + 1);
-    unsigned int characterSize = 16; // –‡ÁÏÂ ¯ËÙÚ‡
+    unsigned int characterSize = 16; // –†–∞–∑–º–µ—Ä —à—Ä–∏—Ñ—Ç–∞
 
     m_MaxNameWidth = 0;
     for (const auto& hero : G_HERO_INFO) {
@@ -149,51 +151,53 @@ std::wstring EngineFileTip2::getPathListHero(const int& i) {
 }
 
 void EngineFileTip2::createHeroDraw(int index, unsigned int characterSize) {
+    ListHeroDraw& currentDraw = m_ListHeroDraw[index];
     bool isLastElement = (index == G_HERO_INFO.size());
-    m_ListHeroDraw[index].shape.setSize(sf::Vector2f(400, 23));
+    
+    currentDraw.shape.setSize(sf::Vector2f(400, 23));
     if (G_CONFIG_MAIN.optionsConfig.blackColor) {
-        m_ListHeroDraw[index].shape.setFillColor(sf::Color(45, 45, 48));
-        m_ListHeroDraw[index].shape.setOutlineColor(sf::Color(28, 28, 28));
+        currentDraw.shape.setFillColor(sf::Color(45, 45, 48));
+        currentDraw.shape.setOutlineColor(sf::Color(28, 28, 28));
     }
     else {
-        m_ListHeroDraw[index].shape.setFillColor(sf::Color::White);
-        m_ListHeroDraw[index].shape.setOutlineColor(sf::Color::Black);
+        currentDraw.shape.setFillColor(sf::Color::White);
+        currentDraw.shape.setOutlineColor(sf::Color::Black);
     }
-    m_ListHeroDraw[index].shape.setOutlineThickness(2);
+    currentDraw.shape.setOutlineThickness(2);
 
     if (!isLastElement) {
-        m_ListHeroDraw[index].text.setString(G_HERO_INFO[index].nameChar);
-        m_ListHeroDraw[index].text.setFont(G_FONT_STANDART);
-        m_ListHeroDraw[index].text.setCharacterSize(characterSize);
+        currentDraw.text.setString(G_HERO_INFO[index].nameChar);
+        currentDraw.text.setFont(G_FONT_STANDART);
+        currentDraw.text.setCharacterSize(characterSize);
 
         std::wstring strtData = file_time_to_wstring(G_HERO_INFO[index].latestTime);
-        m_ListHeroDraw[index].textData.setString(strtData);
-        m_ListHeroDraw[index].textData.setFont(G_FONT_STANDART);
-        m_ListHeroDraw[index].textData.setCharacterSize(characterSize-6);
-        m_ListHeroDraw[index].textData.setLineSpacing(0.6f);
+        currentDraw.textData.setString(strtData);
+        currentDraw.textData.setFont(G_FONT_STANDART);
+        currentDraw.textData.setCharacterSize(characterSize-6);
+        currentDraw.textData.setLineSpacing(0.6f);
 
         if (G_CONFIG_MAIN.optionsConfig.blackColor) {
-            m_ListHeroDraw[index].text.setFillColor(sf::Color::White);
-            m_ListHeroDraw[index].textData.setFillColor(sf::Color::White);
+            currentDraw.text.setFillColor(sf::Color::White);
+            currentDraw.textData.setFillColor(sf::Color::White);
         }
         else {
-            m_ListHeroDraw[index].text.setFillColor(sf::Color::Black);
-            m_ListHeroDraw[index].textData.setFillColor(sf::Color::Black);
+            currentDraw.text.setFillColor(sf::Color::Black);
+            currentDraw.textData.setFillColor(sf::Color::Black);
         }
     }
     else {
-        std::wstring str = std::format(L"{:>20}", L"ŒÚÏÂÌËÚ¸");
-        m_ListHeroDraw[index].text.setString(str);
-        m_ListHeroDraw[index].text.setFont(G_FONT_STANDART);
-        m_ListHeroDraw[index].text.setCharacterSize(characterSize);
+        std::wstring str = std::format(L"{:>20}", L"–û—Ç–º–µ–Ω–∞");
+        currentDraw.text.setString(str);
+        currentDraw.text.setFont(G_FONT_STANDART);
+        currentDraw.text.setCharacterSize(characterSize);
 
-        m_ListHeroDraw[index].textData.setString(L"\0");
+        currentDraw.textData.setString(L"\0");
 
         if (G_CONFIG_MAIN.optionsConfig.blackColor) {
-            m_ListHeroDraw[index].text.setFillColor(sf::Color::White);
+            currentDraw.text.setFillColor(sf::Color::White);
         }
         else {
-            m_ListHeroDraw[index].text.setFillColor(sf::Color::Black);
+            currentDraw.text.setFillColor(sf::Color::Black);
         }
     }
 }
