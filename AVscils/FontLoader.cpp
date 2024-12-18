@@ -14,9 +14,9 @@
 void FontLoader::loadPredefinedFonts() const {
     //std::string fontPath = getSystemFontsPath();
 
-    if (!G_FONT_STANDART.loadFromFile("DataAutoLoad\\ArialUnicodeMS.ttf")) {
+    if (!G_FONT_STANDART.loadFromFile("DataWarAssist\\ArialUnicodeMS.ttf")) {
         if (G_CONFIG_MAIN.optionsConfig.writeLogs)
-            LogError().logWarning("Не удалось загрузить шрифт: DataAutoLoad\\ArialUnicodeMS.ttf");
+            LogError().logWarning("Не удалось загрузить шрифт: DataWarAssist\\ArialUnicodeMS.ttf");
         MessageBox(NULL, L"Не удалось загрузить шрифт", L"Ошибка", MB_OK | MB_ICONEXCLAMATION);
     }
 

@@ -13,7 +13,7 @@ public:
     bool loadConfigMain();
     bool saveConfigMain() const;
 private:
-    const std::filesystem::path m_FilePath{ L"DataAutoLoad/DataAutoLoad.ini" };
+    const std::filesystem::path m_FilePath{ L"DataWarAssist/WarAssist.ini" };
 
     bool parseBool(const std::string& value);
     int parseInt(const std::string& value);

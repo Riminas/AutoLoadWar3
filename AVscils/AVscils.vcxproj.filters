@@ -255,7 +255,7 @@
     <ClInclude Include="AutoUpdate.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ListHeroDraw.h">
+    <ClInclude Include="ListHeroUI.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="OptionsUi.h">

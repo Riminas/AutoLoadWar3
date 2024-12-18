@@ -30,8 +30,8 @@
 void OwnerWindow::initialize() {
 
     setupWindow();
-    if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
-    else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
+    if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataWarAssist\\img\\ButtonBlack.png");
+    else m_TextureButton.loadFromFile("DataWarAssist\\img\\Button.png");
 
     m_Buttons.initialize({ 128, 0, 640, 128 }, m_TextureButton);
     initializeButtonsUsersDataCommands();
@@ -91,15 +91,15 @@ void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, boo
     }
     else if (numButton == -4) {
         G_BOOL_VISIBLE.isVisibleMainMenu = true;
-        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+        UpdateRegionRect().updateRegionMain();
     }
     else if (numButton == -3) {
         G_BOOL_VISIBLE.isVisibleMainMenu = false;
-        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 3);
+        UpdateRegionRect().updateRegionMiniButton();
     }
     else if (numButton == 0) {
         G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
-        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);//нужно передать позицию а ообще нужно все осноные позиции при старте программы записать
+        UpdateRegionRect().updateRegionMain();//нужно передать позицию а ообще нужно все осноные позиции при старте программы записать
     }
     else if (numButton == 2) {
 
@@ -170,15 +170,17 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
                 isWindow2Visible[0] = false;
             }
 
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 1);
+            UpdateRegionRect().updateRegionLoad();
 
-            G_WINDOW.clear(sf::Color(255, 255, 255));
+
+            if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
+            else G_WINDOW.clear(sf::Color(255, 255, 255));
             draw(true);
             G_WINDOW.display();
 
             EngineFileTip1().engineFile();
 
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+            UpdateRegionRect().updateRegionMain();
 
             if (G_CONFIG_MAIN.optionsConfig.autoExit)
                 G_WINDOW.close();
@@ -196,7 +198,7 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
             }
 
             G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+            UpdateRegionRect().updateRegionMain();
         }
 
         break;
@@ -208,7 +210,7 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
         else if (!G_DATA_MAPS.m_NameMaps.empty()) {
             SelectingNewPathMap().selectingNewPathMap();
             G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+            UpdateRegionRect().updateRegionMain();
         }
         break;
     }
@@ -217,17 +219,17 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
 
         G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
         isWindow2Visible[0] = false;
-        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+        UpdateRegionRect().updateRegionMain();
 
 
-        if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
-        else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
+        if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataWarAssist\\img\\ButtonBlack.png");
+        else m_TextureButton.loadFromFile("DataWarAssist\\img\\Button.png");
 
         break;
     }
     case 3: {//вывод гайда
         isWindow2Visible[0] = false;
-        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+        UpdateRegionRect().updateRegionMain();
         UpdateWinow2();
 
         //if (m_CoutGuide.isActive)
@@ -277,91 +279,16 @@ inline void OwnerWindow::initializeButtonsUsersDataCommands() {
 }
 
 // Функция для установки окна поверх всех других окон
-static void setAlwaysOnTop(const HWND& hwnd)  {
+static void setAlwaysOnTop(const HWND& hwnd) {
     SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 }
-//
-//LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-//    switch (uMsg) {
-//    case WM_ACTIVATE: {
-//        // Если окно теряет активное состояние, устанавливаем его на верхний уровень
-//        if (LOBYTE(wParam) == WA_INACTIVE) {
-//            setAlwaysOnTop(hwnd);
-//        }
-//        break;
-//    }
-//    case WM_DESTROY: {
-//        PostQuitMessage(0);
-//        return 0;
-//    }
-//    }
-//    return DefWindowProc(hwnd, uMsg, wParam, lParam);
-//}
-    //void OwnerWindow::setupWindow() {
-    //    // Настройки OpenGL
-    //    sf::ContextSettings settings;
-    //    settings.depthBits = 24;
-    //    settings.stencilBits = 8;
-    //    settings.antialiasingLevel = 4;
-    //    settings.majorVersion = 3;
-    //    settings.minorVersion = 0;
-    //    settings.attributeFlags = sf::ContextSettings::Default;
 
-    //    // Создаем окно с поддержкой OpenGL
-    //    G_WINDOW.create(sf::VideoMode(
-    //        sf::VideoMode::getDesktopMode().width - 2,
-    //        sf::VideoMode::getDesktopMode().height - 2),
-    //        "AutoLoads",
-    //        sf::Style::None,
-    //        settings);
-
-    //    HWND hwnd = G_WINDOW.getSystemHandle();
-    //    activeGameFalse();
-
-    //    // Включаем вертикальную синхронизацию
-    //    G_WINDOW.setVerticalSyncEnabled(true);
-
-    //    G_WINDOW.setPosition(sf::Vector2i(1, 1));
-
-    //    // Настраиваем стили окна
-    //    SetWindowLongPtr(hwnd, GWL_EXSTYLE,
-    //        WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST | WS_EX_COMPOSITED);
-    //    // Устанавливаем прозрачность
-    //    SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
-
-    //    // Инициализация OpenGL состояний
-    //    glEnable(GL_BLEND);
-    //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    //    // Устанавливаем viewport
-    //    GLint viewport[4];
-    //    glGetIntegerv(GL_VIEWPORT, viewport);
-    //    glViewport(0, 0, viewport[2], viewport[3]);
-
-    //    // Настраиваем проекцию
-    //    glMatrixMode(GL_PROJECTION);
-    //    glLoadIdentity();
-    //    glOrtho(0, viewport[2], viewport[3], 0, -1, 1);
-    //    glMatrixMode(GL_MODELVIEW);
-    //    glLoadIdentity();
-
-    //    // Поток для поддержания окна поверх других
-    //    std::thread([hwnd]() {
-    //        while (true) {
-    //            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    //            SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-    //            InvalidateRect(hwnd, NULL, FALSE);
-    //            UpdateWindow(hwnd);
-    //        }
-    //        }).detach();
-    //}
-
-    void OwnerWindow::setupWindow() {
+void OwnerWindow::setupWindow() {
     // Создаем окно без рамки
     G_WINDOW.create(sf::VideoMode(
         sf::VideoMode::getDesktopMode().width-2,
         sf::VideoMode::getDesktopMode().height-2),
-        "AutoLoads", sf::Style::None);
+        "WarAssist", sf::Style::None);
 
     // Получаем хэндл окна SFML
     HWND hwnd = G_WINDOW.getSystemHandle();
@@ -378,20 +305,20 @@ static void setAlwaysOnTop(const HWND& hwnd)  {
     setAlwaysOnTop(hwnd);
 
     // Запускаем таймер в отдельном потоке для периодического обновления окна
-    //std::thread([hwnd]() {
-    //    while (true) {
-    //        std::this_thread::sleep_for(std::chrono::seconds(1));
-    //        setAlwaysOnTop(hwnd);
-    //    }
-    //    }).detach();
+    std::thread([hwnd]() {
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            setAlwaysOnTop(hwnd);
+        }
+        }).detach();
 }
 
 void OwnerWindow::activeGameTrue(const HWND& hWndWindow) {
     G_WINDOW.setFramerateLimit(20);
     if(G_BOOL_VISIBLE.isVisibleMainMenu)
-        UpdateRegionRect().updateRegion(hWndWindow, 0);
+        UpdateRegionRect().updateRegionMain();
     else
-        UpdateRegionRect().updateRegion(hWndWindow, 3);
+        UpdateRegionRect().updateRegionMiniButton();
     m_CoutGuide.m_Window.setVisible(true);
 }
 
@@ -407,7 +334,7 @@ void OwnerWindow::updateRect(const HWND& hWndWindow) {
 }
 
 void OwnerWindow::activeGameFalse() {
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);
+    UpdateRegionRect().clearRegion();
     m_CoutGuide.m_Window.setVisible(false);
     G_WINDOW.setFramerateLimit(3);
 }

@@ -19,9 +19,6 @@
 #include "FontLoader.h"
 #include "UpdateRegionRect.h"
 
-#include <SFML/OpenGL.hpp>
-#include <gl/GL.h>
-
 NOTIFYICONDATA nid;
 
 void Engine::engine1() {
@@ -39,7 +36,9 @@ void Engine::engine1() {
         else {
             sf::Event event;
             while (G_WINDOW.pollEvent(event)) if (event.type == sf::Event::Closed) G_WINDOW.close();
-            G_WINDOW.clear(sf::Color(255, 255, 255));
+
+            if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
+            else G_WINDOW.clear(sf::Color(255, 255, 255));
             G_WINDOW.display();
         }
     }
@@ -149,8 +148,8 @@ void Engine::processEvents()
 }
 
 void Engine::draw(const bool isVisibleLoad) {
-    G_WINDOW.clear(sf::Color(255, 255, 255));
-
+    if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
+    else G_WINDOW.clear(sf::Color(255, 255, 255));
     m_OwnerWindow.draw(isVisibleLoad);
 
     if (m_IsVisibleOwnerWindow) {
@@ -175,7 +174,7 @@ void Engine::handleMouseButtonPressed(sf::Event& event)
         if (numLainListHero >= 0) {
             G_BOOL_VISIBLE.isVisibleEngineFile = false;
             m_OwnerWindow.setIsVisibleMenu(false);
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 1);
+            UpdateRegionRect().updateRegionLoad();
 
             draw(true);
 
@@ -185,12 +184,12 @@ void Engine::handleMouseButtonPressed(sf::Event& event)
                 G_WINDOW.close();
             else
             {
-                UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+                UpdateRegionRect().updateRegionMain();
             }
         }
         else if (numLainListHero == -2) {
             G_BOOL_VISIBLE.isVisibleEngineFile = false;
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+            UpdateRegionRect().updateRegionMain();
         }
     }
     m_Clock.restart();
@@ -202,14 +201,14 @@ inline void Engine::isInitialize(bool lastIsActiveWindow[]) {
         if (m_EngineFileTip2.initialize() == 0) {
             G_BOOL_VISIBLE.isVisibleEngineFile = false;
             m_OwnerWindow.setIsVisibleMenu(false);
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+            UpdateRegionRect().updateRegionMain();
         }
         if (G_BOOL_VISIBLE.isVisibleEngineFile) {
             m_EngineFileTip2.updateRect(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, true);
             m_EngineFileTip2.updateRegionTrue(m_OwnerWindow.getIsVisibleMenu());
         }
         else {
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0);
+            UpdateRegionRect().updateRegionMain();
         }
     }
 }
@@ -417,13 +416,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 void Engine::initializeTree() {
     hWnd = G_WINDOW.getSystemHandle();
-    std::wstring wstr = L"AVLoad_Tree";
+    std::wstring wstr = L"DataWarAssist_Tree";
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WindowProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, wstr.c_str(), NULL };
     RegisterClassEx(&wc);
-    hWnd = CreateWindow(wstr.c_str(), L"AVLoad Tree", WS_OVERLAPPEDWINDOW, 0, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, wc.hInstance, NULL);
+    hWnd = CreateWindow(wstr.c_str(), L"DataWarAssist Tree", WS_OVERLAPPEDWINDOW, 0, 0, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, wc.hInstance, NULL);
 
     //     StartPath.ini
-    if (!LoadConfigData(L"DataAutoLoad\\StartPath.ini")) {
+    if (!LoadConfigData(L"DataWarAssist\\StartPath.ini")) {
         buttonPaths.clear();
     }
 
@@ -441,7 +440,7 @@ void Engine::MinimizeToTray() {
     nid.uID = ID_TRAY_APP_ICON;
     nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     nid.uCallbackMessage = WM_TRAYICON;
-    nid.hIcon = LoadIconFromFile(L"DataAutoLoad\\img\\icon.ico");
-    wcscpy_s(nid.szTip, L"AVLoad tree");
+    nid.hIcon = LoadIconFromFile(L"DataWarAssist\\img\\icon.ico");
+    wcscpy_s(nid.szTip, L"DataWarAssist tree");
     Shell_NotifyIcon(NIM_ADD, &nid);
 }

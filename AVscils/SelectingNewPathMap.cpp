@@ -27,9 +27,9 @@ SelectingNewPathMap::SelectingNewPathMap()
 void SelectingNewPathMap::selectingNewPathMap() {
     // Открытие диалогового окна для выбора папки и получение пути к выбранной папке
     initialize();
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
+    UpdateRegionRect().updateRegionOption();//пернести перед очисткой экрана
     std::wstring folderPath = run();
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// перенести ближе к выводу
+    UpdateRegionRect().clearRegion();// перенести ближе к выводу
     // Проверка, пуст ли путь
     if (folderPath == L"Exit") {
         return;//2
@@ -89,7 +89,7 @@ void SelectingNewPathMap::initialize() {
         m_Rect[3]/*.bottom*/ = static_cast<float>(desktop.height / 2.f + windowHeight / 2 - 32);
     }
 
-    m_Texture.loadFromFile("DataAutoLoad\\img\\Option.png");
+    m_Texture.loadFromFile("DataWarAssist\\img\\Option.png");
     // Общее меню
     initializeSprite(titleAndClose, sf::Vector2f{ m_Rect[0],  m_Rect[1] - 48 }, { 0, 448, 512, 16 });
     //initializeText(title, L"Maps: " + G_DATA_MAPS.m_NameMapsFull, newPosition + sf::Vector2f{ 20, -24 });
@@ -351,7 +351,7 @@ std::wstring SelectingNewPathMap::run() {
                 if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow)
                     return std::wstring();
                 isActive = true;
-                UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
+                UpdateRegionRect().updateRegionOption();//пернести перед очисткой экрана
             }
 
             sf::Event event;
@@ -381,7 +381,7 @@ std::wstring SelectingNewPathMap::run() {
         }
         else {
             if (isActive) {
-                UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// перенести ближе к выводу
+                UpdateRegionRect().clearRegion();// перенести ближе к выводу
             }
             isActive = false;
             sf::Event event;

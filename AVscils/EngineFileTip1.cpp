@@ -2,15 +2,10 @@
 
 #include <filesystem>
 
-#include "Global.h"
-#include "getMapOpen.h"
 #include "LoadManager.h"
 #include "EngineFileTip1.h"
-#include "Options.h"
 #include "SkillsUpgradeStart.h"
-#include "HeroInfoEngine.h"
 #include "HeroInfoEngineFast.h"
-#include "ConfigMain.h"
 #include "ConfigMapsEngine.h"
 #include "LogError.h"
 #include "DataWarcraft.h"
@@ -21,7 +16,7 @@ void EngineFileTip1::engineFile()
     if (!HeroInfoEngineFast().retrieveHeroDataFast(G_CONFIG_MAPS.path)) return;
 
     if (G_HERO_INFO.size() == 0) {
-        MessageBox(NULL, L"Неудалась найти профы", L"Error", MB_OK | MB_ICONEXCLAMATION);
+        //MessageBox(NULL, L"Неудалась найти профы", L"Error", MB_OK | MB_ICONEXCLAMATION);
         return;
     }
 

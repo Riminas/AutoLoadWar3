@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <filesystem>
-#include "ListHeroDraw.h"
+#include "ListHeroUI.h"
 #include <wtypes.h>
 
 class EngineFileTip2 {
@@ -21,7 +21,7 @@ private:
     std::wstring file_time_to_wstring(const std::filesystem::file_time_type& ftime);
     void createHeroDraw(int index, unsigned int characterSize);
 
-    std::vector<ListHeroDraw> m_ListHeroDraw;
+    std::vector<ListHeroUI> m_ListHeroUI;
     size_t m_MaxNameWidth = 0;
     bool isInitialize = false;
 };

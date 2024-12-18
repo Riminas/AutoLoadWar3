@@ -30,6 +30,13 @@ Options::Options()
     }
 }
 
+void Options::options() {
+    UpdateRegionRect().updateRegionOption();//пернести перед очисткой экрана
+    // Открытие диалогового окна для выбора папки и получение пути к выбранной папке
+    std::wstring folderPath = run();
+    UpdateRegionRect().clearRegion();// перенести ближе к выводу
+}
+
 inline void Options::initializeText(sf::Text& text, const std::wstring& textString, const sf::Vector2f& position, 
     const sf::Color& color, const float& letterSpacing) const {
     text.setFont(G_FONT_STANDART);
@@ -64,7 +71,7 @@ void Options::initializeWindow() {
         m_Rect[2]/*.right*/ = static_cast<float>(desktop.width / 2 + 256);
         m_Rect[3]/*.bottom*/ = static_cast<float>(desktop.height / 2 + windowHeight / 2 - 32);
     }
-    m_Texture.loadFromFile("DataAutoLoad\\img\\Option.png");
+    m_Texture.loadFromFile("DataWarAssist\\img\\Option.png");
 
     initializeText(m_NameMap, /*L"Maps: " + */G_DATA_MAPS.m_NameMapsFull, sf::Vector2f{ 20 + m_Rect[0], m_Rect[1] - 26 });
     m_NameMap.setStyle(sf::Text::Bold);
@@ -136,15 +143,10 @@ void Options::initializeSettings() {
     m_Options[5].setPosition(m_Rect[0], m_Rect[1] + 170);
 }
 
-void Options::options() {
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
-    // Открытие диалогового окна для выбора папки и получение пути к выбранной папке
-    std::wstring folderPath = run();
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// перенести ближе к выводу
-}
 
 void Options::drawWindow() {
-    G_WINDOW.clear(sf::Color(255, 255, 255));//sf::Color(45, 45, 48)
+    if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
+    else G_WINDOW.clear(sf::Color(255, 255, 255));
     G_WINDOW.draw(titlAndClose);
     G_WINDOW.draw(background);
 
@@ -218,7 +220,7 @@ std::wstring Options::handleMousePress(sf::Event& event) {
     }
         if(m_PathWar3.isClicked(mouseButton) && m_PathWar3.isClickedButton(mouseButton)) {
             SelectingNewPathMap().selectingNewPathMap();
-            UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
+            UpdateRegionRect().updateRegionOption();//пернести перед очисткой экрана
             m_PathWar3.setString(G_CONFIG_MAPS.path);
 }
 
@@ -302,7 +304,7 @@ std::wstring Options::handleMousePress(sf::Event& event) {
 
 
 void Options::updateConfigMaps() {
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, -1);// перенести ближе к выводу
+    UpdateRegionRect().clearRegion();// перенести ближе к выводу
 
     const std::array<CmdEntry, 5> usersConfigLast = G_CONFIG_MAPS.usersConfig;
 
@@ -320,7 +322,7 @@ void Options::updateConfigMaps() {
     }
 
     initializeDataCommands();
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пернести перед очисткой экрана
+    UpdateRegionRect().updateRegionOption();//пернести перед очисткой экрана
 }
 
 bool Options::IsWindowInFocus(const HWND& hWnd) const {
@@ -365,7 +367,7 @@ std::wstring Options::run() {
                 if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow)
                     return std::wstring();
                 isActive = true;
-                UpdateRegionRect().updateRegion(hWndWindow, 2);
+                UpdateRegionRect().updateRegionOption();
             }
 
             sf::Event event;
@@ -384,14 +386,15 @@ std::wstring Options::run() {
         }
         else {
             if (isActive) {
-                UpdateRegionRect().updateRegion(hWndWindow, -1);
+                UpdateRegionRect().clearRegion();
             }
             isActive = false;
             sf::Event event;
             while (G_WINDOW.pollEvent(event)) {
 
             }
-            G_WINDOW.clear(sf::Color(255, 255, 255));
+            if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
+            else G_WINDOW.clear(sf::Color(255, 255, 255));
             G_WINDOW.display();
         }
     }

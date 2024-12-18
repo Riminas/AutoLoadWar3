@@ -17,7 +17,7 @@ private:
 
         HWND hWndWindowWar = NULL;
         std::wstring warPathDirectMaps;
-        std::array<std::wstring, 2> warPathDirectSave;
+        std::vector<std::wstring> warPathDirectSave{2};
     private:
         std::wstring openWarcraft3(const HWND hWndWindow);
     };

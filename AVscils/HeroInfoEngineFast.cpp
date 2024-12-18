@@ -22,8 +22,6 @@ bool HeroInfoEngineFast::retrieveHeroDataFast(const std::wstring& saveCodePath) 
     }
 
     if (G_HERO_INFO[0].path.empty()) {
-        LogError().logErrorW(L"directory 1.36- (" + fullSavePath + L")");
-        LogError().logErrorW(L"directory 1.26 - (" + fullSavePath2 + L")");
         return false;
     }
 

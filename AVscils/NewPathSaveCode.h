@@ -8,8 +8,9 @@ public:
 
 private:
     void saveFile(const std::wstring& t_Path, std::ofstream& outFile);
+    bool isPathUnique(const std::wstring& path);
     std::wstring BrowseFileDialog() const;
 
     std::wstring m_Path;
-    const std::wstring m_PathOptionDirectory = L"DataAutoLoad\\PathWar3.dat";
+    const std::wstring m_PathOptionDirectory = L"DataWarAssist\\PathWar3.txt";
 };

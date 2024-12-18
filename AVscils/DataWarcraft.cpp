@@ -85,12 +85,6 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
 
     {//1.26
         if (versionWarcraft == 1) {
-            if (!std::filesystem::exists(L"DataAutoLoad\\PathWar3.dat")) {
-                std::wofstream pathFile(L"DataAutoLoad\\PathWar3.dat");
-                pathFile << filePath.wstring();
-                pathFile.close();
-            }
-
             size_t pos = filePath.wstring().find_last_of(L"\\");
             if (pos != std::wstring::npos) {
                 warPathDirectSave[1] = filePath.wstring().substr(0, pos);
@@ -99,20 +93,44 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
             if (!std::filesystem::exists(warPathDirectSave[1])) {
                 warPathDirectSave[1].clear();
             }
-        }
-        else if (versionWarcraft == 0) {
-            // Загружаем дополнительные пути из файла конфигурации
-            std::wifstream pathFile(L"DataAutoLoad\\PathWar3.dat");
+            std::wifstream pathFile(L"DataWarAssist\\PathWar3.txt");
             if (pathFile.is_open()) {
                 std::wstring line;
-                std::getline(pathFile, line);
-                if (!line.empty()) {
-                    size_t pos = line.find(L"\\war3.exe");
-                    if (pos != std::wstring::npos) {
-                        line = line.substr(0, pos);
+                int pathIndex = 2; // Начинаем с индекса 1
+                while (std::getline(pathFile, line) && pathIndex < 10) {
+                    if (!line.empty()) {
+                        size_t pos = line.find(L"\\war3.exe");
+                        if (pos != std::wstring::npos) {
+                            line = line.substr(0, pos);
+                        }
+                        if (std::filesystem::exists(line)) {
+                            pathIndex++;
+                            warPathDirectSave.push_back(line);
+                        }
                     }
-                    if (std::filesystem::exists(line)) {
-                        warPathDirectSave[1] = line;
+                }
+                pathFile.close();
+            }
+
+        }
+        else if (versionWarcraft == 0) {
+            // Загружаем все пути из файла
+            std::wifstream pathFile(L"DataWarAssist\\PathWar3.txt");
+            if (pathFile.is_open()) {
+                std::wstring line;
+                int pathIndex = 1; // Начинаем с индекса 1
+                while (std::getline(pathFile, line) && pathIndex < 10) {
+                    if (!line.empty()) {
+                        size_t pos = line.find(L"\\war3.exe");
+                        if (pos != std::wstring::npos) {
+                            line = line.substr(0, pos);
+                        }
+                        if (std::filesystem::exists(line)) {
+                            if(pathIndex++ == 1)
+                                warPathDirectSave[0] = line;
+                            else
+                                warPathDirectSave.push_back(line);
+                        }
                     }
                 }
                 pathFile.close();
@@ -139,12 +157,13 @@ std::wstring DataWarcraft::DataPath::openWarcraft3(const HWND hWndWindow) {
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
     if (!hProcess) {
         std::wstring path;
+        LogError().logError("Не удалось открыть процесс: " + std::to_string(GetLastError()));
+
         NewPathSaveCode newPathSaveCode_;
         if (newPathSaveCode_.newPathSaveCode(path)) {
             return path;
         }
 
-        LogError().logError("Не удалось открыть процесс: " + std::to_string(GetLastError()));
         return L"";
     }
 

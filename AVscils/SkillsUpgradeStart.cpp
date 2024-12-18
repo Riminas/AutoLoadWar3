@@ -78,7 +78,7 @@ bool SkillsUpgradeStart::loadDataSkill()
             }
         }
 
-        const std::pair<int, unsigned> pair{ idKey, numKey };
+        std::pair<int, unsigned> pair{ idKey, numKey };
         m_DataSkill.push_back(std::move(pair));
     }
 

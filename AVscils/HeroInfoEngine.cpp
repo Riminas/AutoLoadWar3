@@ -7,7 +7,6 @@
 #include "StringConvector.h"
 #include "HeroInfoEngine.h"
 #include "DataWarcraft.h"
-#include "ConfigMapsEngine.h"
 #include "DataMaps.h"
 #include "LogError.h"
 #include <codecvt>
@@ -228,7 +227,7 @@ void HeroInfoEngine::updateHeroInfo(const std::filesystem::directory_entry& file
 // Метод для сохранения данных героев в файл
 void HeroInfoEngine::saveDataHero(const std::vector<HeroInfo>& heroInfo) const {
     // Определяем путь к файлу сохранения
-    std::wstring heroDataFilePath = L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps + L"/Hero.ini";
+    std::wstring heroDataFilePath = L"DataWarAssist/DataMaps/" + G_DATA_MAPS.m_NameMaps + L"/Hero.ini";
 
     // Создаём директорию, если её нет
     std::filesystem::create_directories(std::filesystem::path(heroDataFilePath).parent_path());
@@ -276,7 +275,7 @@ bool HeroInfoEngine::loadDataHero(std::vector<HeroInfo>& heroInfo) const {
     heroInfo.clear();
 
     // Определяем путь к файлу сохранения
-    std::wstring heroDataFilePath = L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps + L"/Hero.ini";
+    std::wstring heroDataFilePath = L"DataWarAssist/DataMaps/" + G_DATA_MAPS.m_NameMaps + L"/Hero.ini";
 
     std::ifstream file(heroDataFilePath, std::ios::in);
     if (!file.is_open()) {

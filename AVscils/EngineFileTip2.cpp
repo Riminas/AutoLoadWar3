@@ -4,21 +4,14 @@
 #include <sstream>
 #include <format>
 #include <iomanip>
-#include <tlhelp32.h>
 
 #include "Global.h"
-#include "getMapOpen.h"
-#include "LoadManager.h"
 #include "EngineFileTip2.h"
-#include "EngineFileTip1.h"
-#include "Options.h"
-#include "SkillsUpgradeStart.h"
 #include "StringConvector.h"
 #include "HeroInfoEngine.h"
 #include "ConfigMaps.h"
 #include "ConfigMain.h"
 #include "UpdateRegionRect.h"
-#include "ListHeroDraw.h"
 
 short EngineFileTip2::initialize() {
     if (!engineFile() || G_HERO_INFO.empty()) {
@@ -26,8 +19,8 @@ short EngineFileTip2::initialize() {
         return 0;
     }
 
-    m_ListHeroDraw.clear();
-    m_ListHeroDraw.resize(G_HERO_INFO.size() + 1);
+    m_ListHeroUI.clear();
+    m_ListHeroUI.resize(G_HERO_INFO.size() + 1);
     unsigned int characterSize = 16; // Размер шрифта
 
     m_MaxNameWidth = 0;
@@ -52,20 +45,20 @@ inline bool EngineFileTip2::engineFile() {
 }
 
 int16_t EngineFileTip2::mouseButtonPressed(const sf::Event& event) const {
-    const uint8_t lastNum = (uint8_t)m_ListHeroDraw.size() - 1;
+    const uint8_t lastNum = (uint8_t)m_ListHeroUI.size() - 1;
     for (uint8_t i = 0; i < lastNum; ++i) {
-        if (m_ListHeroDraw[i].shape.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))
+        if (m_ListHeroUI[i].shape.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))
             return i;
     }
 
-    if (m_ListHeroDraw[lastNum].shape.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))
+    if (m_ListHeroUI[lastNum].shape.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))
         return -2;
 
     return -1;
 }
 
 void EngineFileTip2::draw() {
-    for (const ListHeroDraw& list : m_ListHeroDraw) {
+    for (const ListHeroUI& list : m_ListHeroUI) {
         G_WINDOW.draw(list.shape);
         G_WINDOW.draw(list.text);
         G_WINDOW.draw(list.textData);
@@ -100,17 +93,17 @@ void EngineFileTip2::updateRect(const HWND& hWndWindow, const bool& isUpdataPosi
             int num2 = (G_DATA_WARCRAFT.m_DataRect.size.y / 25);
             std::vector<HeroInfo> listHero{};
             listHero.resize(num2);
-            std::vector<ListHeroDraw> listHeroDraw{};
+            std::vector<ListHeroUI> listHeroDraw{};
             listHeroDraw.resize(num2);
             int j = 0;
             for (size_t i = G_HERO_INFO.size() - num2; auto & p : listHero) {
                 p = G_HERO_INFO[i];
-                listHeroDraw[j] = m_ListHeroDraw[i+1];
+                listHeroDraw[j] = m_ListHeroUI[i+1];
                 i++;
                 j++;
             }
             G_HERO_INFO = listHero;
-            m_ListHeroDraw = listHeroDraw;
+            m_ListHeroUI = listHeroDraw;
         }
 
 
@@ -126,23 +119,22 @@ void EngineFileTip2::updateRect(const HWND& hWndWindow, const bool& isUpdataPosi
 }
 
 void EngineFileTip2::updatePosition(const sf::Vector2f& newPosition) {
-    for (unsigned i = 0; i < m_ListHeroDraw.size(); ++i) {
-        m_ListHeroDraw[i].shape.setPosition(sf::Vector2f(0, static_cast<float>(2 + 25 * i)) + newPosition);
-        m_ListHeroDraw[i].text.setPosition(sf::Vector2f(4, static_cast<float>(3 + 25 * i)) + newPosition);
-        m_ListHeroDraw[i].textData.setPosition(sf::Vector2f(m_ListHeroDraw[i].shape.getSize().x-60, static_cast<float>(3 + 25 * i)) + newPosition);
-        const float maxWidth = m_ListHeroDraw[i].shape.getSize().x - 60;
+    for (unsigned i = 0; i < m_ListHeroUI.size(); ++i) {
+        m_ListHeroUI[i].shape.setPosition(sf::Vector2f(0, static_cast<float>(2 + 25 * i)) + newPosition);
+        m_ListHeroUI[i].text.setPosition(sf::Vector2f(4, static_cast<float>(3 + 25 * i)) + newPosition);
+        m_ListHeroUI[i].textData.setPosition(sf::Vector2f(m_ListHeroUI[i].shape.getSize().x-60, static_cast<float>(3 + 25 * i)) + newPosition);
+        const float maxWidth = m_ListHeroUI[i].shape.getSize().x - 60;
         StringConvector StringConvector_;
-        StringConvector_.adjustTextToFit(m_ListHeroDraw[i].text, maxWidth);
+        StringConvector_.adjustTextToFit(m_ListHeroUI[i].text, maxWidth);
     }
 }
 
 void EngineFileTip2::updateRegionTrue(const bool t_IsVisibleMenu) {
-    UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 0,
-        {
-            static_cast<int>(m_ListHeroDraw[0].shape.getPosition().x),
-            static_cast<int>(m_ListHeroDraw[0].shape.getPosition().y),
-            static_cast<int>(m_ListHeroDraw[0].shape.getPosition().x + m_ListHeroDraw[0].shape.getSize().x),
-            static_cast<int>(m_ListHeroDraw.back().shape.getPosition().y + m_ListHeroDraw[0].shape.getSize().y) 
+    UpdateRegionRect().updateRegionMain({
+            static_cast<int>(m_ListHeroUI[0].shape.getPosition().x),
+            static_cast<int>(m_ListHeroUI[0].shape.getPosition().y),
+            static_cast<int>(m_ListHeroUI[0].shape.getPosition().x + m_ListHeroUI[0].shape.getSize().x),
+            static_cast<int>(m_ListHeroUI.back().shape.getPosition().y + m_ListHeroUI[0].shape.getSize().y) 
         });
 }
 
@@ -151,7 +143,7 @@ std::wstring EngineFileTip2::getPathListHero(const int& i) {
 }
 
 void EngineFileTip2::createHeroDraw(int index, unsigned int characterSize) {
-    ListHeroDraw& currentDraw = m_ListHeroDraw[index];
+    ListHeroUI& currentDraw = m_ListHeroUI[index];
     bool isLastElement = (index == G_HERO_INFO.size());
     
     currentDraw.shape.setSize(sf::Vector2f(400, 23));

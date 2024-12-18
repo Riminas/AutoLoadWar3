@@ -14,13 +14,13 @@
 #include <thread>
 #include "FontLoader.h"
 #include "ConfigMain.h"
-//#include <cstdio>  // РґР»СЏ _popen/_pclose
+//#include <cstdio>  // для _popen/_pclose
 
 class CoutGuide {
 private:
     std::vector<sf::Text> m_TextLines; //      
-    std::wstring m_FilePath = { L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
-    //std::string m_GuideUrl; // Р”РѕР±Р°РІР»СЏРµРј РїРµСЂРµРјРµРЅРЅСѓСЋ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ URL
+    std::wstring m_FilePath = { L"DataWarAssist/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
+    //std::string m_GuideUrl; // Добавляем переменную для хранения URL
     float m_ScrollOffset; // 
     const float m_LineHeight = 30.f; // 
 public:
@@ -43,7 +43,7 @@ public:
     //}
     void newGame() {
         m_TextLines.clear();
-        m_FilePath = { L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
+        m_FilePath = { L"DataWarAssist/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
         initialize();
     }
 
@@ -85,7 +85,7 @@ public:
         int windowWidth = 512;
         int windowHeight = sf::VideoMode::getDesktopMode().height / 3;
 
-        m_Window.create(sf::VideoMode(windowWidth, windowHeight), "AutoLoadsGuide",
+        m_Window.create(sf::VideoMode(windowWidth, windowHeight), "WarGuide",
             sf::Style::Resize | sf::Style::Close);
         // 
 
@@ -135,13 +135,13 @@ private:
         std::string fileContent;
         bool contentLoaded = false;
 
-        // РЎРЅР°С‡Р°Р»Р° РїСЂРѕР±СѓРµРј Р·Р°РіСЂСѓР·РёС‚СЊ РёР· URL РµСЃР»Рё РѕРЅ Р·Р°РґР°РЅ
+        // Сначала пробуем загрузить из URL если он задан
         //if (!m_GuideUrl.empty()) {
         //    fileContent = loadFromUrl(m_GuideUrl);
         //    contentLoaded = !fileContent.empty();
         //}
 
-        // Р•СЃР»Рё РЅРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ РёР· URL, РїСЂРѕР±СѓРµРј Р»РѕРєР°Р»СЊРЅС‹Р№ С„Р°Р№Р»
+        // Если не удалось загрузить из URL, пробуем локальный файл
         if (!contentLoaded) {
             for (const auto& entry : std::filesystem::directory_iterator(m_FilePath)) {
                 if (std::filesystem::is_regular_file(entry) && entry.path().extension() == ".txt") {
@@ -155,7 +155,7 @@ private:
         if (!contentLoaded || fileContent.empty()) {
             sf::Text emptyText;
             emptyText.setFont(G_FONT_STANDART);
-            emptyText.setString("Р“Р°Р№Рґ РїСѓСЃС‚ РёР»Рё РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚");
+            emptyText.setString("Гайд пуст или отсутствует");
             emptyText.setCharacterSize(14);
             emptyText.setFillColor(G_CONFIG_MAIN.optionsConfig.blackColor ? sf::Color::White : sf::Color::Black);
             
@@ -169,7 +169,7 @@ private:
             return;
         }
 
-        // РћСЃС‚Р°Р»СЊРЅРѕР№ РєРѕРґ Р·Р°РіСЂСѓР·РєРё С‚РµРєСЃС‚Р° РѕСЃС‚Р°РµС‚СЃСЏ Р±РµР· РёР·РјРµРЅРµРЅРёР№
+        // Остальной код загрузки текста остается без изменений
         std::stringstream fileStream(fileContent);
         std::string line;
         float yPosition = 10.f;
@@ -189,7 +189,7 @@ private:
     }
 
     //std::string loadFromUrl(const std::string& url) {
-    //    // РСЃРїРѕР»СЊР·СѓРµРј curl РґР»СЏ Р·Р°РіСЂСѓР·РєРё СЃРѕРґРµСЂР¶РёРјРѕРіРѕ
+    //    // Используем curl для загрузки содержимого
     //    std::string command = "curl -s \"" + url + "\"";
     //    std::string result;
     //    
