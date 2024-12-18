@@ -6,3 +6,8 @@ struct ListHeroUI {
     sf::Text text;
     sf::Text textData;
 }; 
+//struct ListHeroNew {
+//    sf::Vector2f position{ 0, 0 };
+//    std::u32string text;
+//    std::string textData;
+//}; 

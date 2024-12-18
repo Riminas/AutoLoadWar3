@@ -55,15 +55,15 @@ void SelectingNewPathMap::selectingNewPathMap() {
 }
 
 
-inline void SelectingNewPathMap::initializeText(sf::Text& text, const std::wstring& textString, const sf::Vector2f& position, const sf::Color& color, const float& letterSpacing) const {
-    text.setFont(G_FONT_STANDART);
-    text.setCharacterSize(16);
-    text.setLetterSpacing(letterSpacing);;
-
-    text.setString(textString);
-    text.setPosition(position);
-    text.setFillColor(color);
-}
+//inline void SelectingNewPathMap::initializeText(sf::Text& text, const std::wstring& textString, const sf::Vector2f& position, const sf::Color& color, const float& letterSpacing) const {
+//    text.setFont(G_FONT_STANDART);
+//    text.setCharacterSize(16);
+//    text.setLetterSpacing(letterSpacing);;
+//
+//    text.setString(textString);
+//    text.setPosition(position);
+//    text.setFillColor(color);
+//}
 
 inline void SelectingNewPathMap::initializeRectangle(sf::RectangleShape& rectangle, const sf::Vector2f& size, const sf::Vector2f& position, const sf::Color& color) const {
     rectangle.setSize(size);
@@ -178,7 +178,7 @@ void SelectingNewPathMap::updateDirectoryTexts() {
     std::function<void(const DirectoryEntry&, float)> addTexts = [&](const DirectoryEntry& dir, float indent) {
         if (dir.isOpen) {
             for (const auto& subDir : dir.subDirectories) {
-                sf::Text dirText(subDir.name, G_FONT_STANDART, 14);
+                sf::Text dirText(subDir.name, G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)], 14);
                 dirText.setFillColor(sf::Color::White);
                 dirText.setPosition(sf::Vector2f(38 + indent, yOffset + m_Rect[1])); // Смещение текста для размещения треугольника
                 directoryTexts.push_back(std::move(dirText));

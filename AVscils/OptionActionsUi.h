@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <SFML/Graphics.hpp>
 #include "StringConvector.h"
-#include "FontSelector.h"
+#include "Global.h"
 
 // Структура для хранения данных
 class OptionActionUi {
@@ -16,7 +16,7 @@ public:
         sprite.setTexture(texture);
         setString(str);
         // Инициализация основного текста
-        FontSelector().getFontForText(text);
+        text.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
         text.setCharacterSize(13);
     }
 

@@ -17,7 +17,7 @@
 #include "ConfigMainEngine.h"
 #include "DataWarcraft.h"
 #include "ConfigMapsEngine.h"
-#include "FontSelector.h"
+
 #include "SelectingNewPathMap.h"
 #include "UpdateRegionRect.h"
 
@@ -39,7 +39,7 @@ void Options::options() {
 
 inline void Options::initializeText(sf::Text& text, const std::wstring& textString, const sf::Vector2f& position, 
     const sf::Color& color, const float& letterSpacing) const {
-    text.setFont(G_FONT_STANDART);
+    text.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
     text.setString(textString);
     text.setPosition(position);
     text.setFillColor(color);

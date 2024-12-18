@@ -13,7 +13,7 @@
 
 namespace {
     constexpr size_t BUFFER_SIZE = 8192;
-    const std::unordered_set<std::string_view> HERO_TOKENS = { "hero", "job", "char", "character", "герой" };
+    const std::unordered_set<std::string_view> HERO_TOKENS = { "hero", "job", "char", "character", "герой", "영웅"};
     const std::unordered_set<std::string_view> EXCLUDE_TOKENS = { "information", "inventory" };
 }
 

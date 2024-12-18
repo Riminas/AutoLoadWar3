@@ -159,12 +159,12 @@ void EngineFileTip2::createHeroDraw(int index, unsigned int characterSize) {
 
     if (!isLastElement) {
         currentDraw.text.setString(G_HERO_INFO[index].nameChar);
-        currentDraw.text.setFont(G_FONT_STANDART);
+        currentDraw.text.setFont(G_FONT.getFontForString(std::u32string(G_HERO_INFO[index].nameChar.begin(), G_HERO_INFO[index].nameChar.end())));
         currentDraw.text.setCharacterSize(characterSize);
 
         std::wstring strtData = file_time_to_wstring(G_HERO_INFO[index].latestTime);
         currentDraw.textData.setString(strtData);
-        currentDraw.textData.setFont(G_FONT_STANDART);
+        currentDraw.textData.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
         currentDraw.textData.setCharacterSize(characterSize-6);
         currentDraw.textData.setLineSpacing(0.6f);
 
@@ -180,7 +180,7 @@ void EngineFileTip2::createHeroDraw(int index, unsigned int characterSize) {
     else {
         std::wstring str = std::format(L"{:>20}", L"Отмена");
         currentDraw.text.setString(str);
-        currentDraw.text.setFont(G_FONT_STANDART);
+        currentDraw.text.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
         currentDraw.text.setCharacterSize(characterSize);
 
         currentDraw.textData.setString(L"\0");

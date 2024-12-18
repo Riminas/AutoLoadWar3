@@ -1,17 +1,17 @@
-#pragma once
+п»ї#pragma once
 #include <SFML/Graphics.hpp>
 #include "Global.h"
 #include <string>
 #include "StringConvector.h"
 
-// Структура для хранения данных
+// РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РґР°РЅРЅС‹С…
 class OptionsUI {
 private:
     sf::Sprite sprite;
-    sf::Text text; // Основной текст
+    sf::Text text; // РћСЃРЅРѕРІРЅРѕР№ С‚РµРєСЃС‚
     bool m_Value{ 0 };
 public:
-    // Конструктор для инициализации данных
+    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РґР°РЅРЅС‹С…
     void initialize(const bool t_Value, const std::wstring str, const sf::Texture& texture)
     {
         m_Value = t_Value;
@@ -19,8 +19,8 @@ public:
         sprite.setTexture(texture);
         updateSpriteIsChecBox(m_Value);
 
-        // Инициализация основного текста
-        text.setFont(G_FONT_STANDART);
+        // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕСЃРЅРѕРІРЅРѕРіРѕ С‚РµРєСЃС‚Р°
+        text.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
         text.setString(str);
         text.setFillColor(sf::Color::White);
         text.setCharacterSize(14);
@@ -31,7 +31,7 @@ public:
         else sprite.setTextureRect(sf::Rect{ 0, 224, 512, 32 });
     }
 
-    // Метод для установки позиции
+    // РњРµС‚РѕРґ РґР»СЏ СѓСЃС‚Р°РЅРѕРІРєРё РїРѕР·РёС†РёРё
     inline void setPosition(const float x, const float y) {
         StringConvector().adjustTextToFit(text, 380); // 236 = 512 / 2 - 20
         text.setPosition(20 + x, 7 + y);

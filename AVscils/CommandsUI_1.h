@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "StringConvector.h"
-#include "FontSelector.h"
+
 #include <unordered_map>
 // Структура для хранения данных
 class CommandsUI_1 {//один шаблон и его поочереди изменять и выводить? заместо 9 копий
@@ -21,8 +21,8 @@ public:
         sprite.setTexture(texture);
 
         // Инициализация основного текста
-        FontSelector().getFontForText(text);
         text.setString(StringConvector().utf8_to_utf16(str));
+        text.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
         text.setFillColor(sf::Color::White);
         text.setCharacterSize(14); // Размер шрифта относительно квадрата
     }
@@ -38,7 +38,29 @@ public:
 
     void draw(sf::RenderWindow& G_WINDOW) {
         G_WINDOW.draw(sprite);
-        G_WINDOW.draw(text);
+        
+        // Отрисовка каждого символа отдельно
+        float xOffset = 20 + sprite.getPosition().x;
+        float yPosition = 7 + sprite.getPosition().y;
+        float currentX = xOffset;
+
+        for (std::size_t i = 0; i < text.getString().getSize(); ++i) {
+            sf::Uint32 unicode = text.getString()[i];
+            sf::Font font = G_FONT.getFontForCharacter(unicode);
+
+            sf::Text character;
+            character.setFont(font);
+            character.setString(text.getString()[i]); // Необходимо убедиться, что символ корректно преобразован
+            character.setFillColor(text.getFillColor());
+            character.setCharacterSize(text.getCharacterSize());
+            character.setPosition(currentX, yPosition);
+
+            // Получение ширины символа для обновления позиции следующего символа
+            sf::FloatRect bounds = character.getLocalBounds();
+            currentX += bounds.width;
+
+            G_WINDOW.draw(character);
+        }
     }
 
     //CheckBox1

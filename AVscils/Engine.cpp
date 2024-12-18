@@ -16,7 +16,7 @@
 #include "StringConvector.h"
 #include "ConfigMain.h"
 #include "ConfigMapsEngine.h"
-#include "FontLoader.h"
+
 #include "UpdateRegionRect.h"
 
 NOTIFYICONDATA nid;
@@ -214,8 +214,6 @@ inline void Engine::isInitialize(bool lastIsActiveWindow[]) {
 }
 
 bool Engine::initialize() {
-    FontLoader().loadPredefinedFonts();
-
     m_OwnerWindow.initialize();
 
     m_OwnerWindow.activeGameFalse();

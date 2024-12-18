@@ -84,56 +84,41 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
     }
 
     {//1.26
-        if (versionWarcraft == 1) {
-            size_t pos = filePath.wstring().find_last_of(L"\\");
-            if (pos != std::wstring::npos) {
-                warPathDirectSave[1] = filePath.wstring().substr(0, pos);
-                warPathDirectMaps = warPathDirectSave[1] + L"\\Maps";
-            }
-            if (!std::filesystem::exists(warPathDirectSave[1])) {
-                warPathDirectSave[1].clear();
-            }
-            std::wifstream pathFile(L"DataWarAssist\\PathWar3.txt");
-            if (pathFile.is_open()) {
-                std::wstring line;
-                int pathIndex = 2; // Начинаем с индекса 1
-                while (std::getline(pathFile, line) && pathIndex < 10) {
-                    if (!line.empty()) {
-                        size_t pos = line.find(L"\\war3.exe");
-                        if (pos != std::wstring::npos) {
-                            line = line.substr(0, pos);
-                        }
-                        if (std::filesystem::exists(line)) {
-                            pathIndex++;
-                            warPathDirectSave.push_back(line);
-                        }
-                    }
-                }
-                pathFile.close();
-            }
+        size_t pos = pathWstr.find_last_of(L"\\");
+        warPathDirectMaps = pathWstr.substr(0, pos) + L"\\Maps";
+        //if (versionWarcraft == 1) {
+        //    size_t pos = filePath.wstring().find_last_of(L"\\");
+        //    if (pos != std::wstring::npos) {
+        //        warPathDirectSave[1] = filePath.wstring().substr(0, pos);
+        //        warPathDirectMaps = warPathDirectSave[1] + L"\\Maps";
+        //    }
+        //    if (!std::filesystem::exists(warPathDirectSave[1])) {
+        //        warPathDirectSave[1].clear();
+        //    }
+        //    
 
-        }
-        else if (versionWarcraft == 0) {
-            // Загружаем все пути из файла
-            std::wifstream pathFile(L"DataWarAssist\\PathWar3.txt");
-            if (pathFile.is_open()) {
-                std::wstring line;
-                int pathIndex = 1; // Начинаем с индекса 1
-                while (std::getline(pathFile, line) && pathIndex < 10) {
-                    if (!line.empty()) {
-                        size_t pos = line.find(L"\\war3.exe");
-                        if (pos != std::wstring::npos) {
-                            line = line.substr(0, pos);
-                        }
-                        if (std::filesystem::exists(line)) {
-                            if(pathIndex++ == 1)
-                                warPathDirectSave[0] = line;
-                            else
-                                warPathDirectSave.push_back(line);
-                        }
+        //}
+        //else if (versionWarcraft == 0) {
+        //   
+        //}newPathSaveCode
+        std::wstring fileContent = LoadDataFail().loadDataFailW(L"DataWarAssist\\PathWar3.txt");
+        if (!fileContent.empty()) {
+            std::wistringstream pathStream(std::move(fileContent));
+            std::wstring line;
+            int pathIndex = 1; // Начинаем с индекса 1
+            while (std::getline(pathStream, line) && pathIndex < 10) {
+                if (!line.empty()) {
+                    size_t pos = line.find(L"\\war3.exe");
+                    if (pos != std::wstring::npos) {
+                        line = line.substr(0, pos);
+                    }
+                    if (std::filesystem::exists(line)) {
+                        if (pathIndex++ == 1)
+                            warPathDirectSave[1] = line;
+                        else
+                            warPathDirectSave.push_back(line);
                     }
                 }
-                pathFile.close();
             }
         }
     }
@@ -143,9 +128,10 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
     // Логируем все пути
     LogError().logMessageW(L"------------------------------------------------------------------------");
     LogError().logMessageW(L"Путь до папки с картами: (" + warPathDirectMaps + L")");
-    LogError().logMessageW(L"Путь до папки с сохранениями 1.36: (" + warPathDirectSave[0] + L")");
-    LogError().logMessageW(L"Путь до папки с сохранениями 1.26: (" + warPathDirectSave[1] + L")");
-
+    LogError().logMessageW(L"Путь до папки с сохранениями Ref: (" + warPathDirectSave[0] + L")");
+    for (int i = 1; i < warPathDirectSave.size(); i++) {
+        LogError().logMessageW(L"Путь до папки с сохранениями " + std::to_wstring(i) + L": (" + warPathDirectSave[i] + L")");
+    }
     return true;
 }
 

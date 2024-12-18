@@ -12,7 +12,7 @@
 #include <wtypes.h>
 #include <Windows.h>
 #include <thread>
-#include "FontLoader.h"
+
 #include "ConfigMain.h"
 //#include <cstdio>  // для _popen/_pclose
 
@@ -154,7 +154,7 @@ private:
 
         if (!contentLoaded || fileContent.empty()) {
             sf::Text emptyText;
-            emptyText.setFont(G_FONT_STANDART);
+            emptyText.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
             emptyText.setString("Гайд пуст или отсутствует");
             emptyText.setCharacterSize(14);
             emptyText.setFillColor(G_CONFIG_MAIN.optionsConfig.blackColor ? sf::Color::White : sf::Color::Black);
@@ -178,7 +178,7 @@ private:
             if (line.empty()) continue;
 
             sf::Text textLine;
-            textLine.setFont(G_FONT_STANDART);
+            textLine.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
             textLine.setString(line);
             textLine.setCharacterSize(14);
             textLine.setFillColor(G_CONFIG_MAIN.optionsConfig.blackColor ? sf::Color::White : sf::Color::Black);

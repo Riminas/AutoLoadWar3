@@ -183,9 +183,8 @@
     <ClCompile Include="ConfigMapsEngine.cpp" />
     <ClCompile Include="CoutGuide.cpp" />
     <ClCompile Include="DataAll.cpp" />
-    <ClCompile Include="FontSelector.cpp" />
+    <ClCompile Include="FontFallback.cpp" />
     <ClCompile Include="Global.cpp" />
-    <ClCompile Include="FontLoader.cpp" />
     <ClCompile Include="HeroInfoEngineFast.cpp" />
     <ClCompile Include="NewDataAll.cpp" />
     <ClCompile Include="DataAll.h" />
@@ -220,7 +219,7 @@
     <ClInclude Include="AutoUpdate.h" />
     <ClInclude Include="ButtonUI.h" />
     <ClInclude Include="CommandsUI_1.h" />
-    <ClInclude Include="FontLoader.h" />
+    <ClInclude Include="FontFallback.h" />
     <ClInclude Include="ConfigMain.h" />
     <ClInclude Include="ConfigMainEngine.h" />
     <ClInclude Include="ConfigMaps.h" />
@@ -231,7 +230,6 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineFileTip1.h" />
     <ClInclude Include="EngineFileTip2.h" />
-    <ClInclude Include="FontSelector.h" />
     <ClInclude Include="getMapOpen.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="HeroInfo.h" />

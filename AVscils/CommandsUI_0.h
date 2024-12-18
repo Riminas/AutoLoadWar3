@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include "StringConvector.h"
-#include "FontSelector.h"
+
 
 // Структура для хранения данных
 class CommandsUI_0 {
@@ -19,9 +19,10 @@ public:
         updateSpriteIsChecBox(m_Value);
 
         // Инициализация основного текста
-        FontSelector().getFontForText(text);
+        //if(isConvectorStr) text.setString(sf::String::fromUtf16(str.begin(), str.end()));
         if(isConvectorStr) text.setString(StringConvector().utf8_to_utf16(str));
         else text.setString(str);
+        text.setFont(G_FONT.fonts[static_cast<size_t>(FontType::LatinCyrillic)]);
         text.setFillColor(sf::Color::White);
         text.setCharacterSize(14);
     }
@@ -40,7 +41,29 @@ public:
 
     inline void draw(sf::RenderWindow& G_WINDOW) {
         G_WINDOW.draw(sprite);
-        G_WINDOW.draw(text);
+        
+        // Отрисовка каждого символа отдельно
+        float xOffset = 20 + sprite.getPosition().x;
+        float yPosition = 7 + sprite.getPosition().y;
+        float currentX = xOffset;
+        const sf::String& wstr = text.getString();
+        for (std::size_t i = 0; i < wstr.getSize(); ++i) {
+            sf::Uint32 unicode = wstr[i];
+            sf::Font font = G_FONT.getFontForCharacter(unicode);
+
+            sf::Text character;
+            character.setFont(font);
+            character.setString(text.getString()[i]); // Необходимо убедиться, что символ корректно преобразован
+            character.setFillColor(text.getFillColor());
+            character.setCharacterSize(text.getCharacterSize());
+            character.setPosition(currentX, yPosition);
+
+            // Получение ширины символа для обновления позиции следующего символа
+            sf::FloatRect bounds = character.getLocalBounds();
+            currentX += bounds.width;
+
+            G_WINDOW.draw(character);
+        }
     }
 
     inline bool getValue() const { return m_Value; }
