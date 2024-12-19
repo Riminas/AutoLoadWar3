@@ -18,7 +18,7 @@ public:
     void startGameCoutCmd(const HWND& hWndWindow);
 private:
     std::wstring m_FilePathFull{ L"\0" };
-    const std::wstring m_FilePath1 = L"DataWarAssist/DataMaps";
+    const std::wstring m_FilePath1 = L"DataAutoLoad/DataMaps";
     const std::wstring m_FilePath2 = L"\\Path.ini";
     std::wstring trim(const std::wstring& str);
 

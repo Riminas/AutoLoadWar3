@@ -30,8 +30,8 @@
 void OwnerWindow::initialize() {
 
     setupWindow();
-    if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataWarAssist\\img\\ButtonBlack.png");
-    else m_TextureButton.loadFromFile("DataWarAssist\\img\\Button.png");
+    if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
+    else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
 
     m_Buttons.initialize({ 128, 0, 640, 128 }, m_TextureButton);
     initializeButtonsUsersDataCommands();
@@ -222,8 +222,8 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
         UpdateRegionRect().updateRegionMain();
 
 
-        if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataWarAssist\\img\\ButtonBlack.png");
-        else m_TextureButton.loadFromFile("DataWarAssist\\img\\Button.png");
+        if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
+        else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
 
         break;
     }
@@ -288,7 +288,7 @@ void OwnerWindow::setupWindow() {
     G_WINDOW.create(sf::VideoMode(
         sf::VideoMode::getDesktopMode().width-2,
         sf::VideoMode::getDesktopMode().height-2),
-        "WarAssist", sf::Style::None);
+        "AutoLoad", sf::Style::None);
 
     // Получаем хэндл окна SFML
     HWND hwnd = G_WINDOW.getSystemHandle();

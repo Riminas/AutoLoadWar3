@@ -18,7 +18,7 @@ TrayManager::~TrayManager() {
 
 void TrayManager::initialize() {
     // Регистрация класса окна
-    std::wstring className = L"DataWarAssist_Tree";
+    std::wstring className = L"DataAutoLoad_Tree";
     WNDCLASSEX wc = { sizeof(WNDCLASSEX) };
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = GetModuleHandle(NULL);
@@ -30,7 +30,7 @@ void TrayManager::initialize() {
     }
 
     // Создание скрытого окна
-    m_hwnd = CreateWindow(className.c_str(), L"DataWarAssist Tree",
+    m_hwnd = CreateWindow(className.c_str(), L"DataAutoLoad Tree",
         WS_OVERLAPPEDWINDOW, 0, 0, CW_USEDEFAULT, CW_USEDEFAULT,
         NULL, NULL, wc.hInstance, NULL);
 
@@ -40,7 +40,7 @@ void TrayManager::initialize() {
     }
 
     // Загрузка конфигурации
-    if (!loadConfigData(L"DataWarAssist\\StartPath.ini")) {
+    if (!loadConfigData(L"DataAutoLoad\\StartPath.ini")) {
         m_buttonPaths.clear();
     }
 
@@ -66,8 +66,8 @@ void TrayManager::setupTrayIcon() {
     m_nid.uID = ID_TRAY_APP_ICON;
     m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     m_nid.uCallbackMessage = WM_TRAYICON;
-    m_nid.hIcon = loadIconFromFile(L"DataWarAssist\\img\\icon.ico");
-    wcscpy_s(m_nid.szTip, L"DataWarAssist tree");
+    m_nid.hIcon = loadIconFromFile(L"DataAutoLoad\\img\\icon.ico");
+    wcscpy_s(m_nid.szTip, L"DataAutoLoad tree");
     
     if (!Shell_NotifyIcon(NIM_ADD, &m_nid)) {
         LogManager::logger().log(LogManager::LogLevel::Error, L"Failed to create tray icon");

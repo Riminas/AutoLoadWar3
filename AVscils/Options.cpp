@@ -71,7 +71,7 @@ void Options::initializeWindow() {
         m_Rect[2]/*.right*/ = static_cast<float>(desktop.width / 2 + 256);
         m_Rect[3]/*.bottom*/ = static_cast<float>(desktop.height / 2 + windowHeight / 2 - 32);
     }
-    m_Texture.loadFromFile("DataWarAssist\\img\\Option.png");
+    m_Texture.loadFromFile("DataAutoLoad\\img\\Option.png");
 
     initializeText(m_NameMap, /*L"Maps: " + */G_DATA_MAPS.m_NameMapsFull, sf::Vector2f{ 20 + m_Rect[0], m_Rect[1] - 26 });
     m_NameMap.setStyle(sf::Text::Bold);

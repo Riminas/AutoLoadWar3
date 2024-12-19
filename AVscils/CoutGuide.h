@@ -19,7 +19,7 @@
 class CoutGuide {
 private:
     std::vector<sf::Text> m_TextLines; //      
-    std::wstring m_FilePath = { L"DataWarAssist/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
+    std::wstring m_FilePath = { L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
     //std::string m_GuideUrl; // Добавляем переменную для хранения URL
     float m_ScrollOffset; // 
     const float m_LineHeight = 30.f; // 
@@ -43,7 +43,7 @@ public:
     //}
     void newGame() {
         m_TextLines.clear();
-        m_FilePath = { L"DataWarAssist/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
+        m_FilePath = { L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps/* + L"/"*/ };
         initialize();
     }
 

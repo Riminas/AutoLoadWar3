@@ -86,22 +86,8 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
     {//1.26
         size_t pos = pathWstr.find_last_of(L"\\");
         warPathDirectMaps = pathWstr.substr(0, pos) + L"\\Maps";
-        //if (versionWarcraft == 1) {
-        //    size_t pos = filePath.wstring().find_last_of(L"\\");
-        //    if (pos != std::wstring::npos) {
-        //        warPathDirectSave[1] = filePath.wstring().substr(0, pos);
-        //        warPathDirectMaps = warPathDirectSave[1] + L"\\Maps";
-        //    }
-        //    if (!std::filesystem::exists(warPathDirectSave[1])) {
-        //        warPathDirectSave[1].clear();
-        //    }
-        //    
 
-        //}
-        //else if (versionWarcraft == 0) {
-        //   
-        //}newPathSaveCode
-        std::wstring fileContent = LoadDataFail().loadDataFailW(L"DataWarAssist\\PathWar3.txt");
+        std::wstring fileContent = LoadDataFail().loadDataFailW(L"DataAutoLoad\\PathWar3.txt");
         if (!fileContent.empty()) {
             std::wistringstream pathStream(std::move(fileContent));
             std::wstring line;
