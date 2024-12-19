@@ -6,7 +6,10 @@
 #include <iostream>
 #include <filesystem>
 #include <array>
-#include "LogError.h"
+#include "LogManager.h"
+#include <locale>
+#include <codecvt>
+#include <Windows.h>
 
 // Перечисление для идентификации шрифтов по категориям
 enum class FontType {
@@ -23,7 +26,7 @@ public:
         char* windir = nullptr;
         size_t len = 0;
         if (_dupenv_s(&windir, &len, "WINDIR") != 0 || windir == nullptr) {
-            LogError().logError("Не удалось получить переменную окружения WINDIR");
+            LogManager::logger().log(LogManager::LogLevel::Error, "Не удалось получить переменную окружения WINDIR");
             free(windir);
             exit(9);
         }
@@ -33,21 +36,21 @@ public:
         sf::Font font;
         // Латиница и кириллица (Arial) 
         if (!font.loadFromFile(fontDirectory + "segoeui.ttf")) { 
-            LogError().logError("Не удалось загрузить шрифт: arial.ttf");
+            LogManager::logger().log(LogManager::LogLevel::Error, "Не удалось загрузить шрифт: arial.ttf");
         }
         else { 
             fonts[static_cast<size_t>(FontType::LatinCyrillic)] = font; 
         }
         // Упрощенный китайский (SimSun)
         if (!font.loadFromFile(fontDirectory + "simsun.ttc")) {
-            LogError().logError("Не удалось загрузить шрифт: simsun.ttc");
+            LogManager::logger().log(LogManager::LogLevel::Error, "Не удалось загрузить шрифт: simsun.ttc");
         }
         else { 
             fonts[static_cast<size_t>(FontType::Chinese)] = font; 
         }
         // Корейский (Malgun Gothic)
         if (!font.loadFromFile(fontDirectory + "malgun.ttf")) { 
-            LogError().logError("Не удалось загрузить шрифт: malgun.ttf");
+            LogManager::logger().log(LogManager::LogLevel::Error, "Не удалось загрузить шрифт: malgun.ttf");
         }
         else { 
             fonts[static_cast<size_t>(FontType::Korean)] = font; 
@@ -87,7 +90,21 @@ public:
         else if (isKoreanBool) return fonts[static_cast<size_t>(FontType::Korean)];
         else if(isChineseBool) return fonts[static_cast<size_t>(FontType::Chinese)];
 
-        LogError().logError("Не удалось найти шрифт для текста: " + std::string(text.begin(), text.end()));
+        // Конвертируем UTF-32 напрямую в UTF-16 (wstring)
+        std::wstring utf16Text;
+        utf16Text.reserve(text.length());
+        for (char32_t ch : text) {
+            if (ch <= 0xFFFF) {
+                utf16Text.push_back(static_cast<wchar_t>(ch));
+            }
+            else {
+                ch -= 0x10000;
+                utf16Text.push_back(static_cast<wchar_t>(0xD800 + (ch >> 10)));
+                utf16Text.push_back(static_cast<wchar_t>(0xDC00 + (ch & 0x3FF)));
+            }
+        }
+
+        LogManager::logger().log(LogManager::LogLevel::Error, L"Не удалось найти шрифт для текста: " + utf16Text);
         return fonts[static_cast<size_t>(FontType::LatinCyrillic)];
     }
 

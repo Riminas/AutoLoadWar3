@@ -21,7 +21,7 @@
 #include "ConfigMapsEngine.h"
 #include "CoutGuide.h"
 #include "SelectingNewPathMap.h"
-#include "LogError.h"
+#include "LogManager.h"
 #include "BoolVisibleMenu.h"
 #include "UpdateRegionRect.h"
 #include <sfml/OpenGL.hpp>
@@ -82,7 +82,7 @@ void OwnerWindow::draw(const bool t_isVisibleLoad) {
     m_CoutUserName.draw(G_WINDOW);
 }
 
-void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, bool isWindow2Visible[]) {
+void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible) {
 
     const int numButton = mouseButtonPressed(event, isWindow2Visible);
 
@@ -133,7 +133,7 @@ void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, boo
     }
 }
 
-inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& event, bool isWindow2Visible[])
+inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible)
 {
     sf::Vector2f mouseButton = { static_cast<float>(event.x), static_cast<float>(event.y) };
     if (m_Buttons.isClicked(mouseButton)) {
@@ -156,7 +156,7 @@ inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& ev
     return -2;
 }
 
-void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event, bool isWindow2Visible[]) {
+void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible) {
     if (!G_BOOL_VISIBLE.isVisibleMenu)
         return;
 
@@ -186,15 +186,15 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
                 G_WINDOW.close();
         }
         else if (!G_DATA_MAPS.m_NameMaps.empty()) {
-            LogError().logErrorW(L"Путь до папки с сохранениями не указон. карта: " + G_DATA_MAPS.m_NameMapsFull);
+            LogManager::logger().log(LogManager::LogLevel::Error, L"Путь до папки с сохранениями не указон. карта: " + G_DATA_MAPS.m_NameMapsFull);
 
             SelectingNewPathMap().selectingNewPathMap();
 
             if (G_CONFIG_MAPS.path.empty()) {
-                LogError().logMessageW(L"новый путь до папки с сохранениями: " + G_CONFIG_MAPS.path);
+                LogManager::logger().log(LogManager::LogLevel::Message, L"новый путь до папки с сохранениями: " + G_CONFIG_MAPS.path);
             }
             else {
-                LogError().logMessageW(L"Пользоатель невыбрал нувый путь до папки с сохранениями");
+                LogManager::logger().log(LogManager::LogLevel::Message, L"Пользоатель невыбрал нувый путь до папки с сохранениями");
             }
 
             G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
@@ -247,7 +247,7 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
     };
 }
 
-inline int OwnerWindow::mouseButtonMenuPressed(const sf::Event::MouseButtonEvent& event, bool isWindow2Visible[])
+inline int OwnerWindow::mouseButtonMenuPressed(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible)
 {
     sf::Vector2f mouseButton = { static_cast<float>(event.x), static_cast<float>(event.y) };
     if (!m_ButtonsMenu.isClicked(mouseButton))

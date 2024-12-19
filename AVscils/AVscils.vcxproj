@@ -186,6 +186,7 @@
     <ClCompile Include="FontFallback.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="HeroInfoEngineFast.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="NewDataAll.cpp" />
     <ClCompile Include="DataAll.h" />
     <ClCompile Include="DataMaps.cpp" />
@@ -208,6 +209,7 @@
     <ClCompile Include="SkillsUpgradeStart.cpp" />
     <ClCompile Include="StringConvector.cpp" />
     <ClCompile Include="StringToString.cpp" />
+    <ClCompile Include="TrayManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AVscils.rc" />
@@ -236,12 +238,13 @@
     <ClInclude Include="HeroInfoEngine.h" />
     <ClInclude Include="HeroInfoEngineFast.h" />
     <ClInclude Include="BoolVisibleMenu.h" />
+    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="key.h" />
     <ClInclude Include="ListHeroUI.h" />
     <ClInclude Include="LoadDataFail.h" />
     <ClInclude Include="LoadManager.h" />
-    <ClInclude Include="LogError.h" />
+    <ClInclude Include="LogManager.h" />
     <ClInclude Include="NewDataAll.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="NewPathSaveCode.h" />
@@ -254,6 +257,7 @@
     <ClInclude Include="SkillsUpgradeStart.h" />
     <ClInclude Include="StringConvector.h" />
     <ClInclude Include="StringToString.h" />
+    <ClInclude Include="TrayManager.h" />
     <ClInclude Include="UpdateRegionRect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

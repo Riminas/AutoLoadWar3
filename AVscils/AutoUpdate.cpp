@@ -4,7 +4,7 @@
 #include <string>
 
 
-#include "LogError.h"
+#include "LogManager.h"
 #include "json.hpp"
 using json = nlohmann::json;
 
@@ -165,7 +165,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
         WINHTTP_NO_PROXY_BYPASS, 0);
 
     if (!hSession) {
-        LogError().logError("hSession");
+        LogManager::logger().log(LogManager::LogLevel::Error, "hSession");
         return false;
     }
 
@@ -189,7 +189,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
     if (!hConnect)
     {
         WinHttpCloseHandle(hSession);
-        LogError().logError("hConnect");
+        LogManager::logger().log(LogManager::LogLevel::Error, "hConnect");
         return false;
     }
 
@@ -204,7 +204,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
     {
         WinHttpCloseHandle(hConnect);
         WinHttpCloseHandle(hSession);
-        LogError().logError("hRequest");
+        LogManager::logger().log(LogManager::LogLevel::Error, "hRequest");
         return false;
     }
 
@@ -228,7 +228,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
                 WinHttpCloseHandle(hRequest);
                 WinHttpCloseHandle(hConnect);
                 WinHttpCloseHandle(hSession);
-                LogError().logError("INVALID_HANDLE_VALUE");
+                LogManager::logger().log(LogManager::LogLevel::Error, "INVALID_HANDLE_VALUE");
                 return false;
             }
 

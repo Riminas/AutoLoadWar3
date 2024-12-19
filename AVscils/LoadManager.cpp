@@ -11,7 +11,7 @@
 #include <regex>
 #include <array>
 
-#include "LogError.h"
+#include "LogManager.h"
 #include "LoadManager.h"
 #include "key.h"
 #include "StringConvector.h"
@@ -249,7 +249,7 @@ void LoadManager::sendLoadDataCommands(const std::array<std::string, 5>& codes, 
         displayCommand(code);
 
         Sleep(10);
-        LogError().logMessage("codes: (" + code + ")");
+        LogManager::logger().log(LogManager::LogLevel::Message, "codes: (" + code + ")");
     }
 }
 

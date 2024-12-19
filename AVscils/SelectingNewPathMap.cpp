@@ -7,7 +7,7 @@
 #include "ConfigMapsEngine.h"
 #include "DataMaps.h"
 #include <unordered_set>
-#include "LogError.h"
+#include "LogManager.h"
 #include "ConfigMain.h"
 #include "UpdateRegionRect.h"
 
@@ -44,7 +44,7 @@ void SelectingNewPathMap::selectingNewPathMap() {
     // Проверка, пуст ли оставшийся путь
     if (folderPath.empty()) {
         if(G_CONFIG_MAIN.optionsConfig.writeLogs)
-            LogError().logMessage("Новый путь к папке с сохранениями пуст");
+            LogManager::logger().log(LogManager::LogLevel::Message, "Новый путь к папке с сохранениями пуст");
         G_CONFIG_MAPS.path.clear();
         return;//0
     }

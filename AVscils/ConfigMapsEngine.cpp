@@ -2,7 +2,7 @@
 #include "LoadDataFail.h"
 #include "LoadManager.h"
 #include "StringConvector.h"
-#include "LogError.h"
+#include "LogManager.h"
 #include "Global.h"
 
 ConfigMapsEngine::ConfigMapsEngine(const std::wstring& nameMaps)
@@ -22,7 +22,7 @@ ConfigMapsEngine::ConfigMapsEngine(const std::wstring& nameMaps)
 
 void ConfigMapsEngine::initializeDefaultConfig()
 {
-    LogError().logMessage("новый конфиг карты.");
+    LogManager::logger().log(LogManager::LogLevel::Message, "новый конфиг карты.");
     G_CONFIG_MAPS.path = L"";
     G_CONFIG_MAPS.mainConfig = { {
          { "-return" },
@@ -38,7 +38,7 @@ bool ConfigMapsEngine::loadConfigMaps()
 {
     const std::wstring fullLine = LoadDataFail().loadDataFailW(m_FilePathFull);
     if (fullLine.empty()) {
-        LogError().logErrorW(L"Unable to open file: " + m_FilePathFull);
+        LogManager::logger().log(LogManager::LogLevel::Error, L"Unable to open file: " + m_FilePathFull);
         return false;
     }
 
@@ -112,7 +112,7 @@ bool ConfigMapsEngine::saveConfigMaps()
 {
     std::ofstream file(m_FilePathFull);
     if (!file.is_open()) {
-        LogError().logErrorW(L"Unable to open file: " + m_FilePathFull);
+        LogManager::logger().log(LogManager::LogLevel::Error, L"Unable to open file: " + m_FilePathFull);
         return false;
     }
 
@@ -168,7 +168,7 @@ void ConfigMapsEngine::openConfigMaps()
     );
 
     if (!success) {
-        LogError().logError("неудалось открыть блокнот.");
+        LogManager::logger().log(LogManager::LogLevel::Error, "неудалось открыть блокнот.");
         return;
     }
 

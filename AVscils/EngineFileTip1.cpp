@@ -7,7 +7,7 @@
 #include "SkillsUpgradeStart.h"
 #include "HeroInfoEngineFast.h"
 #include "ConfigMapsEngine.h"
-#include "LogError.h"
+#include "LogManager.h"
 #include "DataWarcraft.h"
 #include "DataMaps.h"
 
@@ -26,7 +26,7 @@ void EngineFileTip1::engineFile()
 
 void EngineFileTip1::engineTip1()
 {
-    LogError().logMessage("Герой: " + G_HERO_INFO[0].nameChar);
+    LogManager::logger().log(LogManager::LogLevel::Message, "Герой: " + G_HERO_INFO[0].nameChar);
 
     LoadManager LoadManager_(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar);
     LoadManager_.executeLoad(G_HERO_INFO[0].path);

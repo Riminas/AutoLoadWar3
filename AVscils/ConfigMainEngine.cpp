@@ -1,6 +1,6 @@
 #include "ConfigMainEngine.h"
 #include "LoadDataFail.h"
-#include "LogError.h"
+#include "LogManager.h"
 
 ConfigMainEngine::ConfigMainEngine()
 {
@@ -77,7 +77,7 @@ bool ConfigMainEngine::loadConfigMain() {
 bool ConfigMainEngine::saveConfigMain() const {
     std::ofstream file(m_FilePath);
     if (!file.is_open()) {
-        LogError().logError("Unable to open file: " + m_FilePath.string());
+        LogManager::logger().log(LogManager::LogLevel::Error, "Unable to open file: " + m_FilePath.string());
         return false;
     }
     // Сохранение секции Options

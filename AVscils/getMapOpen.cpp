@@ -1,5 +1,5 @@
 #include "getMapOpen.h"
-#include "LogError.h"
+#include "LogManager.h"
 #include <regex>
 
 namespace {
@@ -11,7 +11,7 @@ namespace {
 std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path)
 {
     if (!std::filesystem::is_directory(folder_path.c_str())) {
-        LogError().logErrorW(L"Put(not \"Maps\" directory) - (" + folder_path + L")");
+        LogManager::logger().log(LogManager::LogLevel::Error, L"Put(not \"Maps\" directory) - (" + folder_path + L")");
         return L"error";
     }
 
@@ -22,7 +22,7 @@ std::wstring getMapOpen::getMapOpen1(const std::wstring& folder_path)
         return processMapFile();
     }
     catch (const std::exception& e) {
-        LogError().logError(std::string("Error processing map: ") + e.what());
+        LogManager::logger().log(LogManager::LogLevel::Error, std::string("Error processing map: ") + e.what());
         return L"error";
     }
 

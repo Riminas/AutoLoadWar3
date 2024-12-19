@@ -10,7 +10,7 @@
 #include "DataMaps.h"
 #include "ConfigMainEngine.h"
 #include "LoadDataFail.h"
-#include "LogError.h"
+#include "LogManager.h"
 
 
 NewDataAll::NewDataAll()
@@ -21,7 +21,7 @@ void NewDataAll::newMaps()
 {
 	const std::wstring newNameMaps = getMapOpen().getMapOpen1(G_DATA_WARCRAFT.m_DataPath.warPathDirectMaps);
     
-    LogError().logMessageW(L"newNameMaps: " + newNameMaps);
+    LogManager::logger().log(LogManager::LogLevel::Message, L"newNameMaps: " + newNameMaps);
 
     if (newNameMaps == L"error") { 
         G_DATA_MAPS.isNewMaps = false;
@@ -34,10 +34,10 @@ void NewDataAll::newMaps()
     const bool isNewNameMaps = G_DATA_MAPS.m_NameMapsFull != newNameMaps;
     if (isNewNameMaps) {
         G_DATA_MAPS.m_NameMapsFull = newNameMaps;
-        LogError().logMessageW(L"NameMapsFull: " + G_DATA_MAPS.m_NameMapsFull);
+        LogManager::logger().log(LogManager::LogLevel::Message, L"NameMapsFull: " + G_DATA_MAPS.m_NameMapsFull);
 
         G_DATA_MAPS.NameMaps();
-        LogError().logMessageW(L"NameMaps: " + G_DATA_MAPS.m_NameMaps);
+        LogManager::logger().log(LogManager::LogLevel::Message, L"NameMaps: " + G_DATA_MAPS.m_NameMaps);
 
         ConfigMapsEngine configMapsEngine(G_DATA_MAPS.m_NameMaps);
         configMapsEngine.loadConfigMaps();
@@ -67,12 +67,12 @@ bool NewDataAll::newWarcraft(const HWND& hWndWindow)
 //int NewDataAll::PutSaveCode(const std::wstring& path) 
 //{
 //    if (loadDatFail(path)) {
-//        LogError().logMessageW(L"Loads1: " + G_CONFIG_MAPS.path);
+//        LogManager::logger().log(LogManager::LogLevel::Message, L"Loads1: " + G_CONFIG_MAPS.path);
 //        return 1;
 //    }
 //
 //    if (PathDirectorySaveCode(path)) {
-//        LogError().logMessageW(L"Loads2: " + G_CONFIG_MAPS.path);
+//        LogManager::logger().log(LogManager::LogLevel::Message, L"Loads2: " + G_CONFIG_MAPS.path);
 //        return 1;
 //    }
 //
@@ -118,14 +118,14 @@ bool NewDataAll::newWarcraft(const HWND& hWndWindow)
 //    const std::wstring target = L"\\CustomMapData\\";
 //    size_t start_pos = filePath.find(target);
 //    if (start_pos == std::wstring::npos) {
-//        LogError().logError("Подстрока 'CustomMapData' не найдена в пути.");
+//        LogManager::logger().log(LogManager::LogLevel::Error, "Подстрока 'CustomMapData' не найдена в пути.");
 //        return L"";
 //    }
 //    start_pos += target.length();
 //
 //    size_t end_pos = filePath.find_last_of(L"\\");
 //    if (end_pos == std::wstring::npos) {
-//        LogError().logError("Последний обратный слеш не найден в пути.");
+//        LogManager::logger().log(LogManager::LogLevel::Error, "Последний обратный слеш не найден в пути.");
 //        return L"";
 //    }
 //

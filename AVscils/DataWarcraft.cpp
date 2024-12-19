@@ -16,7 +16,7 @@
 #include "LoadDataFail.h"
 #include "ConfigMain.h"
 
-#include "LogError.h"
+#include "LogManager.h"
 #include "DataWarcraft.h"
 
 DataWarcraft G_DATA_WARCRAFT;
@@ -45,21 +45,21 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
     // Определяем версию по имени исполняемого файла
     std::filesystem::path filePath(pathWstr);
     if (!std::filesystem::exists(filePath) || !std::filesystem::is_regular_file(filePath)) {
-        LogError().logError("Не удалось определить версию Warcraft");
+        LogManager::logger().log(LogManager::LogLevel::Error, "Не удалось определить версию Warcraft");
         return false;
     }
 
     std::wstring filename = filePath.filename().wstring();
     if (filename == L"Warcraft III.exe") {
-        LogError().logMessage("Версия Warcraft 1.36 " + filePath.string());
+        LogManager::logger().log(LogManager::LogLevel::Message, "Версия Warcraft 1.36 " + filePath.string());
         versionWarcraft = 0;
     }
     else if (filename == L"war3.exe") {
-        LogError().logMessage("Версия Warcraft 1.26 " + filePath.string());
+        LogManager::logger().log(LogManager::LogLevel::Message, "Версия Warcraft 1.26 " + filePath.string());
         versionWarcraft = 1;
     }
     else {
-        LogError().logError("Неизвестная версия Warcraft");
+        LogManager::logger().log(LogManager::LogLevel::Error, "Неизвестная версия Warcraft");
         versionWarcraft = -1;
         return false;
     }
@@ -68,7 +68,7 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
         // Инициализация пути к папке с картами
         PWSTR documentsPath = nullptr;
         if (FAILED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &documentsPath))) {
-            LogError().logError("SHGetKnownFolderPath()");
+            LogManager::logger().log(LogManager::LogLevel::Error, "SHGetKnownFolderPath()");
             return false;
         }
 
@@ -126,11 +126,11 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
     
 
     // Логируем все пути
-    LogError().logMessageW(L"------------------------------------------------------------------------");
-    LogError().logMessageW(L"Путь до папки с картами: (" + warPathDirectMaps + L")");
-    LogError().logMessageW(L"Путь до папки с сохранениями Ref: (" + warPathDirectSave[0] + L")");
+    LogManager::logger().log(LogManager::LogLevel::Message, L"------------------------------------------------------------------------");
+    LogManager::logger().log(LogManager::LogLevel::Message, L"Путь до папки с картами: (" + warPathDirectMaps + L")");
+    LogManager::logger().log(LogManager::LogLevel::Message, L"Путь до папки с сохранениями Ref: (" + warPathDirectSave[0] + L")");
     for (int i = 1; i < warPathDirectSave.size(); i++) {
-        LogError().logMessageW(L"Путь до папки с сохранениями " + std::to_wstring(i) + L": (" + warPathDirectSave[i] + L")");
+        LogManager::logger().log(LogManager::LogLevel::Message, L"Путь до папки с сохранениями " + std::to_wstring(i) + L": (" + warPathDirectSave[i] + L")");
     }
     return true;
 }
@@ -143,7 +143,7 @@ std::wstring DataWarcraft::DataPath::openWarcraft3(const HWND hWndWindow) {
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
     if (!hProcess) {
         std::wstring path;
-        LogError().logError("Не удалось открыть процесс: " + std::to_string(GetLastError()));
+        LogManager::logger().log(LogManager::LogLevel::Error, "Не удалось открыть процесс: " + std::to_string(GetLastError()));
 
         NewPathSaveCode newPathSaveCode_;
         if (newPathSaveCode_.newPathSaveCode(path)) {
@@ -159,7 +159,7 @@ std::wstring DataWarcraft::DataPath::openWarcraft3(const HWND hWndWindow) {
         return processName;
     }
     else {
-        LogError().logErrorW(L"Не удалось получить имя процесса: " + std::to_wstring(GetLastError()));
+        LogManager::logger().log(LogManager::LogLevel::Error, L"Не удалось получить имя процесса: " + std::to_wstring(GetLastError()));
     }
 
     CloseHandle(hProcess);

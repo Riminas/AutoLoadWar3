@@ -8,7 +8,7 @@
 #include "HeroInfoEngine.h"
 #include "DataWarcraft.h"
 #include "DataMaps.h"
-#include "LogError.h"
+#include "LogManager.h"
 #include <codecvt>
 
 namespace {
@@ -34,12 +34,13 @@ bool HeroInfoEngine::retrieveHeroData(std::wstring_view saveCodePath) {
     }
 
     if (!foundValidPath) {
-        LogError().logErrorW(L"Directory not found in any of the specified paths");
+        static auto& logger = LogManager::instance();
+        logger.log(LogManager::LogLevel::Warning, L"Directory not found in any of the specified paths");
         return false;
     }
 
     if (G_HERO_INFO.empty()) {
-        LogError().logError("No hero data found");
+        LogManager::logger().log(LogManager::LogLevel::Error, "No hero data found");
         return false;
     }
 
@@ -234,7 +235,7 @@ void HeroInfoEngine::saveDataHero(const std::vector<HeroInfo>& heroInfo) const {
 
     std::ofstream file(heroDataFilePath, std::ios::out);
     if (!file.is_open()) {
-        LogError().logErrorW(L"Не удалось открыть файл для сохранения данных: " + heroDataFilePath);
+        LogManager::logger().log(LogManager::LogLevel::Error, L"Не удалось открыть файл для сохранения данных: " + heroDataFilePath);
         return;
     }
 
@@ -267,7 +268,7 @@ void HeroInfoEngine::saveDataHero(const std::vector<HeroInfo>& heroInfo) const {
     }
 
     file.close();
-    LogError().logErrorW(L"Данные героев успешно сохранены в: " + heroDataFilePath);
+    LogManager::logger().log(LogManager::LogLevel::Error, L"Данные героев успешно сохранены в: " + heroDataFilePath);
 }
 
 // Метод для загрузки данных героев из файла
@@ -279,7 +280,7 @@ bool HeroInfoEngine::loadDataHero(std::vector<HeroInfo>& heroInfo) const {
 
     std::ifstream file(heroDataFilePath, std::ios::in);
     if (!file.is_open()) {
-        LogError().logErrorW(L"Не удалось открыть файл для загрузки данных: " + heroDataFilePath);
+        LogManager::logger().log(LogManager::LogLevel::Error, L"Не удалось открыть файл для загрузки данных: " + heroDataFilePath);
         return false;
     }
 
@@ -293,7 +294,7 @@ bool HeroInfoEngine::loadDataHero(std::vector<HeroInfo>& heroInfo) const {
             size = std::stoul(line.substr(5));
         }
         else {
-            LogError().logErrorW(L"Неожиданный формат файла (отсутствует размер).");
+            LogManager::logger().log(LogManager::LogLevel::Error, L"Неожиданный формат файла (отсутствует размер).");
             return false;
         }
     }
@@ -304,7 +305,7 @@ bool HeroInfoEngine::loadDataHero(std::vector<HeroInfo>& heroInfo) const {
             minTime = std::stoll(line.substr(8));
         }
         else {
-            LogError().logErrorW(L"Неожиданный формат файла (отсутствует минимальное время).");
+            LogManager::logger().log(LogManager::LogLevel::Error, L"Неожиданный формат файла (отсутствует минимальное время).");
             return false;
         }
     }
@@ -328,11 +329,11 @@ bool HeroInfoEngine::loadDataHero(std::vector<HeroInfo>& heroInfo) const {
                 currentHero.latestTime = std::filesystem::file_time_type{} + std::chrono::seconds(seconds_since_epoch);
             }
             catch (const std::invalid_argument& e) {
-                LogError().logErrorW(L"Неверный формат времени: " + std::wstring(e.what(), e.what() + strlen(e.what())));
+                LogManager::logger().log(LogManager::LogLevel::Error, L"Неверный формат времени: " + std::wstring(e.what(), e.what() + strlen(e.what())));
                 continue;
             }
             catch (const std::out_of_range& e) {
-                LogError().logErrorW(L"Время вне допустимого диапазона: " + std::wstring(e.what(), e.what() + strlen(e.what())));
+                LogManager::logger().log(LogManager::LogLevel::Error, L"Время вне допустимого диапазона: " + std::wstring(e.what(), e.what() + strlen(e.what())));
                 continue;
             }
             heroInfo.push_back(currentHero);

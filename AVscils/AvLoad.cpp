@@ -1,9 +1,27 @@
 ﻿#include <windows.h>
 #include <iostream>
 #include "Engine.h"
-#include "LogError.h"
-#include "StringConvector.h"
+#include "LogManager.h"
 #include "ConfigMainEngine.h"
+
+int main()
+{
+    if (FindWindow(NULL, L"WarAssist") == NULL) {
+
+        ConfigMainEngine().loadConfigMain();//должно полнится только 1 раз при старте программы
+
+        LogManager::logger().log(LogManager::LogLevel::Message, L"\n\n------------------------------------------------------------------------");
+        Engine().engine1();
+    }
+    else
+        MessageBox(NULL, L"Программа уже запущена.", L"Оповищение", MB_OK | MB_ICONEXCLAMATION);
+    
+    return 0;
+}
+//if (G_CONFIG_MAIN.optionsConfig.autoUpdate) {
+//    update();
+//}
+// 
 //#include "json.hpp"
 //using json = nlohmann::json;
 //
@@ -41,7 +59,7 @@
 //            savePath += L"\\AutoLoad.exe";//куда будет сохранена программа и с каким именем
 //
 //
-//            LogError().logMessageW(L"savePath " + savePath);
+//            LogManager::logger().log(LogManager::LogLevel::Message, L"savePath " + savePath);
 //
 //            if (AutoUpddate_.DownloadFile(downloadUrl, savePath))
 //            {
@@ -50,42 +68,20 @@
 //            }
 //            else
 //            {
-//                LogError().logError("Ошибка при загрузке файла обновления.");
-//                LogError().logMessage("Доступно обновление до версии " + latestVersion);
-//                LogError().logMessage("адрес " + downloadUrl);
+//                LogManager::logger().log(LogManager::LogLevel::Error, "Ошибка при загрузке файла обновления.");
+//                LogManager::logger().log(LogManager::LogLevel::Message, "Доступно обновление до версии " + latestVersion);
+//                LogManager::logger().log(LogManager::LogLevel::Message, "адрес " + downloadUrl);
 //            }
 //
 //
 //        }
 //        //else
 //        //{
-//        //    LogError().logMessage("У вас установлена последняя версия.");
+//        //    LogManager::logger().log(LogManager::LogLevel::Message, "У вас установлена последняя версия.");
 //        //}
 //    }
 //    else
 //    {
-//        LogError().logMessage("Не удалось получить информацию о последнем релизе.");
+//        LogManager::logger().log(LogManager::LogLevel::Message, "Не удалось получить информацию о последнем релизе.");
 //    }
 //}
-
-int main()
-{
-    std::locale::global(std::locale("Russian"));
-    std::cout.imbue(std::locale());
-
-    if (FindWindow(NULL, L"WarAssist") == NULL) {
-
-        ConfigMainEngine().loadConfigMain();//должно полнится только 1 раз при старте программы
-
-        //if (G_CONFIG_MAIN.optionsConfig.autoUpdate) {
-        //    update();
-        //}
-
-        LogError().logMessageW(L"\n\n------------------------------------------------------------------------");
-        Engine().engine1();
-    }
-    else
-        MessageBox(NULL, L"Программа уже запущена.", L"Оповищение", MB_OK | MB_ICONEXCLAMATION);
-
-    return 0;
-}

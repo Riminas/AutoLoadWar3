@@ -7,7 +7,7 @@
 #include <gdiplus.h>
 #include "SkillsUpgradeStart.h"
 #include "key.h"
-#include "LogError.h"
+#include "LogManager.h"
 
 #pragma comment (lib, "Gdiplus.lib")
 
@@ -71,10 +71,10 @@ bool SkillsUpgradeStart::loadDataSkill()
                 numKey = std::stoul(tokens[1]);
             }
             catch (const std::invalid_argument& e) {
-                LogError().logError("Invalid argument: " + std::string(e.what()));// Обработка ошибки: строка не является числом
+                LogManager::logger().log(LogManager::LogLevel::Error, "Invalid argument: " + std::string(e.what()));// Обработка ошибки: строка не является числом
             }
             catch (const std::out_of_range& e) {
-                LogError().logError("Out of range: " + std::string(e.what()));// Обработка ошибки: число выходит за пределы типа unsigned int
+                LogManager::logger().log(LogManager::LogLevel::Error, "Out of range: " + std::string(e.what()));// Обработка ошибки: число выходит за пределы типа unsigned int
             }
         }
 
