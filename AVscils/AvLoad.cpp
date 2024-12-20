@@ -6,7 +6,7 @@
 
 int main()
 {
-    if (FindWindow(NULL, L"AutoLoad") == NULL) {
+    if (FindWindow(NULL, L"AutoLoadWar3") == NULL) {
 
         ConfigMainEngine().loadConfigMain();//должно полнится только 1 раз при старте программы
 

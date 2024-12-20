@@ -18,7 +18,7 @@ TrayManager::~TrayManager() {
 
 void TrayManager::initialize() {
     // Регистрация класса окна
-    std::wstring className = L"DataAutoLoad_Tree";
+    std::wstring className = L"AutoLoad_Tree";
     WNDCLASSEX wc = { sizeof(WNDCLASSEX) };
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = GetModuleHandle(NULL);
@@ -30,7 +30,7 @@ void TrayManager::initialize() {
     }
 
     // Создание скрытого окна
-    m_hwnd = CreateWindow(className.c_str(), L"DataAutoLoad Tree",
+    m_hwnd = CreateWindow(className.c_str(), L"AutoLoad Tree",
         WS_OVERLAPPEDWINDOW, 0, 0, CW_USEDEFAULT, CW_USEDEFAULT,
         NULL, NULL, wc.hInstance, NULL);
 
@@ -67,7 +67,7 @@ void TrayManager::setupTrayIcon() {
     m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     m_nid.uCallbackMessage = WM_TRAYICON;
     m_nid.hIcon = loadIconFromFile(L"DataAutoLoad\\img\\icon.ico");
-    wcscpy_s(m_nid.szTip, L"DataAutoLoad tree");
+    wcscpy_s(m_nid.szTip, L"AutoLoad tree");
     
     if (!Shell_NotifyIcon(NIM_ADD, &m_nid)) {
         LogManager::logger().log(LogManager::LogLevel::Error, L"Failed to create tray icon");

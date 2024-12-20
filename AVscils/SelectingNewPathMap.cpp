@@ -344,7 +344,7 @@ std::wstring SelectingNewPathMap::run() {
         HWND hWndWindow = GetForegroundWindow();
 
         //HWND hWndWindow = FindWindow(NULL, L"Warcraft III");
-        if (IsWindowInFocus(hWndWindow)) {
+        if (IsWarcraftInFocus(hWndWindow)) {
             SetWindowPos(G_WINDOW.getSystemHandle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
             if (isActive == false) {
@@ -434,32 +434,14 @@ std::wstring SelectingNewPathMap::newPath() {
 
 
 
-bool SelectingNewPathMap::IsWindowInFocus(const HWND& hWnd) const {
-    if (hWnd == NULL) {
-        //std::wcout << L"Нет активного окна!" << std::endl;
-        return 0;
-    }
-
-    // Буфер для имени окна
+inline bool SelectingNewPathMap::IsWarcraftInFocus(const HWND& hWnd) {
+    static const wchar_t* TARGET_TITLE = L"Warcraft III";
     wchar_t windowTitle[256];
 
-    // Получаем имя окна
-    int length = GetWindowText(hWnd, windowTitle, sizeof(windowTitle) / sizeof(windowTitle[0]));
-    if (length == 0) {
-        //std::wcout << L"Не удалось получить имя окна!" << std::endl;
-        return 0;
+    if (!GetWindowTextW(hWnd, windowTitle, 256)) {
+        return false;
     }
-
-    // Сравниваем имя окна с ожидаемым
-    if (wcscmp(windowTitle, L"Warcraft III") != 0) {
-        //std::wcout << L"Имя активного окна не совпадает с 'Warcraft III'" << windowTitle << std::endl;
-        return 0;
-    }
-
-    //std::wcout << windowTitle << std::endl;
-
-
-    return true;
+    return (wcscmp(windowTitle, TARGET_TITLE) == 0);
 }
 
 bool SelectingNewPathMap::isPushDirectory(const std::wstring& fullPath, const std::wstring& nameDirectory) const {

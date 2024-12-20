@@ -288,7 +288,7 @@ void OwnerWindow::setupWindow() {
     G_WINDOW.create(sf::VideoMode(
         sf::VideoMode::getDesktopMode().width-2,
         sf::VideoMode::getDesktopMode().height-2),
-        "AutoLoad", sf::Style::None);
+        "AutoLoadWar3", sf::Style::None);
 
     // Получаем хэндл окна SFML
     HWND hwnd = G_WINDOW.getSystemHandle();

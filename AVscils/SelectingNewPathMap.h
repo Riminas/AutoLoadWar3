@@ -39,7 +39,7 @@ private:
     void toggleDirectory(DirectoryEntry& directory);
     std::wstring newPath();
     // ѕќћ≈Ќя“№ посто€нный вызов фукции определени€ размеров монитора на positionLeftTop
-    bool IsWindowInFocus(const HWND& hWnd) const;
+    inline bool IsWarcraftInFocus(const HWND& hWnd);
 
     bool isPushDirectory(const std::wstring& fullPath, const std::wstring& nameDirectory) const;
     
