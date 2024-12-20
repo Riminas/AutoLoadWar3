@@ -137,7 +137,7 @@ inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& ev
 {
     sf::Vector2f mouseButton = { static_cast<float>(event.x), static_cast<float>(event.y) };
     if (m_Buttons.isClicked(mouseButton)) {
-        mouseButton.x = mouseButton.x - m_ButtonsMenu.getPositionX();
+        mouseButton.x = mouseButton.x - m_ButtonsMenu.getPosition().x;
         if (mouseButton.x < 19.84) { return 0; }
         else if (mouseButton.x < 39.68) { return 1; }
         else if (mouseButton.x < 59.52) { return 2; }
@@ -253,7 +253,7 @@ inline int OwnerWindow::mouseButtonMenuPressed(const sf::Event::MouseButtonEvent
     if (!m_ButtonsMenu.isClicked(mouseButton))
         return -2;
 
-    mouseButton.y = mouseButton.y - m_ButtonsMenu.getPositionY();
+    mouseButton.y = mouseButton.y - m_ButtonsMenu.getPosition().y;
     if (mouseButton.y < 19.84) { return -1; }
     else if (mouseButton.y < 39.68) { return 3; }
     else if (mouseButton.y < 59.52) { return 2; }

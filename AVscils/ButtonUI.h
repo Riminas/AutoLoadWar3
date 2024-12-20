@@ -5,33 +5,37 @@
 class ButtonUI
 {
 public:
-    // Рисует квадрат и текст на окне
-    inline void draw(sf::RenderWindow& G_WINDOW) const {
-        G_WINDOW.draw(sprite);
-    }
+    static constexpr float SPRITE_SCALE = 0.15625f;  // 1/6.4
 
-    inline void initialize(const sf::IntRect& intRect, const sf::Texture& texture) {
-        sprite.setTexture(texture);
-        sprite.setTextureRect(intRect);
-        sprite.setScale(0.15625f, 0.15625f);
-    }
-
-    // Установка позиции кнопки
-    inline void setPosition1(float x, float y) {
+    // Объединяем методы установки позиции в один с перегрузкой
+    void setPosition1(float x, float y) {
         sprite.setPosition(x, y);
     }
 
-    inline void setPosition2(sf::Vector2f  positionButton) {
-        sprite.setPosition(positionButton);
+    void setPosition2(const sf::Vector2f& position) {
+        sprite.setPosition(position);
     }
 
-    // Проверка попадания координат мыши в квадрат и обновление значения
-    inline bool isClicked(sf::Vector2f  mouseButton, const bool isVisible = true) {
-        return (isVisible && sprite.getGlobalBounds().contains(mouseButton.x, mouseButton.y));
+    // Упрощаем геттеры позиции
+    sf::Vector2f getPosition() const { 
+        return sprite.getPosition(); 
     }
-    
-    inline const float getPositionX() const { return sprite.getPosition().x; }
-    inline const float getPositionY() const { return sprite.getPosition().y; }
+
+    // Остальные методы оптимизированы путем передачи по константной ссылке
+    void draw(sf::RenderWindow& window) const {
+        window.draw(sprite);
+    }
+
+    void initialize(const sf::IntRect& intRect, const sf::Texture& texture) {
+        sprite.setTexture(texture);
+        sprite.setTextureRect(intRect);
+        sprite.setScale(SPRITE_SCALE, SPRITE_SCALE);
+    }
+
+    bool isClicked(const sf::Vector2f& mousePosition, bool isVisible = true) const {
+        return (isVisible && sprite.getGlobalBounds().contains(mousePosition));
+    }
+
 private:
     sf::Sprite sprite;
 };

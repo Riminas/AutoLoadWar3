@@ -10,6 +10,14 @@ private:
     uint8_t m_TemStatus = 0;//0(false+false), 1(true+false), 2(false+true), 3(true, true)
     bool m_IsVisible{ false };
     bool m_IsStart{ false };
+    
+    // Добавляем константы для улучшения читаемости
+    static constexpr float TEXT_OFFSET_X = 20.0f;
+    static constexpr float TEXT_OFFSET_Y = 7.0f;
+    static constexpr float CHECKBOX1_X = 375.0f;
+    static constexpr float CHECKBOX2_X = 445.0f;
+    static constexpr float CHECKBOX_WIDTH = 45.0f;
+
 public:
     // Конструктор для инициализации данных
     void initialize(const bool t_isVisible, const bool t_isStart, const std::string& str, const sf::Texture& texture)
@@ -39,26 +47,21 @@ public:
     void draw(sf::RenderWindow& G_WINDOW) {
         G_WINDOW.draw(sprite);
         
-        // Отрисовка каждого символа отдельно
-        float xOffset = 20 + sprite.getPosition().x;
-        float yPosition = 7 + sprite.getPosition().y;
+        const float xOffset = 20 + sprite.getPosition().x;
+        const float yPosition = 7 + sprite.getPosition().y;
         float currentX = xOffset;
-
-        for (std::size_t i = 0; i < text.getString().getSize(); ++i) {
-            sf::Uint32 unicode = text.getString()[i];
-            sf::Font font = G_FONT.getFontForCharacter(unicode);
-
-            sf::Text character;
-            character.setFont(font);
-            character.setString(text.getString()[i]); // Необходимо убедиться, что символ корректно преобразован
-            character.setFillColor(text.getFillColor());
-            character.setCharacterSize(text.getCharacterSize());
+        
+        static sf::Text character; // Создаём статический объект, чтобы избежать создания/уничтожения в цикле
+        character.setFillColor(text.getFillColor());
+        character.setCharacterSize(text.getCharacterSize());
+        
+        const auto& string = text.getString();
+        for (const sf::Uint32 unicode : string) {
+            character.setFont(G_FONT.getFontForCharacter(unicode));
+            character.setString(unicode);
             character.setPosition(currentX, yPosition);
-
-            // Получение ширины символа для обновления позиции следующего символа
-            sf::FloatRect bounds = character.getLocalBounds();
-            currentX += bounds.width;
-
+            
+            currentX += character.getLocalBounds().width;
             G_WINDOW.draw(character);
         }
     }
@@ -72,12 +75,7 @@ public:
     // 1 > 3 > 1        2
     //
     inline void updateSpriteIsChecBox() {
-        switch (m_TemStatus) {
-        case 0: sprite.setTextureRect(sf::Rect(0, 96, 512, 32)); return;
-        case 1: sprite.setTextureRect(sf::Rect(0, 128, 512, 32)); return;
-        case 2: sprite.setTextureRect(sf::Rect(0, 160, 512, 32)); return;
-        case 3: sprite.setTextureRect(sf::Rect(0, 192, 512, 32)); return;
-        }
+        sprite.setTextureRect(sf::IntRect(0, 96 + m_TemStatus * 32, 512, 32));
     }
 
     inline void updateSpriteIsChecBoxBool(const bool isVisible, const bool isStart) {
@@ -91,25 +89,26 @@ public:
     inline bool isClicked(const sf::Vector2f& mouseButton) { return sprite.getGlobalBounds().contains(mouseButton.x, mouseButton.y); }
 
     inline bool isClickedCheckBox1(const sf::Vector2f& mouseButton) {
-        const sf::Vector2f mouseButton2{ mouseButton.x - sprite.getPosition().x, mouseButton.y - sprite.getPosition().y };
-        if (mouseButton2.x >= 375 && mouseButton2.x < 420) {
+        const float relativeX = mouseButton.x - sprite.getPosition().x;
+        if (relativeX >= CHECKBOX1_X && relativeX < CHECKBOX1_X + CHECKBOX_WIDTH) {
             m_IsVisible = !m_IsVisible;
-            updateSpriteIsChecBoxBool(m_IsVisible, m_IsStart);
+            m_TemStatus = m_IsVisible + m_IsStart * 2;
+            updateSpriteIsChecBox();
             return true;
         }
         return false;
     }
     inline bool isClickedCheckBox2(const sf::Vector2f& mouseButton) {
-        const sf::Vector2f mouseButton2{ mouseButton.x - sprite.getPosition().x, mouseButton.y - sprite.getPosition().y };
-        if (mouseButton2.x >= 445 && mouseButton2.x < 490) {
+        const float relativeX = mouseButton.x - sprite.getPosition().x;
+        if (relativeX >= CHECKBOX2_X && relativeX < CHECKBOX2_X + CHECKBOX_WIDTH) {
             m_IsStart = !m_IsStart;
-            updateSpriteIsChecBoxBool(m_IsVisible, m_IsStart);
+            m_TemStatus = m_IsVisible + m_IsStart * 2;
+            updateSpriteIsChecBox();
             return true;
         }
         return false;
     }    
     inline bool isClickedEdit(const sf::Vector2f& mouseButton) {
-        //const sf::Vector2f mouseButton2{ mouseButton.x - sprite.getPosition().x, mouseButton.y - sprite.getPosition().y };
         return { mouseButton.x - sprite.getPosition().x < 370 };
     }
 };

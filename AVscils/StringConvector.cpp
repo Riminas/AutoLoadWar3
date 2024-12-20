@@ -2,7 +2,7 @@
 #include "StringConvector.h"
 
 std::string StringConvector::utf16_to_utf8(const std::wstring& wstr) {
-    if (wstr.empty()) return std::string();
+    if (wstr.empty()) return {};
 
     int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
     std::string strTo(size_needed, 0);
@@ -10,8 +10,8 @@ std::string StringConvector::utf16_to_utf8(const std::wstring& wstr) {
     return strTo;
 }
 
-std::wstring  StringConvector::utf8_to_utf16(const std::string& str) {
-    if (str.empty()) return std::wstring();
+std::wstring StringConvector::utf8_to_utf16(const std::string& str) {
+    if (str.empty()) return {};
 
     int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
     std::wstring wstrTo(size_needed, 0);
@@ -19,30 +19,29 @@ std::wstring  StringConvector::utf8_to_utf16(const std::string& str) {
     return wstrTo;
 }
 
-void StringConvector::adjustTextToFit(sf::Text& text, float maxWidth) {
+void StringConvector::adjustTextToFit(sf::Text& text, const float maxWidth) {
     std::wstring str = text.getString().toWideString();
     if (str.empty()) return;
 
-    const sf::Font G_FONT = *text.getFont();  // Получаем шрифт
-    unsigned int characterSize = text.getCharacterSize();
-    sf::Text tempText("", G_FONT, characterSize);
-
+    const sf::Font& font = *text.getFont();
+    const unsigned int characterSize = text.getCharacterSize();
+    static constexpr std::wstring ellipsis = L"...";
+    
+    sf::Text tempText;
+    tempText.setFont(font);
+    tempText.setCharacterSize(characterSize);
     tempText.setString(str);
     if (tempText.getLocalBounds().width <= maxWidth) {
-        return;  // Текст уже помещается
+        return;
     }
 
-    std::wstring originalStr = str;
-    while (tempText.getLocalBounds().width > maxWidth && !str.empty()) {
-        str.pop_back();  // Удаляем последний символ
-        tempText.setString(str + L"...");  // Добавляем многоточие для проверки ширины
+    while (!str.empty()) {
+        str.pop_back();
+        tempText.setString(str + ellipsis);
+        if (tempText.getLocalBounds().width <= maxWidth) break;
     }
 
-    if (tempText.getLocalBounds().width > maxWidth && !str.empty()) {
-        str.pop_back();  // В случае, если текст все еще слишком длинный
-    }
-
-    text.setString(str + L"...");
+    text.setString(str + ellipsis);
 }
 
 std::wstring StringConvector::toLower(const std::wstring& str) {
@@ -50,6 +49,7 @@ std::wstring StringConvector::toLower(const std::wstring& str) {
     std::transform(result.begin(), result.end(), result.begin(), ::towlower);
     return result;
 }
+
 std::string StringConvector::toLowerStr(const std::string& str) {
     std::string result = str;
     std::transform(result.begin(), result.end(), result.begin(), ::towlower);

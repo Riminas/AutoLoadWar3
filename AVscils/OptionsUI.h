@@ -9,8 +9,15 @@ class OptionsUI {
 private:
     sf::Sprite sprite;
     sf::Text text; // Основной текст
-    bool m_Value{ 0 };
+    bool m_Value{ false };
 public:
+
+    static constexpr float TEXT_X_OFFSET = 20.0f;
+    static constexpr float TEXT_Y_OFFSET = 7.0f;
+    static constexpr float CHECKBOX_X_MIN = 415.0f;
+    static constexpr float CHECKBOX_X_MAX = 455.0f;
+    static constexpr float MAX_TEXT_WIDTH = 380.0f;
+
     // Конструктор для инициализации данных
     void initialize(const bool t_Value, const std::wstring str, const sf::Texture& texture)
     {
@@ -26,31 +33,30 @@ public:
         text.setCharacterSize(14);
     }
 
-    inline void updateSpriteIsChecBox(const bool val) {
-        if (val) sprite.setTextureRect(sf::Rect{ 0, 256, 512, 32 });
-        else sprite.setTextureRect(sf::Rect{ 0, 224, 512, 32 });
+    void updateSpriteIsChecBox(const bool val) {
+        sprite.setTextureRect(val ? sf::Rect{ 0, 256, 512, 32 } : sf::Rect{ 0, 224, 512, 32 });
     }
 
     // Метод для установки позиции
-    inline void setPosition(const float x, const float y) {
-        StringConvector().adjustTextToFit(text, 380); // 236 = 512 / 2 - 20
-        text.setPosition(20 + x, 7 + y);
+    void setPosition(const float x, const float y) {
+        StringConvector().adjustTextToFit(text, MAX_TEXT_WIDTH);
+        text.setPosition(TEXT_X_OFFSET + x, TEXT_Y_OFFSET + y);
         sprite.setPosition(x, y);
     }
 
-    inline void draw(sf::RenderWindow& G_WINDOW) {
+    void draw(sf::RenderWindow& G_WINDOW) {
         G_WINDOW.draw(sprite);
         G_WINDOW.draw(text);
     }
 
-    inline bool getValue() const { return m_Value; }
+    bool getValue() const { return m_Value; }
 
-    inline bool isClicked(const sf::Vector2f& mouseButton) const { return sprite.getGlobalBounds().contains(mouseButton.x, mouseButton.y); }
-
-    inline bool isClickedCheckBox(const sf::Vector2f& mouseButton) {
-        const sf::Vector2f mouseButton2{ mouseButton.x - sprite.getPosition().x, mouseButton.y - sprite.getPosition().y };
-        if (mouseButton2.x >= 415 && mouseButton2.x < 455) {
-            m_Value = (bool)!m_Value;
+    bool isClicked(const sf::Vector2f& mouseButton) const { return sprite.getGlobalBounds().contains(mouseButton.x, mouseButton.y); }
+  
+    bool isClickedCheckBox(const sf::Vector2f& mouseButton) {
+        const float relativeX = mouseButton.x - sprite.getPosition().x;
+        if (relativeX >= CHECKBOX_X_MIN && relativeX < CHECKBOX_X_MAX) {
+            m_Value = !m_Value;
             updateSpriteIsChecBox(m_Value);
             return true;
         }

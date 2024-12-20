@@ -11,6 +11,7 @@
 #include <fstream>
 #include "StringConvector.h"
 
+#include "LogManager.h"
 #include "Global.h"
 #include "Options.h"
 #include <unordered_set>
@@ -74,7 +75,7 @@ void Options::initializeWindow() {
     }
 
     if (!m_Texture.loadFromFile("DataAutoLoad\\img\\Option.png")) {
-        throw std::runtime_error("Failed to load Option.png");
+        LogManager::logger().log(LogManager::LogLevel::Error, "Failed to load Option.png");
     }
 
     initializeText(m_NameMap, G_DATA_MAPS.m_NameMapsFull, 
