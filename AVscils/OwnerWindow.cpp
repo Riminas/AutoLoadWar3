@@ -30,8 +30,8 @@
 void OwnerWindow::initialize() {
 
     setupWindow();
-    if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
-    else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
+    if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("img\\ButtonBlack.png");
+    else m_TextureButton.loadFromFile("img\\Button.png");
 
     m_Buttons.initialize({ 128, 0, 640, 128 }, m_TextureButton);
     initializeButtonsUsersDataCommands();
@@ -170,7 +170,6 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
                 isWindow2Visible[0] = false;
             }
 
-            UpdateRegionRect().updateRegionLoad();
 
 
             if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
@@ -179,8 +178,6 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
             G_WINDOW.display();
 
             EngineFileTip1().engineFile();
-
-            UpdateRegionRect().updateRegionMain();
 
             if (G_CONFIG_MAIN.optionsConfig.autoExit)
                 G_WINDOW.close();
@@ -222,8 +219,8 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
         UpdateRegionRect().updateRegionMain();
 
 
-        if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("DataAutoLoad\\img\\ButtonBlack.png");
-        else m_TextureButton.loadFromFile("DataAutoLoad\\img\\Button.png");
+        if (G_CONFIG_MAIN.optionsConfig.blackColor) m_TextureButton.loadFromFile("img\\ButtonBlack.png");
+        else m_TextureButton.loadFromFile("img\\Button.png");
 
         break;
     }

@@ -89,7 +89,7 @@ void SelectingNewPathMap::initialize() {
         m_Rect[3]/*.bottom*/ = static_cast<float>(desktop.height / 2.f + windowHeight / 2 - 32);
     }
 
-    m_Texture.loadFromFile("DataAutoLoad\\img\\Option.png");
+    m_Texture.loadFromFile("img\\Option.png");
     // Общее меню
     initializeSprite(titleAndClose, sf::Vector2f{ m_Rect[0],  m_Rect[1] - 48 }, { 0, 448, 512, 16 });
     //initializeText(title, L"Maps: " + G_DATA_MAPS.m_NameMapsFull, newPosition + sf::Vector2f{ 20, -24 });

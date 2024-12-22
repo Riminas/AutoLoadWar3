@@ -63,7 +63,7 @@ bool NewPathSaveCode::newPathSaveCode(std::wstring& t_Path) {
         }
     }
     {
-        while (true) {
+        while (G_WINDOW.isOpen()) {
             t_Path = BrowseFileDialog();
             if (!t_Path.empty()) {
                 t_Path.erase(std::remove(t_Path.begin(), t_Path.end(), L'\r'), t_Path.end());
@@ -88,7 +88,7 @@ std::wstring NewPathSaveCode::BrowseFileDialog() const {
     ofn.hwndOwner = nullptr;
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = sizeof(szFile) / sizeof(szFile[0]);
-    ofn.lpstrFilter = L"Warcraft III Executable (war3.exe)\0war3.exe\0";
+    ofn.lpstrFilter = L"Warcraft III Executable (war3.exe, w3l.exe, Warcrafit III.exe)\0war3.exe;w3l.exe;Warcrafit III.exe\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = nullptr;
     ofn.lpstrInitialDir = nullptr;

@@ -10,6 +10,7 @@
 #include "LogManager.h"
 #include "DataWarcraft.h"
 #include "DataMaps.h"
+#include "UpdateRegionRect.h"
 
 void EngineFileTip1::engineFile()
 {
@@ -20,7 +21,11 @@ void EngineFileTip1::engineFile()
         return;
     }
 
+    UpdateRegionRect().updateRegionLoad();
+
     engineTip1();
+
+    UpdateRegionRect().updateRegionMain();
     return;
 }
 

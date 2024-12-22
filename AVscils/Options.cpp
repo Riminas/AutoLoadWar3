@@ -133,7 +133,7 @@ void Options::initializeWindow() {
         };
     }
 
-    if (!m_Texture.loadFromFile("DataAutoLoad\\img\\Option.png")) {
+    if (!m_Texture.loadFromFile("img\\Option.png")) {
         LogManager::logger().log(LogManager::LogLevel::Error, "Failed to load Option.png");
     }
 
@@ -392,8 +392,10 @@ void Options::updateConfigMaps() {
     UpdateRegionRect().clearRegion();
 
     const std::array<CmdEntry, 5>& usersConfigLast = G_CONFIG_MAPS.usersConfig;
-    
-    ConfigMapsEngine(G_DATA_MAPS.m_NameMaps).loadConfigMaps();
+
+    ConfigMapsEngine ConfigMapsEngine_(G_DATA_MAPS.m_NameMaps);
+    ConfigMapsEngine_.openConfigMaps();
+    ConfigMapsEngine_.loadConfigMaps();
 
     for (uint8_t i = 0; CmdEntry& command : G_CONFIG_MAPS.usersConfig) {
         if (command.cmd != usersConfigLast[i].cmd) {
@@ -407,7 +409,7 @@ void Options::updateConfigMaps() {
     }
 
     initializeDataCommands();
-    UpdateRegionRect().updateRegionOption();
+    //UpdateRegionRect().updateRegionOption();
 }
 
 inline bool Options::IsWarcraftInFocus(const HWND& hWnd) {

@@ -67,7 +67,7 @@ void TrayManager::setupTrayIcon() {
     m_nid.uID = ID_TRAY_APP_ICON;
     m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     m_nid.uCallbackMessage = WM_TRAYICON;
-    m_nid.hIcon = loadIconFromFile(L"DataAutoLoad\\img\\icon.ico");
+    m_nid.hIcon = loadIconFromFile(L"img\\icon.ico");
     wcscpy_s(m_nid.szTip, L"AutoLoad tree");
     
     if (!Shell_NotifyIcon(NIM_ADD, &m_nid)) {

@@ -59,6 +59,14 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
         LogManager::logger().log(LogManager::LogLevel::Message, "Версия Warcraft 1.26 " + filePath.string());
         versionWarcraft = 1;
     }
+    else if (filename == L"Warcrafit III.exe") {
+        LogManager::logger().log(LogManager::LogLevel::Message, "Версия Warcraft 1.27b " + filePath.string());
+        versionWarcraft = 1;
+    }
+    else if (filename == L"w3l.exe") {
+        LogManager::logger().log(LogManager::LogLevel::Message, "Версия Warcraft 1.28. " + filePath.string());
+        versionWarcraft = 1;
+    }
     else {
         LogManager::logger().log(LogManager::LogLevel::Error, "Неизвестная версия Warcraft");
         versionWarcraft = -1;
@@ -76,17 +84,34 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
         std::wstring basePath = documentsPath;
         CoTaskMemFree(documentsPath);
         basePath += L"\\Warcraft III";
+        const std::wstring mapsPath = basePath + L"\\Maps";
+        const std::wstring customMapPath = basePath + L"\\CustomMapData";
 
         if (std::filesystem::exists(basePath)) {
-            if(versionWarcraft == 0)
-                warPathDirectMaps = basePath + L"\\Maps";
-            warPathDirectSave[0] = basePath + L"\\CustomMapData";
+            if (versionWarcraft == 0 && std::filesystem::exists(mapsPath)) {
+                warPathDirectMaps = mapsPath;
+            }
+            else {
+                warPathDirectMaps.clear();
+            }
+            if (std::filesystem::exists(customMapPath)) {
+                warPathDirectSave[0] = customMapPath;
+            }
+            else {
+                warPathDirectSave[0].clear();
+            }
+        }
+        else {
+            warPathDirectMaps.clear();
+            warPathDirectSave[0].clear();
         }
     }
 
     {//1.26
-        size_t pos = pathWstr.find_last_of(L"\\");
-        warPathDirectMaps = pathWstr.substr(0, pos) + L"\\Maps";
+        if (versionWarcraft == 1) {
+            size_t pos = pathWstr.find_last_of(L"\\");
+            warPathDirectMaps = pathWstr.substr(0, pos) + L"\\Maps";
+        }
 
         std::wstring fileContent = LoadDataFail().loadDataFailW(G_PATH_APP_DATA+L"\\PathWar3.txt");
         if (!fileContent.empty()) {
@@ -95,7 +120,7 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
             int pathIndex = 1; // Начинаем с индекса 1
             while (std::getline(pathStream, line) && pathIndex < 10) {
                 if (!line.empty()) {
-                    size_t pos = line.find(L"\\war3.exe");
+                    size_t pos = line.find(L"\\war3.exe" || L"\\w3l.exe");
                     if (pos != std::wstring::npos) {
                         line = line.substr(0, pos);
                     }
