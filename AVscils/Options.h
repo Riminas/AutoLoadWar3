@@ -31,7 +31,7 @@ private:
     void initializeText(sf::Text& text, std::wstring textString, const sf::Vector2f& position, const sf::Color& color, const float& letterSpacing) const;
     void initializeRectangle(sf::RectangleShape& rectangle, const sf::Vector2f& size = { 10, 10 }, const sf::Vector2f& position = { 0,0 }, const sf::Color& color = sf::Color::White) const;
     void initializeSprite(sf::Sprite& rectangle, const sf::Vector2f& position, const sf::IntRect& rect) const;
-    std::wstring run();
+    void run();
     void handleInactiveWindow();
     void initializeWindow();
     void initializeDataCommands();
@@ -39,11 +39,11 @@ private:
     void drawWindow();
     void drawCommandsMenu();
     void drawOptionsMenu();
-    std::wstring handleMousePress(const sf::Event& event);
+    bool handleMousePress(const sf::Event& event);
     void updateConfigMaps();
     bool IsWarcraftInFocus(const HWND& hWnd);
 
-    std::wstring handleEvents();
+    bool handleEvents();
 
     sf::Texture m_Texture;
     std::array<float, 4> m_Rect = {0, 0, 0, 0};//[0]left [1]top [2]right [3]bottom

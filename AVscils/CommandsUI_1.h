@@ -17,6 +17,7 @@ private:
     static constexpr float CHECKBOX1_X = 375.0f;
     static constexpr float CHECKBOX2_X = 445.0f;
     static constexpr float CHECKBOX_WIDTH = 45.0f;
+    static constexpr float MAX_TEXT_WIDTH = 380.0f;
 
 public:
     // Конструктор для инициализации данных
@@ -38,30 +39,36 @@ public:
     // Метод для установки позиции
     void setPosition(const float x, const float y) {
         // Корректировка текста для помещения в левую половину окна
-        StringConvector().adjustTextToFit(text, 380); // 236 = 512 / 2 - 20
+        StringConvector().adjustTextToFit(text, MAX_TEXT_WIDTH);
 
-        text.setPosition(20 + x, 7 + y);
+        text.setPosition(TEXT_OFFSET_X + x, TEXT_OFFSET_Y + y);
         sprite.setPosition(x, y);
     }
 
     void draw(sf::RenderWindow& G_WINDOW) {
         G_WINDOW.draw(sprite);
         
-        const float xOffset = 20 + sprite.getPosition().x;
-        const float yPosition = 7 + sprite.getPosition().y;
-        float currentX = xOffset;
-        
-        static sf::Text character; // Создаём статический объект, чтобы избежать создания/уничтожения в цикле
+        const float baseX = TEXT_OFFSET_X + sprite.getPosition().x;
+        const float baseY = TEXT_OFFSET_Y + sprite.getPosition().y;
+        float currentX = baseX;
+
+        sf::Text character;
         character.setFillColor(text.getFillColor());
         character.setCharacterSize(text.getCharacterSize());
-        
-        const auto& string = text.getString();
-        for (const sf::Uint32 unicode : string) {
-            character.setFont(G_FONT.getFontForCharacter(unicode));
-            character.setString(unicode);
-            character.setPosition(currentX, yPosition);
-            
-            currentX += character.getLocalBounds().width;
+
+        const sf::String& wstr = text.getString();
+        for (std::size_t i = 0; i < wstr.getSize(); ++i) {
+            sf::Uint32 unicode = wstr[i];
+            sf::Font font = G_FONT.getFontForCharacter(unicode);
+
+            character.setFont(font);
+            character.setString(text.getString()[i]); // Необходимо убедиться, что символ корректно преобразован
+            character.setPosition(currentX, baseY);
+
+            // Получение ширины символа для обновления позиции следующего символа
+            sf::FloatRect bounds = character.getLocalBounds();
+            currentX += bounds.width;
+
             G_WINDOW.draw(character);
         }
     }
@@ -109,6 +116,6 @@ public:
         return false;
     }    
     inline bool isClickedEdit(const sf::Vector2f& mouseButton) {
-        return { mouseButton.x - sprite.getPosition().x < 370 };
+        return { mouseButton.x - sprite.getPosition().x < CHECKBOX1_X };
     }
 };

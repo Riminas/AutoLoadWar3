@@ -1,4 +1,4 @@
-п»ї#include <Windows.h>
+#include <Windows.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
@@ -32,10 +32,69 @@ Options::Options()
 }
 
 void Options::options() {
-    UpdateRegionRect().updateRegionOption();//   
-    //            
-    std::wstring folderPath = run();
-    UpdateRegionRect().clearRegion();//    
+    UpdateRegionRect().updateRegionOption();
+    run();
+    UpdateRegionRect().clearRegion();
+}
+
+void Options::run() {
+    bool isActive = true;
+    bool needRedraw = true;
+
+    while (G_WINDOW.isOpen()) {
+        HWND hWndWindow = GetForegroundWindow();
+        bool is = IsWarcraftInFocus(hWndWindow);
+        
+        if (is) {
+            if (!isActive) {
+                if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow)
+                    return;
+                UpdateRegionRect().updateRegionOption();
+                isActive = true;
+                needRedraw = true;
+            }
+
+            if (handleEvents())
+                return;
+
+            if (needRedraw) {
+                drawWindow();
+                needRedraw = false;
+            }
+        }
+        else {
+            if (isActive) {
+                UpdateRegionRect().clearRegion();
+                isActive = false;
+                //needRedraw = true;
+            }
+
+            sf::Event event;
+            while (G_WINDOW.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    G_WINDOW.close();
+                }
+            }
+
+            /*if (needRedraw) {
+                handleInactiveWindow();
+                needRedraw = false;
+            }*/
+        }
+
+        sf::sleep(sf::milliseconds(16));
+    }
+}
+
+inline void Options::handleInactiveWindow() {
+
+    const auto& config = G_CONFIG_MAIN.optionsConfig;
+    const auto clearColor = config.blackColor ?
+        sf::Color(45, 45, 48) :
+        sf::Color(255, 255, 255);
+
+    G_WINDOW.clear(clearColor);
+    G_WINDOW.display();
 }
 
 inline void Options::initializeText(sf::Text& text, std::wstring textString, const sf::Vector2f& position,
@@ -122,7 +181,7 @@ void Options::initializeDataCommands() {
 
     float positionY = m_Rect[1] + COMMAND_Y_OFFSET;
 
-    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕСЃРЅРѕРІРЅС‹С… РєРѕРјР°РЅРґ
+    // Инициализация основных команд
     for (size_t i = 0; auto& command : m_CommandsMain) {
         const auto& config = G_CONFIG_MAPS.mainConfig[i];
         command.initialize(config.start, config.cmd, m_Texture);
@@ -131,7 +190,7 @@ void Options::initializeDataCommands() {
         ++i;
     }
 
-    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёС… РєРѕРјР°РЅРґ
+    // Инициализация пользовательских команд
     for (size_t i = 0; auto& command : m_CommandsUsers) {
         const auto& config = G_CONFIG_MAPS.usersConfig[i];
         command.initialize(config.isVisibleButton, config.start, config.cmd, m_Texture);
@@ -149,13 +208,13 @@ void Options::initializeSettings() {
     static constexpr float INITIAL_Y = 10.0f;
     
     const auto& config = G_CONFIG_MAIN.optionsConfig;
-    const std::array<std::pair<const bool&, const wchar_t*>, 6> options = {{
-        {config.autoClickerKey, L"РђРІС‚Рѕ РєР»РёРєРµСЂ РєР»Р°РІРёС€Рё"},
-        {config.autoClickerMouse, L"РђРІС‚Рѕ РєР»РёРєРµСЂ РїСЂР°РІРѕР№ РєРЅРѕРїРєРё РјС‹С€Рё"},
-        {config.blackColor, L"РўРµРјРЅР°СЏ С‚РµРјР°"},
-        {config.autoUpdate, L"РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ"},
-        {config.writeLogs, L"Р—Р°РїРёСЃСЊ Р»РѕРіРѕРІ"},
-        {config.autoExit, L"РђРІС‚Рѕ РІС‹С…РѕРґ РїРѕСЃР»Рµ Р±С‹СЃС‚СЂРѕР№ Р·Р°РіСЂСѓР·РєРё"}
+    const std::array<std::pair<const bool&, const wchar_t*>, 5> options = {{
+        {config.autoClickerKey, L"Авто кликер клавиши"},
+        {config.autoClickerMouse, L"Авто кликер правой кнопки мыши"},
+        {config.blackColor, L"Темная тема"},
+        //{config.autoUpdate, L"Автоматическое обновление"},
+        {config.writeLogs, L"Запись логов"},
+        {config.autoExit, L"Авто выход после быстрой загрузки"}
     }};
 
     for (size_t i = 0; i < options.size(); ++i) {
@@ -206,9 +265,9 @@ inline void Options::drawOptionsMenu() {
 }
 
 
-std::wstring Options::handleMousePress(const sf::Event& event) {
+bool Options::handleMousePress(const sf::Event& event) {
     if (event.mouseButton.button != sf::Mouse::Left)
-        return L"";
+        return false;
 
     const sf::Vector2f mouseButton{
         static_cast<float>(event.mouseButton.x),
@@ -217,39 +276,36 @@ std::wstring Options::handleMousePress(const sf::Event& event) {
 
     if (topBackground.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
         const sf::Vector2f mouseButton2{ mouseButton.x - topBackground.getPosition().x, mouseButton.y - topBackground.getPosition().y };
-        if (!G_DATA_MAPS.m_NameMaps.empty() && numMenu == 3 &&/*mouseButton2.x >= 0 && */mouseButton2.x < 384) {// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+        if (!G_DATA_MAPS.m_NameMaps.empty() && numMenu == 3 && mouseButton2.x < 384) {
             initializeSprite(topBackground, sf::Vector2f{ m_Rect[0], m_Rect[1] - 32 }, { 0, 320, 512, 32 });
             numMenu = 2;
-            return L"";
+            return false;
         }
-        else if (numMenu == 2 && /*mouseButton2.x >= 448 && */mouseButton2.x < 512) {// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        else if (numMenu == 2 && mouseButton2.x < 512) {
             initializeSprite(topBackground, sf::Vector2f{ m_Rect[0], m_Rect[1] - 32 }, { 0, 352, 512, 32 });
             numMenu = 3;
-            return L"";
+            return false;
         }
     }
 
     if (bottomBackground.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
-        //const sf::Vector2f mouseButton2{ mouseButton.x - bottomBackground.getPosition().x, mouseButton.y - bottomBackground.getPosition().y };
-        //if (mouseButton2.x >= 480/* && mouseButton2.x < 512*/)
-        return L"Exit";
+        return true;
     }
+    
     if (titlAndClose.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
         const sf::Vector2f mouseButton2{ mouseButton.x - titlAndClose.getPosition().x, mouseButton.y - titlAndClose.getPosition().y };
-        if (mouseButton2.x >= 480/* && mouseButton2.x < 512*/)
-            return L"Exit";
+        if (mouseButton2.x >= 480)
+            return true;
     }
 
     if (numMenu == 2) {
 
         if (bottomBackground.getGlobalBounds().contains(mouseButton.x, mouseButton.y)) {
-            //const sf::Vector2f mouseButton2{ mouseButton.x - bottomBackground.getPosition().x, mouseButton.y - bottomBackground.getPosition().y };
-            //if (mouseButton2.x >= 480/* && mouseButton2.x < 512*/)
-            return L"Exit";
+            return true;
         }
         if (m_PathWar3.isClicked(mouseButton) && m_PathWar3.isClickedButton(mouseButton)) {
             SelectingNewPathMap().selectingNewPathMap();
-            UpdateRegionRect().updateRegionOption();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+            UpdateRegionRect().updateRegionOption();
             m_PathWar3.setString(G_CONFIG_MAPS.path);
         }
 
@@ -258,7 +314,7 @@ std::wstring Options::handleMousePress(const sf::Event& event) {
         //    if (mouseButton2.x >= 0 && mouseButton2.x < 32) {
         //        //updateConfigMaps();
         //        SelectingNewPathMap().selectingNewPathMap();
-        //        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+        //        UpdateRegionRect().updateRegion(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar, 2);//???????? ????? ???????? ??????
         //    }
         //}
 
@@ -318,9 +374,9 @@ std::wstring Options::handleMousePress(const sf::Event& event) {
         checkAndToggle(0, G_CONFIG_MAIN.optionsConfig.autoClickerKey, isSave);
         if (!isSave) checkAndToggle(1, G_CONFIG_MAIN.optionsConfig.autoClickerMouse, isSave);
         if (!isSave) checkAndToggle(2, G_CONFIG_MAIN.optionsConfig.blackColor, isSave);
-        if (!isSave) checkAndToggle(3, G_CONFIG_MAIN.optionsConfig.autoUpdate, isSave);
-        if (!isSave) checkAndToggle(4, G_CONFIG_MAIN.optionsConfig.writeLogs, isSave);
-        if (!isSave) checkAndToggle(5, G_CONFIG_MAIN.optionsConfig.autoExit, isSave);
+        //if (!isSave) checkAndToggle(3, G_CONFIG_MAIN.optionsConfig.autoUpdate, isSave);
+        if (!isSave) checkAndToggle(3, G_CONFIG_MAIN.optionsConfig.writeLogs, isSave);
+        if (!isSave) checkAndToggle(4, G_CONFIG_MAIN.optionsConfig.autoExit, isSave);
 
         if (isSave) {
             ConfigMainEngine ConfigMainEngine_;
@@ -328,18 +384,18 @@ std::wstring Options::handleMousePress(const sf::Event& event) {
         }
     }
 
-    return L"";
+    return false;
 }
 
 
 void Options::updateConfigMaps() {
     UpdateRegionRect().clearRegion();
 
-    const auto usersConfigLast = G_CONFIG_MAPS.usersConfig;
+    const std::array<CmdEntry, 5>& usersConfigLast = G_CONFIG_MAPS.usersConfig;
     
     ConfigMapsEngine(G_DATA_MAPS.m_NameMaps).loadConfigMaps();
 
-    for (uint8_t i = 0; auto& command : G_CONFIG_MAPS.usersConfig) {
+    for (uint8_t i = 0; CmdEntry& command : G_CONFIG_MAPS.usersConfig) {
         if (command.cmd != usersConfigLast[i].cmd) {
             command.isVisibleButton = !command.cmd.empty();
             m_CommandsUsers[i].updateSpriteIsChecBoxBool(
@@ -355,79 +411,42 @@ void Options::updateConfigMaps() {
 }
 
 inline bool Options::IsWarcraftInFocus(const HWND& hWnd) {
-    static thread_local std::wstring windowTitle(256, L'\0');
-    if (!GetWindowTextW(hWnd, windowTitle.data(), static_cast<int>(windowTitle.size()))) {
+    wchar_t windowTitle[256];
+
+    if (!GetWindowTextW(hWnd, windowTitle, 256)) {
         return false;
     }
-    return (windowTitle.compare(0, wcslen(WARCRAFT_WINDOW_TITLE), WARCRAFT_WINDOW_TITLE) == 0);
+    return (wcscmp(windowTitle, WARCRAFT_WINDOW_TITLE) == 0);
 }
 
-std::wstring Options::handleEvents() {
+bool Options::handleEvents() {
     sf::Event event;
+    bool needRedraw = false;
+
     while (G_WINDOW.pollEvent(event)) {
         switch (event.type) {
         case sf::Event::Closed:
             G_WINDOW.close();
-            return L"Exit";
+            return true;
 
         case sf::Event::MouseButtonPressed:
-            if (auto result = handleMousePress(std::move(event)); !result.empty())
-                return result;
+            needRedraw = true;
+            if (handleMousePress(std::move(event))) {
+                return true;
+            }
             break;
 
         case sf::Event::KeyPressed:
             if (event.key.code == sf::Keyboard::Escape) {
-                return L"Exit";
+                return true;
             }
             break;
         }
     }
-    return L"";
-}
-
-std::wstring Options::run() {
-    bool isActive = true;
-    while (G_WINDOW.isOpen()) {
-        HWND hWndWindow = GetForegroundWindow();
-
-        if (!IsWarcraftInFocus(hWndWindow)) {
-            if (isActive) {
-                UpdateRegionRect().clearRegion();
-                isActive = false;
-            }
-            handleInactiveWindow();
-            continue;
-        }
-
-        if (!isActive) {
-            if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow)
-                return L"";
-            isActive = true;
-            UpdateRegionRect().updateRegionOption();
-        }
-
-        auto result = handleEvents();
-        if (!result.empty())
-            return std::move(result);
-
+    
+    if (needRedraw) {
         drawWindow();
     }
-    return L"";
-}
-
-inline void Options::handleInactiveWindow() {
-    sf::Event event;
-    while (G_WINDOW.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-            G_WINDOW.close();
-        }
-    }
-
-    const auto& config = G_CONFIG_MAIN.optionsConfig;
-    const auto clearColor = config.blackColor ?
-        sf::Color(45, 45, 48) :
-        sf::Color(255, 255, 255);
-
-    G_WINDOW.clear(clearColor);
-    G_WINDOW.display();
+    
+    return false;
 }

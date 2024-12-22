@@ -10,6 +10,7 @@
 #include "DataMaps.h"
 #include "LogManager.h"
 #include <codecvt>
+#include "Global.h"
 
 namespace {
     constexpr size_t BUFFER_SIZE = 8192;
@@ -228,7 +229,7 @@ void HeroInfoEngine::updateHeroInfo(const std::filesystem::directory_entry& file
 // Метод для сохранения данных героев в файл
 void HeroInfoEngine::saveDataHero(const std::vector<HeroInfo>& heroInfo) const {
     // Определяем путь к файлу сохранения
-    std::wstring heroDataFilePath = L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps + L"/Hero.ini";
+    std::wstring heroDataFilePath = G_PATH_APP_DATA+L"DataMaps/" + G_DATA_MAPS.m_NameMaps + L"/Hero.ini";
 
     // Создаём директорию, если её нет
     std::filesystem::create_directories(std::filesystem::path(heroDataFilePath).parent_path());
@@ -276,7 +277,7 @@ bool HeroInfoEngine::loadDataHero(std::vector<HeroInfo>& heroInfo) const {
     heroInfo.clear();
 
     // Определяем путь к файлу сохранения
-    std::wstring heroDataFilePath = L"DataAutoLoad/DataMaps/" + G_DATA_MAPS.m_NameMaps + L"/Hero.ini";
+    std::wstring heroDataFilePath = G_PATH_APP_DATA+L"DataMaps/" + G_DATA_MAPS.m_NameMaps + L"/Hero.ini";
 
     std::ifstream file(heroDataFilePath, std::ios::in);
     if (!file.is_open()) {
@@ -339,4 +340,5 @@ bool HeroInfoEngine::loadDataHero(std::vector<HeroInfo>& heroInfo) const {
             heroInfo.push_back(currentHero);
         }
     }
+    return true;
 }

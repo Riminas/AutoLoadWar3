@@ -6,7 +6,7 @@
 #include "ConfigMaps.h"
 #include "CoutGuide.h"
 
-class OwnerWindow//6100 > 4200 > 2992
+class OwnerWindow//6100 > 4200 > 2992 > 3800
 {
 public:
 	void draw(const bool t_isVisibleLoad);

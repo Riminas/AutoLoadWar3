@@ -29,7 +29,7 @@ public:
     
     inline void setString(const std::wstring& str) {
         if (str.empty()) {
-            text.setString("путь к папке с сохранениями неуказон");
+            text.setString(L"путь к папке с сохранениями неуказон");
             text.setFillColor(sf::Color(202, 51, 62));//sf::Color(202, 51, 62)
             sprite.setTextureRect(sf::Rect{ 0, 576, 512, 32 });
         }

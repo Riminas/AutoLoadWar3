@@ -1,87 +1,44 @@
 ﻿#include <windows.h>
+#include <shlobj.h>
 #include <iostream>
 #include "Engine.h"
 #include "LogManager.h"
 #include "ConfigMainEngine.h"
+#include "Global.h"
 
+// mainCRTStartup
 int main()
 {
     if (FindWindow(NULL, L"AutoLoadWar3") == NULL) {
+        G_PATH_APP_DATA = L"DataAutoLoad\\";
+        //wchar_t path[MAX_PATH];
+        //if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, 0, path))) {
+        //    G_PATH_APP_DATA = std::wstring(path) + L"\\DataAutoLoad\\";
+        //}
+        //else {
+        //    LogManager::logger().log(LogManager::LogLevel::Error, L"Не удалось получить путь к AppData.");
+        //    return -1;
+        //}
 
-        ConfigMainEngine().loadConfigMain();//должно полнится только 1 раз при старте программы
+        //// Проверка наличия папки DataAutoLoad
+        //DWORD attrib = GetFileAttributesW(G_PATH_APP_DATA.c_str());
+        //if (attrib == INVALID_FILE_ATTRIBUTES || !(attrib & FILE_ATTRIBUTE_DIRECTORY)) {
+        //    if (!CreateDirectoryW(G_PATH_APP_DATA.c_str(), NULL)) {
+        //        LogManager::logger().log(LogManager::LogLevel::Error, L"Не удалось создать папку DataAutoLoad.");
+        //        return -1;
+        //    }
+        //    else {
+        //        LogManager::logger().log(LogManager::LogLevel::Message, L"Папка DataAutoLoad успешно создана.");
+        //    }
+        //}
+
+        ConfigMainEngine().loadConfigMain(); // должно выполняться только 1 раз при старте программы
 
         LogManager::logger().log(LogManager::LogLevel::Message, L"\n\n------------------------------------------------------------------------");
         Engine().engine1();
     }
     else
-        MessageBox(NULL, L"Программа уже запущена.", L"Оповищение", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(NULL, L"Программа уже запущена.", L"Оповещение", MB_OK | MB_ICONEXCLAMATION);
     
     return 0;
 }
-//if (G_CONFIG_MAIN.optionsConfig.autoUpdate) {
-//    update();
-//}
-// 
-//#include "json.hpp"
-//using json = nlohmann::json;
-//
-//void update() {
-//    AutoUpdate AutoUpddate_;
-//    std::string releaseInfo = AutoUpddate_.GetLatestReleaseInfo(L"Riminas", L"AutoLoadWar3");
-//
-//    if (!releaseInfo.empty())
-//    {
-//        json jsonData = json::parse(releaseInfo);
-//
-//        std::string latestVersion = jsonData["tag_name"];
-//
-//        // Предположим, что currentVersion - это строка с текущей версией вашей программы
-//        std::string currentVersion = "AutoLoad_1_18_16";
-//
-//        if (latestVersion != currentVersion)
-//        {
-//
-//            std::string downloadUrl;
-//            for (const auto& asset : jsonData["assets"])
-//            {
-//                std::string name = asset["name"];
-//                if (name == "AvLoad.exe") // или другое имя вашего файла(в гит хаб)
-//                {
-//                    downloadUrl = asset["browser_download_url"];
-//                    break;
-//                }
-//            }
-//
-//            wchar_t modulePath[MAX_PATH];
-//            GetModuleFileName(NULL, modulePath, MAX_PATH);
-//            std::wstring savePath = modulePath;
-//            savePath.erase(savePath.size() - 11);
-//            savePath += L"\\AutoLoad.exe";//куда будет сохранена программа и с каким именем
-//
-//
-//            LogManager::logger().log(LogManager::LogLevel::Message, L"savePath " + savePath);
-//
-//            if (AutoUpddate_.DownloadFile(downloadUrl, savePath))
-//            {
-//                // Перейдите к установке обновления
-//                ShellExecute(NULL, L"open", L"update.exe", NULL, NULL, SW_SHOWNORMAL);
-//            }
-//            else
-//            {
-//                LogManager::logger().log(LogManager::LogLevel::Error, "Ошибка при загрузке файла обновления.");
-//                LogManager::logger().log(LogManager::LogLevel::Message, "Доступно обновление до версии " + latestVersion);
-//                LogManager::logger().log(LogManager::LogLevel::Message, "адрес " + downloadUrl);
-//            }
-//
-//
-//        }
-//        //else
-//        //{
-//        //    LogManager::logger().log(LogManager::LogLevel::Message, "У вас установлена последняя версия.");
-//        //}
-//    }
-//    else
-//    {
-//        LogManager::logger().log(LogManager::LogLevel::Message, "Не удалось получить информацию о последнем релизе.");
-//    }
-//}

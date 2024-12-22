@@ -6,6 +6,7 @@
 // Структура для хранения данных
 class CommandsUI_0 {
 private:
+
     sf::Sprite sprite;
     sf::Text text; // Основной текст
     bool m_Value{ false };
@@ -51,17 +52,24 @@ public:
         const float baseX = TEXT_X_OFFSET + sprite.getPosition().x;
         const float baseY = TEXT_Y_OFFSET + sprite.getPosition().y;
         float currentX = baseX;
-        
-        const sf::String& str = text.getString();
+
         sf::Text character;
         character.setFillColor(text.getFillColor());
         character.setCharacterSize(text.getCharacterSize());
 
-        for (const auto& unicode : str) {
-            character.setFont(G_FONT.getFontForCharacter(unicode));
-            character.setString(unicode);
+        const sf::String& wstr = text.getString();
+        for (std::size_t i = 0; i < wstr.getSize(); ++i) {
+            sf::Uint32 unicode = wstr[i];
+            sf::Font font = G_FONT.getFontForCharacter(unicode);
+
+            character.setFont(font);
+            character.setString(text.getString()[i]); // Необходимо убедиться, что символ корректно преобразован
             character.setPosition(currentX, baseY);
-            currentX += character.getLocalBounds().width;
+
+            // Получение ширины символа для обновления позиции следующего символа
+            sf::FloatRect bounds = character.getLocalBounds();
+            currentX += bounds.width;
+
             G_WINDOW.draw(character);
         }
     }

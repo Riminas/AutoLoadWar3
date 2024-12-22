@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <ShObjIdl.h>
+#include "Global.h"
 
 class NewPathSaveCode {
 public:
@@ -12,5 +13,5 @@ private:
     std::wstring BrowseFileDialog() const;
 
     std::wstring m_Path;
-    const std::wstring m_PathOptionDirectory = L"DataAutoLoad\\PathWar3.txt";
+    const std::wstring m_PathOptionDirectory = G_PATH_APP_DATA+L"PathWar3.txt";
 };

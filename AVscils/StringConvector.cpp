@@ -25,7 +25,7 @@ void StringConvector::adjustTextToFit(sf::Text& text, const float maxWidth) {
 
     const sf::Font& font = *text.getFont();
     const unsigned int characterSize = text.getCharacterSize();
-    static constexpr std::wstring ellipsis = L"...";
+    static const std::wstring ellipsis = L"...";
     
     sf::Text tempText;
     tempText.setFont(font);

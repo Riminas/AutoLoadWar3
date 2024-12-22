@@ -20,8 +20,6 @@
 
 #include "UpdateRegionRect.h"
 
-NOTIFYICONDATA nid;
-
 void Engine::engine1() {
     if (initialize()) {
         return;
@@ -46,8 +44,6 @@ void Engine::engine1() {
             handleInactiveWindow();
         }
     }
-
-    Shell_NotifyIcon(NIM_DELETE, &nid);
 }
 
 bool Engine::updateWindowVisibility(const HWND& hWndWindow) {
@@ -115,8 +111,8 @@ void Engine::processEvents() {
 }
 
 void Engine::draw(const bool isVisibleLoad) {
-    if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
-    else G_WINDOW.clear(sf::Color(255, 255, 255));
+    G_WINDOW.clear(G_CONFIG_MAIN.optionsConfig.blackColor ?
+        sf::Color(45, 45, 48) : sf::Color(255, 255, 255));
     m_OwnerWindow.draw(isVisibleLoad);
 
     if (m_IsVisibleOwnerWindow) {

@@ -18,6 +18,7 @@
 
 #include "LogManager.h"
 #include "DataWarcraft.h"
+#include "Global.h"
 
 DataWarcraft G_DATA_WARCRAFT;
 
@@ -87,7 +88,7 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
         size_t pos = pathWstr.find_last_of(L"\\");
         warPathDirectMaps = pathWstr.substr(0, pos) + L"\\Maps";
 
-        std::wstring fileContent = LoadDataFail().loadDataFailW(L"DataAutoLoad\\PathWar3.txt");
+        std::wstring fileContent = LoadDataFail().loadDataFailW(G_PATH_APP_DATA+L"\\PathWar3.txt");
         if (!fileContent.empty()) {
             std::wistringstream pathStream(std::move(fileContent));
             std::wstring line;

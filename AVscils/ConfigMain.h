@@ -24,7 +24,7 @@ struct OptionsConfig {
 struct ConfigMain {
     OptionsConfig optionsConfig; // содержит информацию что включено а что выключено
     std::string playerName{ "PlayerName" }; //имя игрока
-
+   
 
     ConfigMain() {
         

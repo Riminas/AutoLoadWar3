@@ -237,7 +237,7 @@ void SelectingNewPathMap::drawWindow() {
     }
 
     for (const auto& triangle : directoryTriangles) { // Затем рисуем треугольники
-        if (triangle.getPosition().y >= m_Rect[1] - 32 && triangle.getPosition().y + 16 <= m_Rect[3]) {
+        if (triangle.getPosition().y >= m_Rect[1] - 32 && triangle.getPosition().y <= m_Rect[3]) {
             G_WINDOW.draw(triangle);
         }
     }
@@ -345,7 +345,6 @@ std::wstring SelectingNewPathMap::run() {
 
         //HWND hWndWindow = FindWindow(NULL, L"Warcraft III");
         if (IsWarcraftInFocus(hWndWindow)) {
-            SetWindowPos(G_WINDOW.getSystemHandle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
             if (isActive == false) {
                 if (G_DATA_WARCRAFT.m_DataPath.hWndWindowWar != hWndWindow)

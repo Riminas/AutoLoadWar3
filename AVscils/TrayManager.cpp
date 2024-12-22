@@ -3,6 +3,7 @@
 #include "LogManager.h"
 #include <fstream>
 #include <shellapi.h>
+#include "Global.h"
 
 TrayManager* TrayManager::s_instance = nullptr;
 
@@ -40,7 +41,7 @@ void TrayManager::initialize() {
     }
 
     // Загрузка конфигурации
-    if (!loadConfigData(L"DataAutoLoad\\StartPath.ini")) {
+    if (!loadConfigData(G_PATH_APP_DATA+L"StartPath.ini")) {
         m_buttonPaths.clear();
     }
 
