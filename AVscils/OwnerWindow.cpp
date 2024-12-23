@@ -52,9 +52,8 @@ void OwnerWindow::initialize() {
 
 }
 
-void OwnerWindow::draw(const bool t_isVisibleLoad) {
-
-    if (t_isVisibleLoad) {
+void OwnerWindow::draw(const bool isVisibleLoad) {
+    if (isVisibleLoad) {
         G_WINDOW.draw(m_SpriteIsLoad);
         return;
     }
@@ -169,18 +168,23 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
             if (isWindow2Visible[0]) {
                 isWindow2Visible[0] = false;
             }
+            EngineFileTip1 EngineFileTip1_;
+            if (EngineFileTip1_.engineFile()) {
+                UpdateRegionRect().updateRegionLoad();
 
+                if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
+                else G_WINDOW.clear(sf::Color(255, 255, 255));
+                draw(true);
+                G_WINDOW.display();
 
+                EngineFileTip1_.engineTip1();
 
-            if (G_CONFIG_MAIN.optionsConfig.blackColor) G_WINDOW.clear(sf::Color(45, 45, 48));
-            else G_WINDOW.clear(sf::Color(255, 255, 255));
-            draw(true);
-            G_WINDOW.display();
+                UpdateRegionRect().updateRegionMain();
 
-            EngineFileTip1().engineFile();
+                if (G_CONFIG_MAIN.optionsConfig.autoExit)
+                    G_WINDOW.close();
+            }
 
-            if (G_CONFIG_MAIN.optionsConfig.autoExit)
-                G_WINDOW.close();
         }
         else if (!G_DATA_MAPS.m_NameMaps.empty()) {
             LogManager::logger().log(LogManager::LogLevel::Error, L"Путь до папки с сохранениями не указон. карта: " + G_DATA_MAPS.m_NameMapsFull);

@@ -59,7 +59,7 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
         LogManager::logger().log(LogManager::LogLevel::Message, "Версия Warcraft 1.26 " + filePath.string());
         versionWarcraft = 1;
     }
-    else if (filename == L"Warcrafit III.exe") {
+    else if (filename == L"Warcraft III.exe") {
         LogManager::logger().log(LogManager::LogLevel::Message, "Версия Warcraft 1.27b " + filePath.string());
         versionWarcraft = 1;
     }
@@ -120,7 +120,18 @@ bool DataWarcraft::DataPath::initializeDataPath(const HWND hWndWindow)
             int pathIndex = 1; // Начинаем с индекса 1
             while (std::getline(pathStream, line) && pathIndex < 10) {
                 if (!line.empty()) {
-                    size_t pos = line.find(L"\\war3.exe" || L"\\w3l.exe");
+                    static const std::wstring_view endings[] = { L"\\war3.exe", L"\\w3l.exe", L"\\Warcraft III.exe" };
+                    size_t pos = std::wstring::npos;
+
+                    for (const auto& ending : endings) {
+                        if (size_t current = line.find(ending); current != std::wstring::npos) {
+                            if (pos == std::wstring::npos || current < pos) {
+                                pos = current;
+                                if (pos == 0) break; // Выходим, если нашли в начале строки
+                            }
+                        }
+                    }
+                    /*size_t pos = line.find(L"\\war3.exe" || L"\\w3l.exe" || L"\\Warcraft III.exe");*/
                     if (pos != std::wstring::npos) {
                         line = line.substr(0, pos);
                     }

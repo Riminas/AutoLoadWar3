@@ -324,6 +324,7 @@ bool Options::handleMousePress(const sf::Event& event) {
             if (command.isClicked(mouseButton)) {
                 if (command.isClickedCheckBox(mouseButton)) {
                     G_CONFIG_MAPS.mainConfig[i].start = command.getValue();
+                    isSquare = true;
                     break;
                 }
                 else if (command.isClickedEdit(mouseButton)) {

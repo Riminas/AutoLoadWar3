@@ -126,9 +126,11 @@ void SelectingNewPathMap::initializeScrollbar(const float& windowWidth, const fl
 
     rootDirectory.isOpen = true;
 }
+//Возникло необработанное исключение по адресу 0x00007FFE4989B699 в AvLoad.exe: исключение Microsoft C++ : std::filesystem::filesystem_error по адресу памяти 0x000000A8AD8F5D90.
 
 void SelectingNewPathMap::loadDirectories(const std::wstring& directoryPath, DirectoryEntry& parent, bool& isPathSaveCodeFalse)
 {
+    UpdateRegionRect().clearRegion();
     for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
         if (entry.is_directory() && isPushDirectory(entry.path().wstring(), entry.path().filename().wstring())) {
             std::wstring name = entry.path().filename().wstring();

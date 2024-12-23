@@ -9,7 +9,7 @@
 class OwnerWindow//6100 > 4200 > 2992 > 3800
 {
 public:
-	void draw(const bool t_isVisibleLoad);
+	void draw(const bool isVisibleLoad);
 	void processingButton(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible);
 	void processingButtonMenu(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible);
 	void processingGuide();

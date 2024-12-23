@@ -10,23 +10,17 @@
 #include "LogManager.h"
 #include "DataWarcraft.h"
 #include "DataMaps.h"
-#include "UpdateRegionRect.h"
 
-void EngineFileTip1::engineFile()
+bool EngineFileTip1::engineFile()
 {
-    if (!HeroInfoEngineFast().retrieveHeroDataFast(G_CONFIG_MAPS.path)) return;
+    if (!HeroInfoEngineFast().retrieveHeroDataFast(G_CONFIG_MAPS.path)) return false;
 
     if (G_HERO_INFO.size() == 0) {
         //MessageBox(NULL, L"Неудалась найти профы", L"Error", MB_OK | MB_ICONEXCLAMATION);
-        return;
+        return false;
     }
 
-    UpdateRegionRect().updateRegionLoad();
-
-    engineTip1();
-
-    UpdateRegionRect().updateRegionMain();
-    return;
+    return true;
 }
 
 void EngineFileTip1::engineTip1()
