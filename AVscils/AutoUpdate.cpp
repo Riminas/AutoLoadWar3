@@ -407,38 +407,39 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
 
 // Добавляем новые функции для работы с версией
 std::wstring AutoUpdate::getCurrentVersionFromFile() const {
-    std::wstring versionPath = m_PathAppData + L"version.txt";
-
-    // Проверяем существование файла
-    if (!std::filesystem::exists(versionPath)) {
-        std::wofstream file(versionPath);
-        if (file.is_open()) {
-            file << L"v1_19_1";
-            file.close();
-        }
-        return L"v1_19_1"; // Возвращаем дефолтную версию если файл не существует
-    }
-
-    // Читаем версию из файла
-    std::wifstream file(versionPath);
-    if (!file.is_open()) {
-        return L"v1_19_1";
-    }
-
-    std::wstring version;
-    std::getline(file, version);
-    file.close();
+    const std::wstring versionPath = m_PathAppData + L"version.txt";
+    const std::wstring defaultVersion = L"v1_19_2";
     
-    return version.empty() ? L"v1_19_1" : version;
+    try {
+        if (!std::filesystem::exists(versionPath)) {
+            saveCurrentVersion(defaultVersion);
+            return defaultVersion;
+        }
+
+        std::wifstream file(versionPath);
+        if (!file) {
+            return defaultVersion;
+        }
+
+        std::wstring version;
+        std::getline(file, version);
+        return version.empty() ? defaultVersion : version;
+    }
+    catch (const std::exception&) {
+        return defaultVersion;
+    }
 }
 
 void AutoUpdate::saveCurrentVersion(const std::wstring& version) const {
-    std::wstring versionPath = m_PathAppData + L"version.txt";
-
-    // Записываем новую версию в файл
-    std::wofstream file(versionPath);
-    if (file.is_open()) {
+    try {
+        const std::wstring versionPath = m_PathAppData + L"version.txt";
+        std::wofstream file(versionPath);
+        if (!file) {
+            throw std::runtime_error("Не удалось открыть файл для записи");
+        }
         file << version;
-        file.close();
+    }
+    catch (const std::exception&) {
+        // Можно добавить логирование ошибки если необходимо
     }
 }
