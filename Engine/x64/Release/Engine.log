@@ -1,16 +1,8 @@
-﻿  ConfigMainEngine.cpp
-  Engine.cpp
-C:\Users\Aio\Documents\War3\AVscils\Engine\Engine.cpp(199,20): warning C4305: return: усечение из "int" в "bool"
-  (компиляция исходного файла "/Engine.cpp")
-  
-C:\Users\Aio\Documents\War3\AVscils\Engine\Engine.cpp(207,24): warning C4305: return: усечение из "int" в "bool"
-  (компиляция исходного файла "/Engine.cpp")
-  
-  Options.cpp
+﻿  OpenIrinaBot.cpp
      Создается библиотека C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.lib и объект C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.exp
   Создание кода
-  15 of 4784 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
-    2 functions were new in current compilation
-    22 functions had inline decision re-evaluated but remain unchanged
+  7 of 4909 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    13 functions had inline decision re-evaluated but remain unchanged
   Создание кода завершено
   Engine.vcxproj -> C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.dll

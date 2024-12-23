@@ -10,6 +10,7 @@
 #include "InputHandler.h"
 #include "UpdateRegionRect.h"
 #include "ConfigMainEngine.h"
+#include "OpenIrinaBot.h"
 
 #include <windows.h>
 #include <memory>
@@ -23,7 +24,8 @@
 #include <chrono>
 
 void Engine::RunEngineDll() {
-    if (initialize()) {
+    OpenIrinaBot().Run();
+    if (!initialize()) {
         return;
     }
 
@@ -196,7 +198,7 @@ bool Engine::initialize() {
         }
         else {
             LogManager::logger().log(LogManager::LogLevel::Error, L"Не удалось получить путь к AppData.");
-            return -1;
+            return false;
         }
 
         // Проверка наличия папки DataAutoLoad
@@ -204,7 +206,7 @@ bool Engine::initialize() {
         if (attrib == INVALID_FILE_ATTRIBUTES || !(attrib & FILE_ATTRIBUTE_DIRECTORY)) {
             if (!CreateDirectoryW(G_PATH_APP_DATA.c_str(), NULL)) {
                 LogManager::logger().log(LogManager::LogLevel::Error, L"Не удалось создать папку DataAutoLoad.");
-                return -1;
+                return false;
             }
             else {
                 LogManager::logger().log(LogManager::LogLevel::Message, L"Папка DataAutoLoad успешно создана.");
@@ -224,5 +226,5 @@ bool Engine::initialize() {
     m_TrayManager = std::make_unique<TrayManager>(G_WINDOW);
     m_TrayManager->initialize();
 
-    return false;
+    return true;
 }

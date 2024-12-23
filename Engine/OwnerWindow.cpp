@@ -27,6 +27,7 @@
 #include "UpdateRegionRect.h"
 #include <sfml/OpenGL.hpp>
 #include <gl/GL.h>
+#include "OpenIrinaBot.h"
 
 void OwnerWindow::initialize() {
 
@@ -39,6 +40,7 @@ void OwnerWindow::initialize() {
     m_ButtonsMenu.initialize({ 0, 0, 128, 640 }, m_TextureButton);
 
     m_CoutUserName.initialize({ 256, 384, 128, 128 }, m_TextureButton);
+    m_CoutIrinaBot.initialize({ 384, 384, 128, 128 }, m_TextureButton);
 
     m_SpriteIsLoad.setTexture(m_TextureButton);
     m_SpriteIsLoad.setTextureRect(sf::IntRect(128, 512, 640, 128));//640x120
@@ -80,13 +82,19 @@ void OwnerWindow::draw(const bool isVisibleLoad) {
     m_ButtonsMenu.draw(G_WINDOW);
     m_ShapeTrueVisibleMainMenu.draw(G_WINDOW);
     m_CoutUserName.draw(G_WINDOW);
+    m_CoutIrinaBot.draw(G_WINDOW);
 }
 
 void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible) {
 
     const int numButton = mouseButtonPressed(event, isWindow2Visible);
-
-    if (numButton == -5) {
+    if (numButton == -6) {
+        UpdateRegionRect().clearRegion();
+        OpenIrinaBot().Run();
+        G_BOOL_VISIBLE.isVisibleMainMenu = false;
+        UpdateRegionRect().updateRegionMain();
+    }
+    else if (numButton == -5) {
         LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAIN.playerName }, false);
     }
     else if (numButton == -4) {
@@ -152,6 +160,7 @@ inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& ev
     else if (m_ShapeTrueVisibleMainMenu.isClicked(mouseButton)) { return -3; }
     else if (m_ShapeFalseVisibleMainMenu.getGlobalBounds().contains(mouseButton)) { return -4; }
     else if (m_CoutUserName.isClicked(mouseButton)) { return -5; }
+    else if (m_CoutIrinaBot.isClicked(mouseButton)) { return -6; }
 
     return -2;
 }
@@ -375,6 +384,7 @@ void OwnerWindow::updatePosition(const sf::Vector2f& newPosition, const sf::Vect
         m_ShapeTrueVisibleMainMenu.setPosition2(sf::Vector2f(sum.x, 20.f + /*1.0f + */sum.y));
 
         m_CoutUserName.setPosition2(sf::Vector2f(sum.x, 40.f + /*1.0f + */sum.y));
+        m_CoutIrinaBot.setPosition2(sf::Vector2f(sum.x, 60.f + /*1.0f + */sum.y));
     }
 
 }

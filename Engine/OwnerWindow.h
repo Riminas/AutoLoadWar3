@@ -36,6 +36,7 @@ private:
 	std::array<ButtonUI, 5> m_ButtonsUsers;
 	ButtonUI m_ButtonsMenu;
 	ButtonUI m_CoutUserName;
+	ButtonUI m_CoutIrinaBot;
 	ButtonUI m_ShapeTrueVisibleMainMenu;
 	sf::RectangleShape m_ShapeFalseVisibleMainMenu;
 	sf::Sprite m_SpriteIsLoad;

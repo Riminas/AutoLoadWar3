@@ -408,7 +408,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
 // Добавляем новые функции для работы с версией
 std::wstring AutoUpdate::getCurrentVersionFromFile() const {
     const std::wstring versionPath = m_PathAppData + L"version.txt";
-    const std::wstring defaultVersion = L"v1_19_2";
+    const std::wstring defaultVersion = L"v1_20_1";
     
     try {
         if (!std::filesystem::exists(versionPath)) {

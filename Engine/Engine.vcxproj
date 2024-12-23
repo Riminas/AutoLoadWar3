@@ -185,6 +185,7 @@
     <ClInclude Include="LogManager.h" />
     <ClInclude Include="NewDataAll.h" />
     <ClInclude Include="NewPathSaveCode.h" />
+    <ClInclude Include="OpenIrinaBot.h" />
     <ClInclude Include="OptionActionsUi.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="OptionsUi.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="LoadManager.cpp" />
     <ClCompile Include="NewDataAll.cpp" />
     <ClCompile Include="NewPathSaveCode.cpp" />
+    <ClCompile Include="OpenIrinaBot.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="OwnerWindow.cpp" />
     <ClCompile Include="pch.cpp">
@@ -240,7 +242,17 @@
     <ClCompile Include="StringToString.cpp" />
     <ClCompile Include="TrayManager.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\native\Microsoft.Web.WebView2.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2903.40\build\native\Microsoft.Web.WebView2.targets'))" />
+  </Target>
 </Project>
