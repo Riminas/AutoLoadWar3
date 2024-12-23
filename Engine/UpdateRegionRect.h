@@ -39,7 +39,7 @@ public:
                 sumX,
                 sumY - 100,
                 sumX + 20,
-                sumY + 60);
+                sumY + 80);
             CombineRgn(region, region, mainVerticalBar, RGN_OR); // Добавляем вертикальную часть
             DeleteObject(mainVerticalBar);
         }

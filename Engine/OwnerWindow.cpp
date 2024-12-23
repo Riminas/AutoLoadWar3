@@ -93,6 +93,7 @@ void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, std
         OpenIrinaBot().Run();
         G_BOOL_VISIBLE.isVisibleMainMenu = false;
         UpdateRegionRect().updateRegionMain();
+        draw(false);
     }
     else if (numButton == -5) {
         LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAIN.playerName }, false);

@@ -24,7 +24,6 @@
 #include <chrono>
 
 void Engine::RunEngineDll() {
-    OpenIrinaBot().Run();
     if (!initialize()) {
         return;
     }
@@ -217,7 +216,7 @@ bool Engine::initialize() {
 
         LogManager::logger().log(LogManager::LogLevel::Message, L"\n\n------------------------------------------------------------------------");
     }
-
+    
     m_OwnerWindow.initialize();
 
     m_OwnerWindow.activeGameFalse();
