@@ -9,6 +9,7 @@ int main()
         // Проверка на уже запущенный экземпляр
         if (FindWindow(nullptr, L"AutoLoadWar3") != nullptr) {
             MessageBoxA(nullptr, "Программа уже запущена.", "Сообщение", MB_OK | MB_ICONERROR);
+            return 2;
         }
 
         // Запуск автообновления

@@ -16,23 +16,52 @@ void AutoUpdate::autoUpdate1()
     if (!isUpdate())
         return;
 
-    const std::wstring currentVersion = L"v1_19_1"; // Текущая версия
-    {
-        std::wstring wstr = L"Начло обновления до " + currentVersion;
-        MessageBoxW(nullptr, wstr.c_str(),
-            L"Обновление", MB_OK | MB_ICONINFORMATION);
-    }
+    const std::wstring currentVersion = getCurrentVersionFromFile(); // Получаем версию из файла
+
     
     // Получаем информацию о последнем релизе
-    std::string releaseInfo = GetLatestReleaseInfo(L"Rimina", L"AutoLoadWar3");
+    std::string releaseInfo = GetLatestReleaseInfo(L"Riminas", L"AutoLoadWar3");
     
     try {
         // Парсим JSON ответ
         json release = json::parse(releaseInfo);
-        std::wstring wlatestVersion = release["tag_name"];
+        
+        // Проверяем наличие тега версии
+        if (!release.contains("tag_name")) {
+            MessageBoxA(nullptr, "No version tag found in release", 
+                       "Error", MB_OK | MB_ICONERROR);
+            return;
+        }
+        
+        // Получаем версию как строку
+        std::string latestVersion = release["tag_name"].get<std::string>();
+        std::wstring wlatestVersion(latestVersion.begin(), latestVersion.end());
+        
+        // Проверяем assets
+        if (!release.contains("assets") || !release["assets"].is_array() || release["assets"].empty()) {
+            std::string debugInfo = "Received JSON: " + releaseInfo;
+            MessageBoxA(nullptr, debugInfo.c_str(),
+                       "Debug Info", MB_OK | MB_ICONINFORMATION);
+            return;
+        }
+        
+        // Добавляем отладочный вывод
+
+        if (!release.contains("assets") || !release["assets"].is_array()) {
+            std::string debugInfo = "Received JSON: " + releaseInfo;
+            MessageBoxA(nullptr, debugInfo.c_str(),
+                "Debug Info", MB_OK | MB_ICONINFORMATION);
+            return;
+        }
         
         // Сравниваем версии
         if (wlatestVersion != currentVersion) {
+            {
+                std::wstring wstr = L"Update. your " + currentVersion + L"\n  new" + wlatestVersion;
+                MessageBoxW(nullptr, wstr.c_str(),
+                    L"Update", MB_OK | MB_ICONINFORMATION);
+            }
+
             // Получаем URL для скачивания Engine.dll
             std::string downloadUrl;
             for (const auto& asset : release["assets"]) {
@@ -51,55 +80,55 @@ void AutoUpdate::autoUpdate1()
                         std::filesystem::remove(enginePath);
                     }
                     catch (const std::filesystem::filesystem_error& e) {
-                        MessageBoxA(nullptr, "Не удалось удалить старую версию Engine.dll", 
-                                  "Ошибка обновления", MB_OK | MB_ICONERROR);
+                        MessageBoxA(nullptr, "Couldn't delete the old version", 
+                                  "Error Update", MB_OK | MB_ICONERROR);
                         return;
                     }
                 }
                 
                 // Скачиваем новую версию
                 if (DownloadFile(downloadUrl, enginePath)) {
-                    MessageBoxW(nullptr, L"Успешно обновлено", 
-                              L"Обновление", MB_OK | MB_ICONINFORMATION);
+                    saveCurrentVersion(wlatestVersion); // Сохраняем новую версию
+                    MessageBoxW(nullptr, L"Successfully updated", 
+                              L"Update", MB_OK | MB_ICONINFORMATION);
                 }
                 else {
-                    MessageBoxW(nullptr, L"Не удалось скачать новую версию Engine.dll", 
-                              L"Ошибка обновления", MB_OK | MB_ICONERROR);
+                    MessageBoxW(nullptr, L"Couldn't download the new version", 
+                              L"Error Update", MB_OK | MB_ICONERROR);
                 }
             }
         }
     }
     catch (const json::parse_error& e) {
         MessageBoxA(nullptr, e.what(),
-                   "Ошибка при разборе информации о версии", MB_OK | MB_ICONERROR);
+                   "Error when parsing version information", MB_OK | MB_ICONERROR);
     }
     catch (const std::exception& e) {
-        MessageBoxA(nullptr, e.what(), "Ошибка обновления", MB_OK | MB_ICONERROR);
+        MessageBoxA(nullptr, e.what(), "Update error", MB_OK | MB_ICONERROR);
     }
 }
 
 bool AutoUpdate::isUpdate() {
-    std::wstring G_PATH_APP_DATA;
     {
         //G_PATH_APP_DATA = L"DataAutoLoad\\";
         wchar_t path[MAX_PATH];
         if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, 0, path))) {
-            G_PATH_APP_DATA = std::wstring(path) + L"\\DataAutoLoad\\";
+            m_PathAppData = std::wstring(path) + L"\\DataAutoLoad\\";
         }
         else {
             return true;
         }
 
         // Проверка наличия папки DataAutoLoad
-        DWORD attrib = GetFileAttributesW(G_PATH_APP_DATA.c_str());
+        DWORD attrib = GetFileAttributesW(m_PathAppData.c_str());
         if (attrib == INVALID_FILE_ATTRIBUTES || !(attrib & FILE_ATTRIBUTE_DIRECTORY)) {
-            if (!CreateDirectoryW(G_PATH_APP_DATA.c_str(), NULL)) {
+            if (!CreateDirectoryW(m_PathAppData.c_str(), NULL)) {
                 return true;
             }
         }
     }
     {
-        const std::filesystem::path m_FilePath{ G_PATH_APP_DATA + L"DataAutoLoad.ini" };
+        const std::filesystem::path m_FilePath{ m_PathAppData + L"DataAutoLoad.ini" };
         
         // Проверяем существование файла
         if (!std::filesystem::exists(m_FilePath)) {
@@ -374,4 +403,42 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
     WinHttpCloseHandle(hSession);
 
     return bResult == TRUE;
+}
+
+// Добавляем новые функции для работы с версией
+std::wstring AutoUpdate::getCurrentVersionFromFile() const {
+    std::wstring versionPath = m_PathAppData + L"version.txt";
+
+    // Проверяем существование файла
+    if (!std::filesystem::exists(versionPath)) {
+        std::wofstream file(versionPath);
+        if (file.is_open()) {
+            file << L"v1_19_1";
+            file.close();
+        }
+        return L"v1_19_1"; // Возвращаем дефолтную версию если файл не существует
+    }
+
+    // Читаем версию из файла
+    std::wifstream file(versionPath);
+    if (!file.is_open()) {
+        return L"v1_19_1";
+    }
+
+    std::wstring version;
+    std::getline(file, version);
+    file.close();
+    
+    return version.empty() ? L"v1_19_1" : version;
+}
+
+void AutoUpdate::saveCurrentVersion(const std::wstring& version) const {
+    std::wstring versionPath = m_PathAppData + L"version.txt";
+
+    // Записываем новую версию в файл
+    std::wofstream file(versionPath);
+    if (file.is_open()) {
+        file << version;
+        file.close();
+    }
 }
