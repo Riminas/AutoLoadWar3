@@ -176,40 +176,6 @@
   <ItemGroup>
     <ClCompile Include="AutoUpdate.cpp" />
     <ClCompile Include="AvLoad.cpp" />
-    <ClCompile Include="BoolVisibleMenu.cpp" />
-    <ClCompile Include="ConfigMain.cpp" />
-    <ClCompile Include="ConfigMainEngine.cpp" />
-    <ClCompile Include="ConfigMaps.cpp" />
-    <ClCompile Include="ConfigMapsEngine.cpp" />
-    <ClCompile Include="CoutGuide.cpp" />
-    <ClCompile Include="DataAll.cpp" />
-    <ClCompile Include="FontFallback.cpp" />
-    <ClCompile Include="Global.cpp" />
-    <ClCompile Include="HeroInfoEngineFast.cpp" />
-    <ClCompile Include="InputHandler.cpp" />
-    <ClCompile Include="NewDataAll.cpp" />
-    <ClCompile Include="DataAll.h" />
-    <ClCompile Include="DataMaps.cpp" />
-    <ClCompile Include="DataWarcraft.cpp" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="EngineFileTip1.cpp" />
-    <ClCompile Include="EngineFileTip2.cpp" />
-    <ClCompile Include="getMapOpen.cpp" />
-    <ClCompile Include="HeroInfo.cpp" />
-    <ClCompile Include="HeroInfoEngine.cpp" />
-    <ClCompile Include="key.cpp" />
-    <ClCompile Include="LoadDataFail.cpp" />
-    <ClCompile Include="LoadManager.cpp" />
-    <ClCompile Include="Options.cpp" />
-    <ClCompile Include="NewPathSaveCode.cpp" />
-    <ClCompile Include="OptionActionsUi.h" />
-    <ClCompile Include="OwnerWindow.cpp" />
-    <ClCompile Include="SearchAfterCreatedFile.cpp" />
-    <ClCompile Include="SelectingNewPathMap.cpp" />
-    <ClCompile Include="SkillsUpgradeStart.cpp" />
-    <ClCompile Include="StringConvector.cpp" />
-    <ClCompile Include="StringToString.cpp" />
-    <ClCompile Include="TrayManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AVscils.rc" />
@@ -219,46 +185,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoUpdate.h" />
-    <ClInclude Include="ButtonUI.h" />
-    <ClInclude Include="CommandsUI_1.h" />
-    <ClInclude Include="FontFallback.h" />
-    <ClInclude Include="ConfigMain.h" />
-    <ClInclude Include="ConfigMainEngine.h" />
-    <ClInclude Include="ConfigMaps.h" />
-    <ClInclude Include="ConfigMapsEngine.h" />
-    <ClInclude Include="CoutGuide.h" />
-    <ClInclude Include="DataMaps.h" />
-    <ClInclude Include="DataWarcraft.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="EngineFileTip1.h" />
-    <ClInclude Include="EngineFileTip2.h" />
-    <ClInclude Include="getMapOpen.h" />
-    <ClInclude Include="Global.h" />
-    <ClInclude Include="HeroInfo.h" />
-    <ClInclude Include="HeroInfoEngine.h" />
-    <ClInclude Include="HeroInfoEngineFast.h" />
-    <ClInclude Include="BoolVisibleMenu.h" />
-    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="key.h" />
-    <ClInclude Include="ListHeroUI.h" />
-    <ClInclude Include="LoadDataFail.h" />
-    <ClInclude Include="LoadManager.h" />
-    <ClInclude Include="LogManager.h" />
-    <ClInclude Include="NewDataAll.h" />
-    <ClInclude Include="Options.h" />
-    <ClInclude Include="NewPathSaveCode.h" />
-    <ClInclude Include="OptionsUi.h" />
-    <ClInclude Include="OwnerWindow.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="CommandsUI_0.h" />
-    <ClInclude Include="SearchAfterCreatedFile.h" />
-    <ClInclude Include="SelectingNewPathMap.h" />
-    <ClInclude Include="SkillsUpgradeStart.h" />
-    <ClInclude Include="StringConvector.h" />
-    <ClInclude Include="StringToString.h" />
-    <ClInclude Include="TrayManager.h" />
-    <ClInclude Include="UpdateRegionRect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

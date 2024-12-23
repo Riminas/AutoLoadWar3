@@ -1,14 +1,127 @@
 #include "AutoUpdate.h"
 #include <windows.h>
+#include <shlobj.h>
 #include <winhttp.h>
 #include <string>
+#include <filesystem>
+#include <fstream>
 
-
-#include "LogManager.h"
 #include "json.hpp"
 using json = nlohmann::json;
 
 #pragma comment(lib, "winhttp.lib")
+
+void AutoUpdate::autoUpdate1()
+{
+    if (!isUpdate())
+        return;
+
+    const std::wstring currentVersion = L"v1_19_1"; // Текущая версия
+    {
+        std::wstring wstr = L"Начло обновления до " + currentVersion;
+        MessageBoxW(nullptr, wstr.c_str(),
+            L"Обновление", MB_OK | MB_ICONINFORMATION);
+    }
+    
+    // Получаем информацию о последнем релизе
+    std::string releaseInfo = GetLatestReleaseInfo(L"Rimina", L"AutoLoadWar3");
+    
+    try {
+        // Парсим JSON ответ
+        json release = json::parse(releaseInfo);
+        std::wstring wlatestVersion = release["tag_name"];
+        
+        // Сравниваем версии
+        if (wlatestVersion != currentVersion) {
+            // Получаем URL для скачивания Engine.dll
+            std::string downloadUrl;
+            for (const auto& asset : release["assets"]) {
+                if (asset["name"] == "Engine.dll") {
+                    downloadUrl = asset["browser_download_url"];
+                    break;
+                }
+            }
+            
+            if (!downloadUrl.empty()) {
+                const std::wstring enginePath = L"Engine.dll";
+                
+                // Пробуем удалить существующий файл
+                if (std::filesystem::exists(enginePath)) {
+                    try {
+                        std::filesystem::remove(enginePath);
+                    }
+                    catch (const std::filesystem::filesystem_error& e) {
+                        MessageBoxA(nullptr, "Не удалось удалить старую версию Engine.dll", 
+                                  "Ошибка обновления", MB_OK | MB_ICONERROR);
+                        return;
+                    }
+                }
+                
+                // Скачиваем новую версию
+                if (DownloadFile(downloadUrl, enginePath)) {
+                    MessageBoxW(nullptr, L"Успешно обновлено", 
+                              L"Обновление", MB_OK | MB_ICONINFORMATION);
+                }
+                else {
+                    MessageBoxW(nullptr, L"Не удалось скачать новую версию Engine.dll", 
+                              L"Ошибка обновления", MB_OK | MB_ICONERROR);
+                }
+            }
+        }
+    }
+    catch (const json::parse_error& e) {
+        MessageBoxA(nullptr, e.what(),
+                   "Ошибка при разборе информации о версии", MB_OK | MB_ICONERROR);
+    }
+    catch (const std::exception& e) {
+        MessageBoxA(nullptr, e.what(), "Ошибка обновления", MB_OK | MB_ICONERROR);
+    }
+}
+
+bool AutoUpdate::isUpdate() {
+    std::wstring G_PATH_APP_DATA;
+    {
+        //G_PATH_APP_DATA = L"DataAutoLoad\\";
+        wchar_t path[MAX_PATH];
+        if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, 0, path))) {
+            G_PATH_APP_DATA = std::wstring(path) + L"\\DataAutoLoad\\";
+        }
+        else {
+            return true;
+        }
+
+        // Проверка наличия папки DataAutoLoad
+        DWORD attrib = GetFileAttributesW(G_PATH_APP_DATA.c_str());
+        if (attrib == INVALID_FILE_ATTRIBUTES || !(attrib & FILE_ATTRIBUTE_DIRECTORY)) {
+            if (!CreateDirectoryW(G_PATH_APP_DATA.c_str(), NULL)) {
+                return true;
+            }
+        }
+    }
+    {
+        const std::filesystem::path m_FilePath{ G_PATH_APP_DATA + L"DataAutoLoad.ini" };
+        
+        // Проверяем существование файла
+        if (!std::filesystem::exists(m_FilePath)) {
+            return true; // Если файл не существует, разрешаем обновление
+        }
+
+        // Читаем файл
+        std::wifstream file(m_FilePath);
+        if (!file.is_open()) {
+            return true;
+        }
+
+        std::wstring line;
+        while (std::getline(file, line)) {
+            if (line.find(L"autoUpdate=") == 0) {
+                std::wstring value = line.substr(11); // Длина "autoUpdate="
+                return (value == L"true");
+            }
+        }
+        return true; // Если параметр не найден, разрешаем обновление
+    }
+}
 
 std::string AutoUpdate::GetLatestReleaseInfo(const std::wstring& owner, const std::wstring& repo)
 {
@@ -35,7 +148,7 @@ std::string AutoUpdate::GetLatestReleaseInfo(const std::wstring& owner, const st
 
             if (hRequest)
             {
-                // ���������� ��������� User-Agent, ����� GitHub API ����� ������� ������
+                // ���������� ��������� User-Agent, ����� GitHub API ����� ������� ������
                 const wchar_t* szHeaders = L"User-Agent: MyApp\r\n";
                 BOOL bResult = WinHttpSendRequest(hRequest, szHeaders, -1L,
                     WINHTTP_NO_REQUEST_DATA, 0,
@@ -87,13 +200,13 @@ std::string AutoUpdate::GetLatestReleaseInfo(const std::wstring& owner, const st
 //{
 //    bool downloadSuccess = false;
 //
-//    // ������� ������ WinHTTP
+//    // ������� ������ WinHTTP
 //    HINTERNET hSession = WinHttpOpen(L"Updater/1.0",
 //        WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 //        WINHTTP_NO_PROXY_NAME,
 //        WINHTTP_NO_PROXY_BYPASS, 0);
 //    if (hSession) {
-//        // ��������� URL
+//        // ��������� URL
 //        URL_COMPONENTS urlComp;
 //        ZeroMemory(&urlComp, sizeof(urlComp));
 //        urlComp.dwStructSize = sizeof(urlComp);
@@ -106,18 +219,18 @@ std::string AutoUpdate::GetLatestReleaseInfo(const std::wstring& owner, const st
 //        urlComp.dwUrlPathLength = _countof(urlPath);
 //
 //        if (WinHttpCrackUrl(downloadUrl.c_str(), (DWORD)downloadUrl.length(), 0, &urlComp)) {
-//            // ��������� ����������
+//            // ��������� ����������
 //            HINTERNET hConnect = WinHttpConnect(hSession, urlComp.lpszHostName,
 //                urlComp.nPort, 0);
 //            if (hConnect) {
-//                // ������� ������
+//                // ������� ������
 //                HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET",
 //                    urlComp.lpszUrlPath,
 //                    NULL, WINHTTP_NO_REFERER,
 //                    WINHTTP_DEFAULT_ACCEPT_TYPES,
 //                    (urlComp.nScheme == INTERNET_SCHEME_HTTPS) ? WINHTTP_FLAG_SECURE : 0);
 //                if (hRequest) {
-//                    // ���������� ������
+//                    // ���������� ������
 //                    BOOL bResult = WinHttpSendRequest(hRequest,
 //                        WINHTTP_NO_ADDITIONAL_HEADERS, 0,
 //                        WINHTTP_NO_REQUEST_DATA, 0,
@@ -165,7 +278,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
         WINHTTP_NO_PROXY_BYPASS, 0);
 
     if (!hSession) {
-        LogManager::logger().log(LogManager::LogLevel::Error, "hSession");
+        MessageBoxA(nullptr, "hSession", "Error", MB_OK | MB_ICONERROR);
         return false;
     }
 
@@ -189,7 +302,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
     if (!hConnect)
     {
         WinHttpCloseHandle(hSession);
-        LogManager::logger().log(LogManager::LogLevel::Error, "hConnect");
+        MessageBoxA(nullptr, "hConnect", "Error", MB_OK | MB_ICONERROR);
         return false;
     }
 
@@ -204,11 +317,11 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
     {
         WinHttpCloseHandle(hConnect);
         WinHttpCloseHandle(hSession);
-        LogManager::logger().log(LogManager::LogLevel::Error, "hRequest");
+        MessageBoxA(nullptr, "hRequest", "Error", MB_OK | MB_ICONERROR);
         return false;
     }
 
-    // ���������� ��������� User-Agent
+    // ���������� ��������� User-Agent
     const wchar_t* szHeaders = L"User-Agent: MyApp\r\n";
     BOOL bResult = WinHttpSendRequest(hRequest, szHeaders, -1L,
         WINHTTP_NO_REQUEST_DATA, 0,
@@ -228,7 +341,7 @@ bool AutoUpdate::DownloadFile(const std::string& url, const std::wstring& savePa
                 WinHttpCloseHandle(hRequest);
                 WinHttpCloseHandle(hConnect);
                 WinHttpCloseHandle(hSession);
-                LogManager::logger().log(LogManager::LogLevel::Error, "INVALID_HANDLE_VALUE");
+                MessageBoxA(nullptr, "INVALID_HANDLE_VALUE", "Error", MB_OK | MB_ICONERROR);
                 return false;
             }
 
