@@ -1,8 +1,8 @@
-﻿  OpenIrinaBot.cpp
+﻿  CoutGuide.cpp
      Создается библиотека C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.lib и объект C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.exp
   Создание кода
-  4 of 4909 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  9 of 4904 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    11 functions had inline decision re-evaluated but remain unchanged
+    22 functions had inline decision re-evaluated but remain unchanged
   Создание кода завершено
   Engine.vcxproj -> C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.dll

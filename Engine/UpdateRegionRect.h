@@ -29,7 +29,7 @@ public:
                 sumX - sum,
                 sumY,
                 sumX + 100,
-                sumY + 20);
+                (G_BOOL_VISIBLE.isVisibleMenu ? (sumY + 40) : (sumY + 20)));
             CombineRgn(region, region, mainHorizontalBar, RGN_OR); // Добавляем горизонтальную часть
             DeleteObject(mainHorizontalBar);
         }
@@ -39,7 +39,7 @@ public:
                 sumX,
                 sumY - 100,
                 sumX + 20,
-                sumY + 80);
+                sumY/* + 80*/);
             CombineRgn(region, region, mainVerticalBar, RGN_OR); // Добавляем вертикальную часть
             DeleteObject(mainVerticalBar);
         }

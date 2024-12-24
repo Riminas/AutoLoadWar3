@@ -38,15 +38,11 @@ void OwnerWindow::initialize() {
     m_Buttons.initialize({ 128, 0, 640, 128 }, m_TextureButton);
     initializeButtonsUsersDataCommands();
     m_ButtonsMenu.initialize({ 0, 0, 128, 640 }, m_TextureButton);
-
-    m_CoutUserName.initialize({ 256, 384, 128, 128 }, m_TextureButton);
-    m_CoutIrinaBot.initialize({ 384, 384, 128, 128 }, m_TextureButton);
+    m_ButtonsMenu2.initialize({ 128, 128, 640, 128 }, m_TextureButton);
 
     m_SpriteIsLoad.setTexture(m_TextureButton);
     m_SpriteIsLoad.setTextureRect(sf::IntRect(128, 512, 640, 128));//640x120
     m_SpriteIsLoad.setScale(0.3f, 0.3f);//213x40
-
-    m_ShapeTrueVisibleMainMenu.initialize({ 128, 384, 128, 128 }, m_TextureButton);
 
     //m_ShapeFalseVisibleMainMenu;
     m_ShapeFalseVisibleMainMenu.setSize(sf::Vector2f(10.f, 8.f));
@@ -80,31 +76,18 @@ void OwnerWindow::draw(const bool isVisibleLoad) {
         return;
 
     m_ButtonsMenu.draw(G_WINDOW);
-    m_ShapeTrueVisibleMainMenu.draw(G_WINDOW);
-    m_CoutUserName.draw(G_WINDOW);
-    m_CoutIrinaBot.draw(G_WINDOW);
+    m_ButtonsMenu2.draw(G_WINDOW);
 }
 
 void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible) {
 
     const int numButton = mouseButtonPressed(event, isWindow2Visible);
-    if (numButton == -6) {
-        UpdateRegionRect().clearRegion();
-        OpenIrinaBot().Run();
-        G_BOOL_VISIBLE.isVisibleMenu = false;
-        UpdateRegionRect().updateRegionMain();
-        draw(false);
-    }
-    else if (numButton == -5) {
-        LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAIN.playerName }, false);
-    }
-    else if (numButton == -4) {
+    if (numButton == -2)
+        return;
+
+    if (numButton == -3) {
         G_BOOL_VISIBLE.isVisibleMainMenu = true;
         UpdateRegionRect().updateRegionMain();
-    }
-    else if (numButton == -3) {
-        G_BOOL_VISIBLE.isVisibleMainMenu = false;
-        UpdateRegionRect().updateRegionMiniButton();
     }
     else if (numButton == 0) {
         G_BOOL_VISIBLE.isVisibleMenu = !G_BOOL_VISIBLE.isVisibleMenu;
@@ -146,7 +129,7 @@ inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& ev
 {
     sf::Vector2f mouseButton = { static_cast<float>(event.x), static_cast<float>(event.y) };
     if (m_Buttons.isClicked(mouseButton)) {
-        mouseButton.x = mouseButton.x - m_ButtonsMenu.getPosition().x;
+        mouseButton.x = mouseButton.x - m_Buttons.getPosition().x;//m_ButtonsMenu
         if (mouseButton.x < 19.84) { return 0; }
         else if (mouseButton.x < 39.68) { return 1; }
         else if (mouseButton.x < 59.52) { return 2; }
@@ -158,10 +141,8 @@ inline int OwnerWindow::mouseButtonPressed(const sf::Event::MouseButtonEvent& ev
     else if (m_ButtonsUsers[2].isClicked(mouseButton, G_CONFIG_MAPS.usersConfig[2].isVisibleButton)) { return 12; }
     else if (m_ButtonsUsers[3].isClicked(mouseButton, G_CONFIG_MAPS.usersConfig[3].isVisibleButton)) { return 13; }
     else if (m_ButtonsUsers[4].isClicked(mouseButton, G_CONFIG_MAPS.usersConfig[4].isVisibleButton)) { return 14; }
-    else if (m_ShapeTrueVisibleMainMenu.isClicked(mouseButton)) { return -3; }
-    else if (m_ShapeFalseVisibleMainMenu.getGlobalBounds().contains(mouseButton)) { return -4; }
-    else if (m_CoutUserName.isClicked(mouseButton)) { return -5; }
-    else if (m_CoutIrinaBot.isClicked(mouseButton)) { return -6; }
+
+    else if (m_ShapeFalseVisibleMainMenu.getGlobalBounds().contains(mouseButton)) { return -3; }
 
     return -2;
 }
@@ -239,7 +220,13 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
 
         break;
     }
-    case 3: {//вывод гайда
+    case 3: {//свернуть кнопки(скрыть)
+        G_BOOL_VISIBLE.isVisibleMainMenu = false;
+        UpdateRegionRect().updateRegionMiniButton();
+        break;
+    }
+    case 10://вывод гайда
+    {
         isWindow2Visible[0] = false;
         UpdateRegionRect().updateRegionMain();
         UpdateWinow2();
@@ -253,7 +240,28 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
         //G_WINDOW.clear(sf::Color(0, 255, 0));
         //G_WINDOW.display();
         //CoutGuide().coutGuide();
-
+        break;
+    }
+    case 11://открыть сайт ирина хост бот
+    {
+        UpdateRegionRect().clearRegion();
+        OpenIrinaBot().Run();
+        G_BOOL_VISIBLE.isVisibleMenu = false;
+        UpdateRegionRect().updateRegionMain();
+        draw(false);
+        break;
+    }
+    case 12://открыть сайт дискорд
+    {
+        break;
+    }
+    case 13://нечего
+    {
+        break;
+    }
+    case 14:// вывести ник
+    {
+        LoadManager(G_DATA_WARCRAFT.m_DataPath.hWndWindowWar).sendLoadDataCommands({ G_CONFIG_MAIN.playerName }, false);
         break;
     }
     };
@@ -262,15 +270,22 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
 inline int OwnerWindow::mouseButtonMenuPressed(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible)
 {
     sf::Vector2f mouseButton = { static_cast<float>(event.x), static_cast<float>(event.y) };
-    if (!m_ButtonsMenu.isClicked(mouseButton))
-        return -2;
-
-    mouseButton.y = mouseButton.y - m_ButtonsMenu.getPosition().y;
-    if (mouseButton.y < 19.84) { return -1; }
-    else if (mouseButton.y < 39.68) { return 3; }
-    else if (mouseButton.y < 59.52) { return 2; }
-    else if (mouseButton.y < 79.36) { return 1; }
-    else if (mouseButton.y < 99.2) { return 0; }
+    if (m_ButtonsMenu.isClicked(mouseButton)) {
+        mouseButton.y = mouseButton.y - m_ButtonsMenu.getPosition().y;
+        if (mouseButton.y < 19.84) { return -1; }
+        else if (mouseButton.y < 39.68) { return 3; }
+        else if (mouseButton.y < 59.52) { return 2; }
+        else if (mouseButton.y < 79.36) { return 1; }
+        else if (mouseButton.y < 99.2) { return 0; }
+    }
+    else if (m_ButtonsMenu2.isClicked(mouseButton)) {
+        mouseButton.x = mouseButton.x - m_ButtonsMenu2.getPosition().x;//m_ButtonsMenu
+        if (mouseButton.x < 19.84) { return 10; }//открыть гайд по карте
+        else if (mouseButton.x < 39.68) { return 11; }//открыть ирина хост бот
+        else if (mouseButton.x < 59.52) { return 12; }//открыть дискорд
+        else if (mouseButton.x < 79.36) { return 13; }//пусто
+        else if (mouseButton.x < 99.2) { return 14; }//ввод ника
+    }
 
     return -2;
 
@@ -283,11 +298,11 @@ void OwnerWindow::processingGuide() {
 const bool OwnerWindow::getCoutGuideActive() const { return m_CoutGuide.isActive; }
 
 inline void OwnerWindow::initializeButtonsUsersDataCommands() {
-    m_ButtonsUsers[0].initialize({ 128, 128, 128, 128 }, m_TextureButton);
-    m_ButtonsUsers[1].initialize({ 256, 128, 128, 128 }, m_TextureButton);
-    m_ButtonsUsers[2].initialize({ 384, 128, 128, 128 }, m_TextureButton);
-    m_ButtonsUsers[3].initialize({ 512, 128, 128, 128 }, m_TextureButton);
-    m_ButtonsUsers[4].initialize({ 640, 128, 128, 128 }, m_TextureButton);
+    m_ButtonsUsers[0].initialize({ 128, 384, 128, 128 }, m_TextureButton);
+    m_ButtonsUsers[1].initialize({ 256, 384, 128, 128 }, m_TextureButton);
+    m_ButtonsUsers[2].initialize({ 384, 384, 128, 128 }, m_TextureButton);
+    m_ButtonsUsers[3].initialize({ 512, 384, 128, 128 }, m_TextureButton);
+    m_ButtonsUsers[4].initialize({ 640, 384, 128, 128 }, m_TextureButton);
 }
 
 // Функция для установки окна поверх всех других окон
@@ -381,11 +396,7 @@ void OwnerWindow::updatePosition(const sf::Vector2f& newPosition, const sf::Vect
 
     {
         m_ButtonsMenu.setPosition1(sum.x, /*1.0f - */sum.y - 100.f);
-
-        m_ShapeTrueVisibleMainMenu.setPosition2(sf::Vector2f(sum.x, 20.f + /*1.0f + */sum.y));
-
-        m_CoutUserName.setPosition2(sf::Vector2f(sum.x, 40.f + /*1.0f + */sum.y));
-        m_CoutIrinaBot.setPosition2(sf::Vector2f(sum.x, 60.f + /*1.0f + */sum.y));
+        m_ButtonsMenu2.setPosition1(sum.x, /*1.0f - */sum.y + 20.f);
     }
 
 }
