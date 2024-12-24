@@ -1,8 +1,10 @@
 ﻿  CoutGuide.cpp
-     Создается библиотека C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.lib и объект C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.exp
-  Создание кода
-  35 of 4956 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
-    6 functions were new in current compilation
-    61 functions had inline decision re-evaluated but remain unchanged
-  Создание кода завершено
-  Engine.vcxproj -> C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.dll
+C:\Users\Aio\Documents\War3\AVscils\Engine\CoutGuide.cpp(113,5): error C3872: 0xb0: этот символ невозможно использовать в идентификаторе
+  (компиляция исходного файла "/CoutGuide.cpp")
+  
+C:\Users\Aio\Documents\War3\AVscils\Engine\CoutGuide.cpp(113,5): error C2065: Р°: необъявленный идентификатор
+  (компиляция исходного файла "/CoutGuide.cpp")
+  
+C:\Users\Aio\Documents\War3\AVscils\Engine\CoutGuide.cpp(115,5): error C2144: синтаксическая ошибка: перед "int" требуется ";"
+  (компиляция исходного файла "/CoutGuide.cpp")
+  

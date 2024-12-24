@@ -110,8 +110,8 @@ void CoutGuide::initializeWindow() {
     SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~(WS_MINIMIZEBOX | WS_MAXIMIZEBOX));
     SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
-
-    // Позиционирование окна
+    
+    // Позиционирование окнаа
     int posX = (G_DATA_WARCRAFT.m_DataRect.center.x - windowWidth / 2);
     int posY = (G_DATA_WARCRAFT.m_DataRect.center.y - windowHeight / 2);
     m_Window.setPosition(sf::Vector2i(posX, posY));
