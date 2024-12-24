@@ -4,7 +4,6 @@
 #include "ButtonUI.h"
 #include "NewDataAll.h"
 #include "ConfigMaps.h"
-#include "CoutGuide.h"
 
 class OwnerWindow//6100 > 4200 > 2992 > 3800
 {
@@ -12,14 +11,11 @@ public:
 	void draw(const bool isVisibleLoad);
 	void processingButton(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible);
 	void processingButtonMenu(const sf::Event::MouseButtonEvent& event, std::array<bool, 2>& isWindow2Visible);
-	void processingGuide();
-	const bool getCoutGuideActive() const;
 	void initialize();
 
 	void activeGameTrue(const HWND& hWndWindow);
 	void activeGameFalse();
 	void updateRect(const HWND& hWndWindow);
-	void UpdateWinow2();
 
 	void setIsVisibleMenu(const bool t_IsVisibleMenu);
 	const bool getIsVisibleMenu() const;
@@ -41,8 +37,6 @@ private:
 	//ButtonUI m_ShapeTrueVisibleMainMenu;
 	sf::RectangleShape m_ShapeFalseVisibleMainMenu;
 	sf::Sprite m_SpriteIsLoad;
-
-	CoutGuide m_CoutGuide;
 
 	const int m_ConstSize{ 20 };
 };

@@ -69,9 +69,6 @@ void OwnerWindow::draw(const bool isVisibleLoad) {
     if (G_CONFIG_MAPS.usersConfig[3].isVisibleButton) { m_ButtonsUsers[3].draw(G_WINDOW); }
     if (G_CONFIG_MAPS.usersConfig[4].isVisibleButton) { m_ButtonsUsers[4].draw(G_WINDOW); }
     
-    if (m_CoutGuide.isActive)
-        m_CoutGuide.draw();
-    
     if (!G_BOOL_VISIBLE.isVisibleMenu)
         return;
 
@@ -227,9 +224,10 @@ void OwnerWindow::processingButtonMenu(const sf::Event::MouseButtonEvent& event,
     }
     case 10://вывод гайда
     {
+        UpdateRegionRect().clearRegion();
+        CoutGuide().Run();
         isWindow2Visible[0] = false;
         UpdateRegionRect().updateRegionMain();
-        UpdateWinow2();
 
         //if (m_CoutGuide.isActive)
         //    m_CoutGuide = new CoutGuide();
@@ -291,12 +289,6 @@ inline int OwnerWindow::mouseButtonMenuPressed(const sf::Event::MouseButtonEvent
 
 }
 
-void OwnerWindow::processingGuide() {
-     m_CoutGuide.processEvents();
-}
-
-const bool OwnerWindow::getCoutGuideActive() const { return m_CoutGuide.isActive; }
-
 inline void OwnerWindow::initializeButtonsUsersDataCommands() {
     m_ButtonsUsers[0].initialize({ 128, 384, 128, 128 }, m_TextureButton);
     m_ButtonsUsers[1].initialize({ 256, 384, 128, 128 }, m_TextureButton);
@@ -346,7 +338,6 @@ void OwnerWindow::activeGameTrue(const HWND& hWndWindow) {
         UpdateRegionRect().updateRegionMain();
     else
         UpdateRegionRect().updateRegionMiniButton();
-    m_CoutGuide.m_Window.setVisible(true);
 }
 
 void OwnerWindow::updateRect(const HWND& hWndWindow) {
@@ -362,21 +353,7 @@ void OwnerWindow::updateRect(const HWND& hWndWindow) {
 
 void OwnerWindow::activeGameFalse() {
     UpdateRegionRect().clearRegion();
-    m_CoutGuide.m_Window.setVisible(false);
     G_WINDOW.setFramerateLimit(3);
-}
-
-void OwnerWindow::UpdateWinow2()
-{
-    if (m_CoutGuide.isActive) {
-        m_CoutGuide.isActive = false;
-        m_CoutGuide.m_Window.close();
-    }
-    else {
-        m_CoutGuide.isActive = true;
-        m_CoutGuide.initializeWindow();
-        m_CoutGuide.newGame();
-    }
 }
 
 void OwnerWindow::updatePosition(const sf::Vector2f& newPosition, const sf::Vector2f& windowPoition, const sf::Vector2f& windowWidthHeight)

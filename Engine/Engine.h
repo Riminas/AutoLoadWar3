@@ -8,6 +8,7 @@
 #include "TrayManager.h"
 #include "BoolVisibleMenu.h"
 #include "UpdateRegionRect.h"
+#include "ConfigMain.h"
 
 // Экспортируем класс Engine
 #ifdef ENGINE_EXPORTS

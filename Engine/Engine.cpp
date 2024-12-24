@@ -107,10 +107,6 @@ void Engine::processEvents() {
                 break;
         }
     }
-
-    if (m_OwnerWindow.getCoutGuideActive()) {
-        m_OwnerWindow.processingGuide();
-    }
 }
 
 void Engine::draw(const bool isVisibleLoad) {

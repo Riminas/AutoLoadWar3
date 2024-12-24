@@ -1,8 +1,8 @@
 ﻿  CoutGuide.cpp
      Создается библиотека C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.lib и объект C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.exp
   Создание кода
-  9 of 4904 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    22 functions had inline decision re-evaluated but remain unchanged
+  35 of 4956 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
+    6 functions were new in current compilation
+    61 functions had inline decision re-evaluated but remain unchanged
   Создание кода завершено
   Engine.vcxproj -> C:\Users\Aio\Documents\War3\AVscils\x64\Release\Engine.dll
