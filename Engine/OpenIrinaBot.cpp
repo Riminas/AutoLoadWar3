@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "OpenIrinaBot.h"
 #include "Global.h"
+#include "DataWarcraft.h"
 
 OpenIrinaBot::OpenIrinaBot() {
     InitializeWindow();
@@ -9,8 +10,8 @@ OpenIrinaBot::OpenIrinaBot() {
 
 void OpenIrinaBot::InitializeWindow() {
     // Установка размеров окна
-    int windowWidth = 512;
-    int windowHeight = sf::VideoMode::getDesktopMode().height / 3;
+    int windowWidth = static_cast<int>((static_cast<float>(G_DATA_WARCRAFT.m_DataRect.size.x / 3)) * 2.5f);
+    int windowHeight = static_cast<int>((static_cast<float>(G_DATA_WARCRAFT.m_DataRect.size.y / 3)) * 2.5f);
 
     window.create(sf::VideoMode(windowWidth, windowHeight), "IrinaBot Browser",
         sf::Style::Resize | sf::Style::Close);
@@ -24,10 +25,8 @@ void OpenIrinaBot::InitializeWindow() {
     SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
 
     // Позиционирование окна
-    int screenWidth = sf::VideoMode::getDesktopMode().width;
-    int screenHeight = sf::VideoMode::getDesktopMode().height;
-    int posX = (screenWidth - windowWidth);
-    int posY = (screenHeight - windowHeight) / 2;
+    int posX = (G_DATA_WARCRAFT.m_DataRect.center.x - windowWidth/2);
+    int posY = (G_DATA_WARCRAFT.m_DataRect.center.y - windowHeight/2);
     window.setPosition(sf::Vector2i(posX, posY));
 
     // Установка поверх всех окон

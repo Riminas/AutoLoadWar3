@@ -91,7 +91,7 @@ void OwnerWindow::processingButton(const sf::Event::MouseButtonEvent& event, std
     if (numButton == -6) {
         UpdateRegionRect().clearRegion();
         OpenIrinaBot().Run();
-        G_BOOL_VISIBLE.isVisibleMainMenu = false;
+        G_BOOL_VISIBLE.isVisibleMenu = false;
         UpdateRegionRect().updateRegionMain();
         draw(false);
     }
